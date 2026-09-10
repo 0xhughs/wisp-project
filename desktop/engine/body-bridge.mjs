@@ -1,8 +1,15 @@
 import { validateVoice, voiceCompletion, assertVoiceOwner } from './voice-protocol.mjs';
 import { productFiles } from './prepare-product.mjs';
 import { validateDecision, validateRequest } from './permission-protocol.mjs';
+import { validateOpenComplete, validateOpenRequest } from './safe-actions.mjs';
+import { validateAxComplete, validateAxRequest } from './ax-actions.mjs';
+import { validateVisualComplete, validateVisualRequest } from './visual-actions.mjs';
 import { bootstrap, profileFor } from './reasoning-config.mjs';
 import { readSnapshot } from './memory-schema.mjs';
+import { composeOverlay } from './plugin-overlay.mjs';
+import { readPluginSnapshot, defaultPluginSnapshot, pluginInventory } from './plugin-config.mjs';
+import { readConnectionSnapshot, defaultConnectionSnapshot, connectionInventory } from './connection-config.mjs';
+import { readSkillSnapshot, defaultSkillSnapshot, skillInventory } from './skill-config.mjs';
 import { Client, completedTurn } from '../../spike/client.mjs';
 import { PIN, environment } from '../../spike/prepare.mjs';
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, realpathSync, existsSync } from 'node:fs';
@@ -22,6 +29,9 @@ export class Lines {
       const message = JSON.parse(line);
       if (['voice','voice-cancel'].includes(message?.op)) return validateVoice(message);
       if (message?.op === 'approval') { if(Object.keys(message).sort().join()!=='decision,op')throw Error('BODY_APPROVAL');validateDecision(message.decision);return message; }
+      if (message?.op === 'open-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_OPEN');validateOpenComplete(message.completion);return message; }
+      if (message?.op === 'ax-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_AX');validateAxComplete(message.completion);return message; }
+      if (message?.op === 'visual-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_VISUAL');validateVisualComplete(message.completion);return message; }
       if (message?.op === 'configure') { bootstrap(message); return message; }
       if (!message || Object.keys(message).length !== 1 || !['smoke','recall','test','stop','permission-direct','permission-plugin','permission-pair','permission-queue'].includes(message.op)) throw new Error('BODY_MESSAGE');
       return message;
@@ -36,7 +46,7 @@ export function denyApproval(descriptor) {
 export async function run(argv) {
   const options = {};
   for (let i=0;i<argv.length;i+=2) {
-    if (!['--runtime-root','--scratch','--developer','--memory-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
+    if (!['--runtime-root','--scratch','--developer','--memory-file','--plugin-file','--connection-file','--skill-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
     options[argv[i]]=argv[i+1];
   }
   const send = value => { if (!process.stdout.destroyed) process.stdout.write(JSON.stringify(value)+'\n'); };
@@ -55,6 +65,9 @@ export async function run(argv) {
     for(const frame of frames) {
       if(frame.method==='wisp.approval.requested'&&!ending)send({event:'approval-request',...validateRequest(frame.params)});
       if(frame.method==='wisp.approval.closed')send({event:'approval-closed',...frame.params});
+      if(frame.method==='wisp.open.requested'&&!ending)send({event:'open-request',...validateOpenRequest(frame.params)});
+      if(frame.method==='wisp.ax.requested'&&!ending)send({event:'ax-request',...validateAxRequest(frame.params)});
+      if(frame.method==='wisp.visual.requested'&&!ending)send({event:'visual-request',...validateVisualRequest(frame.params)});
     }
   };
   const finish = (reason='stop') => ending ??= (async () => {
@@ -81,6 +94,18 @@ export async function run(argv) {
         if(message.op==='approval') {
           if(!ready||ending||message.decision.generation!==permissionGeneration)throw Error('BODY_STALE_APPROVAL');
           void client.request('wisp/approval.decide',message.decision).catch(fail);continue;
+        }
+        if(message.op==='open-complete') {
+          if(!ready||ending||message.completion.generation!==permissionGeneration)throw Error('BODY_STALE_OPEN');
+          void client.request('wisp/open.complete',message.completion).catch(fail);continue;
+        }
+        if(message.op==='ax-complete') {
+          if(!ready||ending||message.completion.generation!==permissionGeneration)throw Error('BODY_STALE_AX');
+          void client.request('wisp/ax.complete',message.completion).catch(fail);continue;
+        }
+        if(message.op==='visual-complete') {
+          if(!ready||ending||message.completion.generation!==permissionGeneration)throw Error('BODY_STALE_VISUAL');
+          void client.request('wisp/visual.complete',message.completion).catch(fail);continue;
         }
         if (message.op==='stop') { void finish(); continue; }
         if(['voice','voice-cancel'].includes(message.op)) {
@@ -162,6 +187,9 @@ export async function run(argv) {
     if (!existsSync(join(scratch,'.wisp-owned'))) throw new Error('BODY_ROOT');
     const home=mkdtempSync(join(scratch,'body-')); mkdirSync(join(home,'workspace'),{mode:0o700}); mkdirSync(join(home,'dsh-home'),{mode:0o700}); mkdirSync(join(home,'tmp'),{mode:0o700});
     memory=readSnapshot(options['--memory-file']);
+    const plugin=options['--plugin-file']?readPluginSnapshot(options['--plugin-file']):defaultPluginSnapshot();
+    const connection=options['--connection-file']?readConnectionSnapshot(options['--connection-file']):defaultConnectionSnapshot();
+    const skill=options['--skill-file']?readSkillSnapshot(options['--skill-file']):defaultSkillSnapshot();
     let launch=await incoming; clearTimeout(bootstrapTimer); if(ending)return;
     voiceProvider=launch.configuration.selected;
     const route=profileFor(launch.configuration);
@@ -169,11 +197,18 @@ export async function run(argv) {
     writeFileSync(join(home,'dsh-home/settings.yaml'),JSON.stringify(settings),{mode:0o600});
     const patch=join(home,'wisp.patch.yml');
     const memoryPlugin=join(dirname(fileURLToPath(import.meta.url)),'memory-context.mjs');
-    // A JSON flow mapping is YAML data; user strings never form patch syntax.
-    const memoryPatch='\n- insert:\n    - '+JSON.stringify({id:'wisp-memory',name:memoryPlugin,inject:['systemPrompt'],config:memory})+'\n';
-    writeFileSync(patch,readFileSync(join(product,'product.patch.yml'),'utf8').replace('__WISP_PRODUCT_ADAPTER__',JSON.stringify(join(up,'wisp-product/engine/product-sdk.ts')))+memoryPatch+(options['--developer']==='true'?'\n- insert:\n    - '+JSON.stringify({id:'wisp-local-permission-plugin',name:join(up,'wisp-product/engine/local-permission-plugin.ts'),inject:['tools','wispPermissions']})+'\n':''),{mode:0o600});
+    writeFileSync(patch,composeOverlay({
+      basePatch:readFileSync(join(product,'product.patch.yml'),'utf8'),
+      adapterPath:join(up,'wisp-product/engine/product-sdk.ts'),
+      memoryPath:memoryPlugin,
+      memoryConfig:memory,
+      developerPath:options['--developer']==='true'?join(up,'wisp-product/engine/local-permission-plugin.ts'):null,
+      compatible:plugin.enabled?{path:join(up,'wisp-product/engine/compatible-plugin.ts'),config:plugin.config,snapshot:plugin}:null,
+      mcp:connection.enabled?{path:join(up,'wisp-product/engine/mcp-connection.ts'),config:connection.config,snapshot:connection}:null,
+      skill:skill.enabled?{path:join(up,'wisp-product/engine/skill-register.ts'),snapshot:skill}:null,
+    }),{mode:0o600});
     ledger=join(home,'ledger.jsonl');
-    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
+    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,WISP_PLUGIN_SNAPSHOT:JSON.stringify({version:plugin.version,catalogId:plugin.catalogId,enabled:plugin.enabled,config:plugin.config,revision:plugin.revision}),WISP_CONNECTION_SNAPSHOT:JSON.stringify({version:connection.version,catalogId:connection.catalogId,enabled:connection.enabled,config:connection.config,revision:connection.revision}),WISP_SKILL_SNAPSHOT:JSON.stringify({version:skill.version,catalogId:skill.catalogId,enabled:skill.enabled,revision:skill.revision}),...(plugin.enabled?{WISP_COMPATIBLE_LEDGER:join(home,'ledger.compatible.jsonl')}:{}),...(connection.enabled?{WISP_MCP_LEDGER:join(home,'ledger.mcp.jsonl')}:{}),...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
     launch=undefined;
     client=new Client(m.node,['--import',m.tsx,join(up,'apps/cli/src/bin.ts'),'--profile','sdk','--patch',patch],{cwd:join(home,'workspace'),env});
     delete env.WISP_REASONING_CLOUD_KEY;
@@ -185,7 +220,14 @@ export async function run(argv) {
     },20);
     await client.request('initialize',{cwd:join(home,'workspace'),provider:route.provider,model:route.model});
     if (ending) return;
-    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,observation:client.observe()});
+    const notified=client.frames.find(f=>f.method==='wisp.inventory')?.params;
+    const inventory=pluginInventory({snapshot:plugin,tools:notified?.tools,transport:notified?.transport||'stdio'});
+    const connections=connectionInventory({snapshot:connection,tools:notified?.tools,transport:notified?.transport||'stdio'});
+    const skills=skillInventory({snapshot:skill,tools:notified?.tools,transport:notified?.transport||'stdio'});
+    if(JSON.stringify(notified?.plugins)!==JSON.stringify(inventory.plugins))throw Error('WISP_INVENTORY');
+    if(JSON.stringify(notified?.connections||[])!==JSON.stringify(connections.connections))throw Error('WISP_INVENTORY');
+    if(JSON.stringify(notified?.skills||[])!==JSON.stringify(skills.skills))throw Error('WISP_INVENTORY');
+    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,plugins:inventory.plugins,pluginRevision:plugin.revision,connections:connections.connections,connectionRevision:connection.revision,skills:skills.skills,skillRevision:skill.revision,observation:client.observe()});
   } catch (error) { await fail(error); }
 }
 if (process.argv[1] && resolve(process.argv[1])===fileURLToPath(import.meta.url)) run(process.argv.slice(2)).catch(()=>{process.exitCode=1;});

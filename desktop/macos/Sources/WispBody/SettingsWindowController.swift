@@ -6,6 +6,12 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     private var memoryEditor: MemoryEditorView!
     private var voiceEditor:VoiceView!
     private var modelsEditor: ModelsView!
+    private var pluginsEditor: PluginsView!
+    private var connectionsEditor: ConnectionsView!
+    private var skillsEditor: SkillsView!
+    private var petsEditor: PetsView!
+    private var permissionsEditor: PermissionsView!
+    private var diagnosticsEditor: DiagnosticsView!
     private let navigation = NSTableView()
     private let heading = NSTextField(labelWithString: "General")
     private let detail = NSTextField(wrappingLabelWithString: "")
@@ -31,11 +37,18 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         memoryEditor = MemoryEditorView(owner: owner)
         modelsEditor = ModelsView(owner: owner)
         voiceEditor = VoiceView(owner:owner)
-        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
+        pluginsEditor = PluginsView(owner: owner)
+        connectionsEditor = ConnectionsView(owner: owner)
+        skillsEditor = SkillsView(owner: owner)
+        petsEditor = PetsView(owner: owner)
+        permissionsEditor = PermissionsView(owner: owner)
+        diagnosticsEditor = DiagnosticsView()
+        diagnosticsEditor.refreshHandler = { [weak self] in self?.companion?.refreshOnboarding() }
+        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,petsEditor,pluginsEditor,connectionsEditor,skillsEditor,permissionsEditor,diagnosticsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
         for view in [scroll,content] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: root.leadingAnchor,constant: 12), scroll.topAnchor.constraint(equalTo: root.topAnchor,constant: 14), scroll.bottomAnchor.constraint(equalTo: root.bottomAnchor,constant: -14), scroll.widthAnchor.constraint(equalToConstant: 180),
-            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
+            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),petsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),connectionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),skillsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),permissionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),diagnosticsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
         ])
         refresh(owner.management)
     }
@@ -51,11 +64,25 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     func refresh(_ state: ManagementState) {
         let index = ManagementSection.allCases.firstIndex(of: state.section)!
         if navigation.selectedRow != index { navigation.selectRowIndexes(IndexSet(integer: index),byExtendingSelection: false) }
-        heading.stringValue = state.section.rawValue; detail.stringValue = companion?.managementDescription ?? state.description
+        heading.stringValue = state.section.rawValue
+        if state.section == .diagnostics {
+            detail.isHidden = true
+            diagnosticsEditor.show(companion?.diagnosticsText ?? DiagnosticsSnapshot.redact(state.description))
+        } else {
+            detail.isHidden = false
+            detail.stringValue = companion?.managementDescription ?? state.description
+        }
+        diagnosticsEditor.isHidden = state.section != .diagnostics
         chooseButton.isHidden = state.section != .general && state.section != .memory
         chooseButton.isEnabled = companion?.homeBusy == false
         voiceEditor.isHidden = state.section != .voice;voiceEditor.refresh()
         modelsEditor.isHidden = state.section != .models; modelsEditor.refresh()
+        petsEditor.isHidden = state.section != .pets; petsEditor.refresh()
+        pluginsEditor.isHidden = state.section != .plugins; pluginsEditor.refresh()
+        connectionsEditor.isHidden = state.section != .connections; connectionsEditor.refresh()
+        skillsEditor.isHidden = state.section != .skills; skillsEditor.refresh()
+        permissionsEditor.isHidden = state.section != .permissions
+        if state.section == .permissions { permissionsEditor.refresh() }
         memoryEditor.isHidden = state.section != .memory; memoryEditor.refresh()
         showButton.isHidden = state.section != .general; showButton.isEnabled = state.canShowCompanion
         navigation.isEnabled = state.canNavigate
@@ -65,7 +92,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil); window?.makeFirstResponder(navigation)
     }
-    func allowQuit() -> Bool { memoryEditor.allowQuit() && modelsEditor.allowQuit() }
+    func allowQuit() -> Bool { memoryEditor.allowQuit() && modelsEditor.allowQuit() && petsEditor.allowQuit() && pluginsEditor.allowQuit() && connectionsEditor.allowQuit() && skillsEditor.allowQuit() }
     @objc private func chooseFolder() {
         guard let window else { return }
         let panel = NSOpenPanel(); panel.canChooseDirectories = true; panel.canChooseFiles = false; panel.allowsMultipleSelection = false; panel.resolvesAliases = false

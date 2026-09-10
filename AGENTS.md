@@ -1,11 +1,11 @@
 # Wisp — shared rules
 
 ## Working rules
-- Work only within the active BUILD contract and the authorized SLICES Loop target. This new pack is Prepared, not an instruction to begin building.
+- Work only within the active BUILD contract and the authorized SLICES targets. Distinguish the implementation target from the acceptance target. This new pack is Prepared, not an instruction to begin building.
 - Inspect source and tests before changing them. Resolve reversible implementation choices using evidence; do not substitute a different agent runtime without the user's decision.
 - Coordinator alone writes protocol files and archives. Builder owns implementation and proposed proof. Reviewer independently verifies and never fixes what it reviews.
 - Use independent Builder and Reviewer agents when executing. Never self-approve or simulate independent review by changing personas.
-- Preserve dispatch ownership, snapshot identities, counters and immutable history across interruptions. Shipped means independently accepted, not deployed or published.
+- Preserve dispatch ownership, snapshot identities, counters and immutable history across interruptions. Shipped means independently accepted, not deployed or published. Implemented with verification pending is not Shipped.
 - Apply locally installed agent-skills workflows when they match the task. For code review use code-reviewer or code-review-and-quality; for security use security-auditor or security-and-hardening; for tests use test-engineer or test-driven-development. Readiness reviews cover correctness, readability, architecture, security, performance and meaningful test coverage. These optional workflow aids do not replace the self-contained LOOP protocol or require that another machine have these skills installed.
 
 ## Product invariants
@@ -31,4 +31,4 @@
 Read AGENTS.md, SLICES.md, BUILD.md, LOOP.md and the relevant role file. Inspect repository evidence; read HANDOFF.md only if active. Coordinator reconciles workers, pending results, counters, identities and advance phase before dispatch. Do not start a second writer while ownership is unresolved.
 
 ## Session end
-Return worker results to coordinator. Persist the exact next action and evidence. Human required stops execution; Blocked permits only its recorded recheck. Complete permits no new work without an authorized target or repair.
+Return worker results to coordinator. Persist completed work, remaining implementation, deferred verification, worker ownership and the exact next action. Slice-level missing human or platform evidence parks that slice as implemented-with-verification-pending (or blocked with its recorded class) and does not by itself stop the run; continue the next eligible slice. Run-level Human required (missing authority, retry or budget limit, or a decision that blocks all remaining eligible work) stops execution. Blocked permits only its recorded recheck. Complete permits no new work without an authorized target or repair. Do not declare the overall project complete while required acceptance gates remain open.

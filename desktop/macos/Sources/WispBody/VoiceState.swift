@@ -51,6 +51,28 @@ struct VoiceState {
     }
 }
 
+// Carbon registration is optional. Wake uses VoiceController.activate on the same machine.
+enum VoiceActivation {
+    static let shortcutLabel="Option–Space"
+    static func shortcutStatus(registered:Bool)->String {
+        "\(shortcutLabel) · \(registered ? "registered":"unavailable (conflict); use Wake")"
+    }
+    static func wakeAllowed(shortcutRegistered:Bool)->Bool {
+        _=shortcutRegistered
+        return true
+    }
+}
+
+struct VoiceHotKeyEdge {
+    private var held=false
+    mutating func handle(pressed isPressed:Bool)->(edge:String,activates:Bool) {
+        let activates=isPressed && !held
+        held=isPressed
+        return (isPressed ? "pressed":"released", activates)
+    }
+    mutating func reset(){held=false}
+}
+
 // A failed stop call before didStart is not a release acknowledgement.
 struct SpeechPlaybackState {
     enum Start {case present, stop, ignore}

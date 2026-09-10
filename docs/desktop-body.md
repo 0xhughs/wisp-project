@@ -1,6 +1,6 @@
 # Wisp macOS desktop body
 
-Wisp is an AppKit floating, nonactivating panel with one original animated body. The application controller owns one anonymous-pipe Node bridge and one accepted Harness client/session. Replacing the view keeps that connection alive. There is no chat interface, microphone or speech playback. The accepted02 body-only build preceded the current03 management and04 durable-memory surfaces described below. Listening/speaking in developer mode are explicitly simulated presentation signals.
+Wisp is an AppKit floating, nonactivating panel with interchangeable original animated bodies. The application controller owns one anonymous-pipe Node bridge and one accepted Harness client/session. Replacing the view keeps that connection alive. The current body is one of a closed catalog (`wisp-orb` Wisp orb, `wisp-fox` Fox, `wisp-robot` Robot, `wisp-bird` Bird, `wisp-cat` Cat, `wisp-owl` Owl, `wisp-sprout` Sprout, `wisp-capsule` Capsule); default and missing snapshot restore the accepted-02 even-odd oval. Changing the pet recreates the drawing view inside the existing panel and does not restart the hidden engine. See `pets.md`. There is no chat interface. Listening/speaking in developer mode are explicitly simulated presentation signals. Microphone and speech playback belong to the unaccepted voice loop, not to pet selection.
 
 ## Build and run
 
@@ -20,7 +20,7 @@ The runtime must already be the accepted prepared pin, with its `.wisp-spike.jso
 
 Run the executable directly as above so PID ownership and stop are explicit. `kill -TERM <native-pid>` requests ordinary cleanup; closing the controller-owned bridge input converges on accepted shutdown. The native app defers final exit until its bridge exits. Body replacement recreates and disposes the drawing view inside the controller's one persistent native panel, with an explicit autorelease scope. It creates no additional window. Missing or failed startup presents gray unavailable Wisp and never silently claims ready or restarts itself. Closing a body for replacement is separate from terminating the app.
 
-This is local development assembly only: no signing, notarization, installer, bundled model, dependency distribution or publication is claimed.
+This is local development assembly only. It is **not** a notarize, Developer ID, App Store, Sparkle, installer, bundled-model, or publication instruction. Ad-hoc `codesign --sign -` is local TCC identity for `local.wisp.body`, not a shipping identity. See `macos-readiness.md` for the first-release local assemble/run/quit path, Settings → Diagnostics, telemetry isolation, and recovery facts.
 
 ## Tests
 
@@ -38,7 +38,7 @@ The bridge's completion window begins before each prompt request, preserving eve
 
 ## Developer presentation and GUI proof
 
-Launch the executable with the same explicit arguments plus `--developer true --test-support /absolute/private/scratch/run/support`, with stdin held open. The test-support directory must be a direct child of marked scratch; use the documented HomeFixture for regression tests. It accepts newline JSON containing only `op`. Supported bounded developer operations: `smoke`, `recall` (fixed test-only memory query), `sequence`, `listen`, `speak`, `interrupt`, `recreate`, `hide`, `show`, `status`, `raster`, `stop`. There is no arbitrary prompt, shell command, control socket or control file. Ordinary launch does not read these controls. `sequence` deterministically exercises listening→speaking→idle; `listen`/`speak` hold simulated states for inspection. `status` reports actual view/timer/window resources; `raster` samples alpha from the actual rendered view cache. These are developer diagnostics, not voice input.
+Launch the executable with the same explicit arguments plus `--developer true --test-support /absolute/private/scratch/run/support`, with stdin held open. The test-support directory must be a direct child of marked scratch; use the documented HomeFixture for regression tests. It accepts newline JSON containing only `op`. Supported bounded developer operations: `smoke`, `recall` (fixed test-only memory query), `sequence`, `listen`, `speak`, `interrupt`, `recreate`, `hide`, `show`, `status`, `raster`, `stop`. There is no arbitrary prompt, shell command, control socket or control file. Ordinary launch does not read these controls. `sequence` deterministically exercises listening→speaking→idle; `listen`/`speak` hold simulated states for inspection. `status` reports actual view/timer/window resources; `raster` samples alpha from the actual rendered view cache and reports `catalogId`, corner alpha, interior-gap alpha, and one body-unique opaque sample. `recreate` recreates the **current** pet inside the existing panel. These are developer diagnostics, not voice input.
 
 See `desktop/tests/gui/README.md` for the independent target and globally posted input. The product does not post, capture or forward events and needs no Accessibility/Input Monitoring permission. The test operator's global driver does need posting access. Public window geometry and native target logs establish routing; CUA's app-addressed click is not acceptable evidence of cross-app hit testing.
 
@@ -48,8 +48,13 @@ Observed one3440×1440 display at1× scaling. Actual target full-screen Space en
 
 ## Current management shell (03)
 
-The current app now provides its own menu bar and retained native Settings window. Open Settings from the Wisp status item, and use Quit Wisp for normal cleanup; closing Settings leaves the body alive. General provides Show Companion. Wake and Mute are explicitly unavailable until speech is integrated. See `management-shell.md` for launch/test procedure and `../evidence/03-management-shell.md` for the current regression results. The02 evidence and archive describe the earlier accepted body-only build and have not been rewritten.
+The current app now provides its own menu bar and retained native Settings window. Open Settings from the Wisp status item, and use Quit Wisp for normal cleanup; closing Settings leaves the body alive. General provides Show Companion. Settings → Diagnostics is a structured pane (Refresh/Copy; no concatenated `voice.status`). See `macos-readiness.md` and `management-shell.md` for launch/test procedure and `../evidence/03-management-shell.md` for the current regression results. The02 evidence and archive describe the earlier accepted body-only build and have not been rewritten.
 
 ## Current durable home (04)
 
 General/Memory now chooses and retains a user folder with editable categorized knowledge. Normal launch restores it from private application-support bookmark state; no home is chosen by default. The hidden runtime starts only with valid configured memory, and its internal cwd/DSH_HOME stays outside that folder. Read `local-home-memory.md` for first selection, next-launch snapshot semantics, recovery and isolated verification. Never run developer tests without explicit test-support isolation. Historical02/03 evidence remains unchanged.
+
+## Windows companion (17)
+
+A separate Win32 host for the **same** companion identity is documented in `windows-companion.md`. This macOS document and accepted-02 evidence are unchanged as macOS proof. Slice 17 on Windows is body + click-through + tray + Ctrl+Alt+W + the same `wisp-home.json` UUID; engine attach, voice, models, eleven-section Settings, 09 openers, UI Automation, and installer remain 17.x. Linux authors of `desktop/windows` sources do not compile them here (`missing-platform`).
+

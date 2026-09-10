@@ -29,6 +29,17 @@ func voiceStateTests() throws {
     voice.cancel(); voice.released(id:third)
     try check(voice.phase == .idle,"speech cancellation settles")
 }
+
+// Mac-native-only Foundation. Linux-supplemental double: desktop/tests/voice-seams.test.mjs
+func voiceActivationPolicyTests()throws {
+    try check(VoiceActivation.wakeAllowed(shortcutRegistered:false) && VoiceActivation.wakeAllowed(shortcutRegistered:true),"Wake is independent of Carbon registration")
+    try check(VoiceActivation.shortcutStatus(registered:true)=="Option–Space · registered","registered shortcut status")
+    try check(VoiceActivation.shortcutStatus(registered:false).contains("unavailable (conflict); use Wake"),"unregistered shortcut tells the user to use Wake")
+    var edge=VoiceHotKeyEdge()
+    let first=edge.handle(pressed:true),repeatPress=edge.handle(pressed:true),release=edge.handle(pressed:false)
+    try check(first.activates && !repeatPress.activates && !release.activates,"one activation per press without Carbon")
+    try check(first.edge=="pressed" && repeatPress.edge=="pressed" && release.edge=="released","categorical press edges")
+}
 private func unwrapVoice(_ value:String?) throws -> String {guard let value else {throw NSError(domain:"missing voice operation",code:1)}; return value}
 func voiceFrameTests()throws {
     let id="aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"

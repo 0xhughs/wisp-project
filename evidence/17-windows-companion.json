@@ -1,0 +1,18 @@
+{
+  "dispatch": "17-build-092",
+  "slice": 17,
+  "accepted": false,
+  "shipped": false,
+  "linuxSupplemental": true,
+  "win32": "uncompiled-unverified",
+  "gapClasses": ["missing-platform", "human-test"],
+  "remainder": [
+    "17.x-engine",
+    "17.x-voice",
+    "17.x-models",
+    "17.x-management",
+    "17.x-actions",
+    "17.x-uia",
+    "17.x-installer"
+  ]
+}
