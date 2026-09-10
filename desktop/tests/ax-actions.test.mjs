@@ -130,7 +130,7 @@ test('Linux-supplemental: find accepts the three fixture names only', () => {
     assert.equal(action.destination, `ax-fixture-search:${name}`);
   }
   const driver = createRecordingAxDriver();
-  for (const name of ['Safari', 'Dock', 'Fixture', '']) {
+  for (const name of ['Safari', 'Dock', 'Fixture', '', 'Drawn Canary']) {
     assert.throws(() => describeFindNamed({name}));
   }
   assert.throws(() => describeFindNamed({name: FIXTURE_BUTTON, extra: 'x'}));

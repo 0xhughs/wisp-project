@@ -35,6 +35,8 @@ struct PermissionRequest {
             guard source=="wisp-safe-action",operation=="read-local-clock",args.isEmpty,destination=="local-system-clock" else { throw PermissionFailure.invalid }
         case "wisp_ax_focus_window","wisp_ax_move_window","wisp_ax_read_focused","wisp_ax_click_named","wisp_ax_type_named","wisp_ax_find_named":
             do { try AccessibilityDriver.validatePermission(tool:tool,source:source,operation:operation,arguments:args,destination:destination) } catch { throw PermissionFailure.invalid }
+        case "wisp_visual_click_drawn":
+            do { try VisualClickDriver.validatePermission(tool:tool,source:source,operation:operation,arguments:args,destination:destination) } catch { throw PermissionFailure.invalid }
         case "skill":
             guard source=="wisp-skill",operation=="load-skill-instructions",Set(args.keys)==["name"],args["name"]=="wisp-local-time-briefing" else { throw PermissionFailure.invalid }
         default:
@@ -53,6 +55,9 @@ struct PermissionRequest {
             let label=tool=="wisp_open_url" ? "Open URL" : tool=="wisp_open_file" ? "Open file for viewing" : "Tell local time"
             let operationLine=tool=="wisp_tell_time" ? "Read this device’s local clock once" : tool=="wisp_open_url" ? "Open one http(s) address with the default handler" : "Open one viewable file with the default handler"
             return "Wisp is acting on your behalf.\n\nOperation: \(operationLine)\nSource: Wisp safe action (\(label))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nThis decision applies to this one action only. No account permission or future consent is granted. A spoken or typed yes is not a grant."
+        }
+        if source=="wisp-visual" {
+            return "Wisp is acting on your behalf.\n\nOperation: Click Drawn Canary\nSource: Wisp visual fallback (Drawn Canary)\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nThis is not a click on Fixture Button. Accessibility remains preferred when it can reach a control. This action does not request Screen Recording or Input Monitoring. This decision applies to this one action only. A spoken or typed yes is not a grant. There is no Allow Always."
         }
         if source=="wisp-ax" {
             let label:String

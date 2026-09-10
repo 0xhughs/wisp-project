@@ -30,5 +30,5 @@ The engine child has no AppKit. After consume, URL and file tools notify `wisp.o
 
 Stock `tool-bash`, `tool-fs`, `tool-web` and shell wrappers stay disabled. Outcomes use existing voice and Wisp surfaces; there is no chat composer. Slice 07 is not assumed working.
 
-Slice 15 Accessibility fixture tools are a separate Direct catalog (`wisp-ax`) with their own `wisp.ax.requested` channel. They do not reuse this opener, `NSWorkspace`, or pin helper binaries. See `computer-control.md`. Visual click remains unavailable.
+Slice 15 Accessibility fixture tools are a separate Direct catalog (`wisp-ax`) with their own `wisp.ax.requested` channel. They do not reuse this opener, `NSWorkspace`, or pin helper binaries. Slice 16 Drawn Canary visual click is a separate Direct catalog (`wisp-visual`) with `wisp.visual.requested`. See `computer-control.md`.
 

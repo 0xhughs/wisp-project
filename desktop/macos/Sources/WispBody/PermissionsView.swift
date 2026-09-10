@@ -16,7 +16,7 @@ final class PermissionsView: NSView {
         showFixture.action = #selector(showWindow)
         let actions = NSStackView(views: [openSettings, showFixture])
         actions.spacing = 10
-        let hint = NSTextField(wrappingLabelWithString: "Opening Accessibility settings or showing the fixture is not Allow Once. Visual click and Windows computer control stay unavailable.")
+        let hint = NSTextField(wrappingLabelWithString: "Opening Accessibility settings or showing the fixture is not Allow Once. Drawn Canary visual click is Ask-each-time and is not a click on Fixture Button. Screen Recording and Input Monitoring are not requested here. Windows computer control stays unavailable.")
         hint.textColor = .secondaryLabelColor
         let stack = NSStackView(views: [actions, status, hint])
         stack.orientation = .vertical

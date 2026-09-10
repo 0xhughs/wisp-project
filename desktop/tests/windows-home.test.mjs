@@ -93,6 +93,7 @@ test('Linux-supplemental: overlay still lists tool-pwsh; inventory/admission fil
  const names=expectedInventoryNames();
  for(const name of DIRECT_SAFE_ACTION_NAMES)assert.ok(names.includes(name));
  for(const name of DIRECT_AX_NAMES)assert.ok(names.includes(name));
+ assert.ok(names.includes('wisp_visual_click_drawn'));
  assert.equal(names.some(name=>String(name).includes('wisp_uia_')),false);
  const engine=fileURLToPath(new URL('../engine',import.meta.url));
  const admission=[

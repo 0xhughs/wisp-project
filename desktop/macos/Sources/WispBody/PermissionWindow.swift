@@ -73,6 +73,8 @@ final class PermissionWindow:NSWindowController,NSWindowDelegate {
                     case "wisp_ax_type_named": label="Set text"
                     default: label="Search fixture"
                     }
+                } else if source == "wisp-visual" {
+                    label="Click Drawn Canary"
                 } else if source == "wisp-mcp" {
                     label="Wisp MCP demonstration"
                 } else if source == "wisp-skill" {

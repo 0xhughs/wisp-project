@@ -3,6 +3,7 @@ import { productFiles } from './prepare-product.mjs';
 import { validateDecision, validateRequest } from './permission-protocol.mjs';
 import { validateOpenComplete, validateOpenRequest } from './safe-actions.mjs';
 import { validateAxComplete, validateAxRequest } from './ax-actions.mjs';
+import { validateVisualComplete, validateVisualRequest } from './visual-actions.mjs';
 import { bootstrap, profileFor } from './reasoning-config.mjs';
 import { readSnapshot } from './memory-schema.mjs';
 import { composeOverlay } from './plugin-overlay.mjs';
@@ -30,6 +31,7 @@ export class Lines {
       if (message?.op === 'approval') { if(Object.keys(message).sort().join()!=='decision,op')throw Error('BODY_APPROVAL');validateDecision(message.decision);return message; }
       if (message?.op === 'open-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_OPEN');validateOpenComplete(message.completion);return message; }
       if (message?.op === 'ax-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_AX');validateAxComplete(message.completion);return message; }
+      if (message?.op === 'visual-complete') { if(Object.keys(message).sort().join()!=='completion,op')throw Error('BODY_VISUAL');validateVisualComplete(message.completion);return message; }
       if (message?.op === 'configure') { bootstrap(message); return message; }
       if (!message || Object.keys(message).length !== 1 || !['smoke','recall','test','stop','permission-direct','permission-plugin','permission-pair','permission-queue'].includes(message.op)) throw new Error('BODY_MESSAGE');
       return message;
@@ -65,6 +67,7 @@ export async function run(argv) {
       if(frame.method==='wisp.approval.closed')send({event:'approval-closed',...frame.params});
       if(frame.method==='wisp.open.requested'&&!ending)send({event:'open-request',...validateOpenRequest(frame.params)});
       if(frame.method==='wisp.ax.requested'&&!ending)send({event:'ax-request',...validateAxRequest(frame.params)});
+      if(frame.method==='wisp.visual.requested'&&!ending)send({event:'visual-request',...validateVisualRequest(frame.params)});
     }
   };
   const finish = (reason='stop') => ending ??= (async () => {
@@ -99,6 +102,10 @@ export async function run(argv) {
         if(message.op==='ax-complete') {
           if(!ready||ending||message.completion.generation!==permissionGeneration)throw Error('BODY_STALE_AX');
           void client.request('wisp/ax.complete',message.completion).catch(fail);continue;
+        }
+        if(message.op==='visual-complete') {
+          if(!ready||ending||message.completion.generation!==permissionGeneration)throw Error('BODY_STALE_VISUAL');
+          void client.request('wisp/visual.complete',message.completion).catch(fail);continue;
         }
         if (message.op==='stop') { void finish(); continue; }
         if(['voice','voice-cancel'].includes(message.op)) {

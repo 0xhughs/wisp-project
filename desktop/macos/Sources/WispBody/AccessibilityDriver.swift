@@ -249,7 +249,7 @@ struct NativeAccessibilityDriver: AccessibilityPerforming {
         guard let positionValue = attribute(window, kAXPositionAttribute as String) else { throw AccessibilityFailure.missing }
         var position = CGPoint.zero
         guard AXValueGetValue(positionValue as! AXValue, .cgPoint, &position) else { throw AccessibilityFailure.missing }
-        var size = CGSize(width: 360, height: 220)
+        var size = CGSize(width: AccessibilityFixtureWindow.defaultSize.width, height: AccessibilityFixtureWindow.defaultSize.height)
         if let value = attribute(window, kAXSizeAttribute as String) {
             _ = AXValueGetValue(value as! AXValue, .cgSize, &size)
         }

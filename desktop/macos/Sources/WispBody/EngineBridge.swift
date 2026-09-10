@@ -19,7 +19,7 @@ struct BridgeFrames {
         var frames=[[String:Any]]()
         while let newline=buffer.firstIndex(of:10) {
             let line=buffer.prefix(upTo:newline); buffer.removeSubrange(...newline)
-            guard let object=try JSONSerialization.jsonObject(with:line) as? [String:Any],let event=object["event"] as? String,["owned","ready","smoke","recall","stopped","unavailable","connection-test","testing","tested","approval-request","approval-closed","permission-test","voice-processing","voice-result","voice-settled","voice-failed","open-request","ax-request"].contains(event) else { throw NSError(domain:"frame",code:1) }
+            guard let object=try JSONSerialization.jsonObject(with:line) as? [String:Any],let event=object["event"] as? String,["owned","ready","smoke","recall","stopped","unavailable","connection-test","testing","tested","approval-request","approval-closed","permission-test","voice-processing","voice-result","voice-settled","voice-failed","open-request","ax-request","visual-request"].contains(event) else { throw NSError(domain:"frame",code:1) }
             if event.hasPrefix("voice-"){try validateVoiceEvent(object)}
             frames.append(object)
         }
@@ -85,6 +85,7 @@ final class EngineBridge {
     func decidePermission(_ decision:[String:Any]) { guard started,!stopping,process.isRunning else { return }; send(["op":"approval","decision":decision]) }
     func completeOpen(_ completion:[String:Any]) { guard started,!stopping,process.isRunning else { return }; send(["op":"open-complete","completion":completion]) }
     func completeAx(_ completion:[String:Any]) { guard started,!stopping,process.isRunning else { return }; send(["op":"ax-complete","completion":completion]) }
+    func completeVisual(_ completion:[String:Any]) { guard started,!stopping,process.isRunning else { return }; send(["op":"visual-complete","completion":completion]) }
     func testConnection() { guard started,!stopping,process.isRunning else { return }; send(["op":"test"]) }
     func recall() { guard started,!stopping,process.isRunning else { return }; send(["op":"recall"]) }
     func smoke() { guard started,!stopping,process.isRunning else { return }; send(["op":"smoke"]) }

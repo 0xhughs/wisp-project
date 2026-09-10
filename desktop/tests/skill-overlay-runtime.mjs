@@ -68,6 +68,7 @@ try {
     assert.ok(inventory.tools.includes('wisp_ax_click_named'));
     assert.ok(inventory.tools.includes('wisp_ax_type_named'));
     assert.ok(inventory.tools.includes('wisp_ax_find_named'));
+    assert.ok(inventory.tools.includes('wisp_visual_click_drawn'));
     assert.equal(inventory.tools.includes('wisp_compatible_check'),false);
     assert.equal(inventory.tools.some(t=>String(t).startsWith('mcp__')),false);
     assert.deepEqual(inventory.skills,[]);

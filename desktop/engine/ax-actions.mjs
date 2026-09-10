@@ -16,6 +16,7 @@ export const DIRECT_AX_NAMES = Object.freeze([
   'wisp_ax_type_named',
   'wisp_ax_find_named',
 ]);
+export const DIRECT_VISUAL_NAMES = Object.freeze(['wisp_visual_click_drawn']);
 export const AX_TOOLS = Object.freeze({
   wisp_ax_focus_window: {operation: 'focus-fixture-window', args: ['title'], destination: 'ax-fixture-window'},
   wisp_ax_move_window: {operation: 'move-fixture-window', args: ['title', 'dx', 'dy'], destination: 'ax-fixture-window'},
@@ -37,7 +38,7 @@ function id(value) {
 }
 
 export function expectedInventoryNames({plugin = false, connection = false, skill = false, developer = false} = {}) {
-  const names = [...DIRECT_SAFE_ACTION_NAMES, ...DIRECT_AX_NAMES];
+  const names = [...DIRECT_SAFE_ACTION_NAMES, ...DIRECT_AX_NAMES, ...DIRECT_VISUAL_NAMES];
   if (developer) names.push('wisp_permission_check');
   if (plugin) names.push('wisp_compatible_check');
   if (connection) names.push('mcp__wispdemo__record');

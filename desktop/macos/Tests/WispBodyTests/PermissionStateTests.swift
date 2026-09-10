@@ -82,14 +82,27 @@ func permissionStateTests() throws {
     try check(try PermissionRequest(axFind).destination=="ax-fixture-search:Fixture Marker", "ax find decode")
     let axMoveOk:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-move-ok","rootCallId":"call-move-ok","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_move_window","source":"wisp-ax","revision":"1","arguments":["title":"Wisp Accessibility Fixture","dx":"4","dy":"-2"],"operation":"move-fixture-window","destination":"ax-fixture-window","fields":[["label":"Delta","value":"dx 4, dy -2"]]]
     try check(try PermissionRequest(axMoveOk).summary.contains("Move fixture"), "ax move decode")
+    let visualFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-visual","rootCallId":"call-visual","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_visual_click_drawn","source":"wisp-visual","revision":"1","arguments":["title":"Wisp Accessibility Fixture","target":"Drawn Canary"],"operation":"click-drawn-canary","destination":"visual-fixture-canary:Drawn Canary","fields":[["label":"Target","value":"Drawn Canary"]]]
+    let visualRequest=try PermissionRequest(visualFrame)
+    try check(visualRequest.summary.contains("Drawn Canary") && visualRequest.summary.contains("not a click on Fixture Button") && visualRequest.summary.contains("Screen Recording") && visualRequest.summary.contains("Input Monitoring") && !visualRequest.summary.contains("Allow Always"), "visual click decode")
+    var visualButton=visualFrame; visualButton["arguments"]=["title":"Wisp Accessibility Fixture","target":"Fixture Button"]
+    do {_=try PermissionRequest(visualButton); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var visualTitle=visualFrame; visualTitle["arguments"]=["title":"Safari","target":"Drawn Canary"]
+    do {_=try PermissionRequest(visualTitle); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var extraVisual=visualFrame; extraVisual["arguments"]=["title":"Wisp Accessibility Fixture","target":"Drawn Canary","extra":"x"]
+    do {_=try PermissionRequest(extraVisual); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var wrongVisualSource=visualFrame; wrongVisualSource["source"]="wisp-ax"
+    do {_=try PermissionRequest(wrongVisualSource); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
     var stateCancel=PermissionState(); stateCancel.attach(generation:generation,companionID:companion)
     let cancelable=try PermissionRequest(urlFrame)
     try stateCancel.receive(cancelable)
     let opener=RecordingWorkspaceOpener()
     let axDriver=RecordingAccessibilityDriver()
+    let visualDriver=RecordingVisualClickDriver()
     _=stateCancel.decide(cancelable.requestID,action:"cancel")
     try check(opener.count==0, "confirm-cancel performs zero opener calls")
     try check(axDriver.count==0, "confirm-cancel performs zero AX-driver calls")
+    try check(visualDriver.count==0 && visualDriver.rasters==0 && visualDriver.mouseEvents==0, "confirm-cancel performs zero visual-driver calls")
     let mcpFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-mcp","rootCallId":"call-mcp","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"mcp__wispdemo__record","source":"wisp-mcp","revision":"1","arguments":["label":"once"],"operation":"append-test-record","destination":"/owned/mcp-ledger","fields":[["label":"Public tool","value":"mcp__wispdemo__record"],["label":"Record label","value":"once"]]]
     let mcpRequest=try PermissionRequest(mcpFrame)
     try check(mcpRequest.summary.contains("mcp__wispdemo__record") && mcpRequest.summary.contains("Wisp MCP demonstration") && mcpRequest.summary.contains("Append one verification record") && mcpRequest.summary.contains("Saving a connection is not a grant") && mcpRequest.summary.contains("spoken or typed yes is not a grant") && !mcpRequest.summary.contains("Allow Always"), "MCP request decode and copy")

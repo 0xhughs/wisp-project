@@ -66,6 +66,7 @@ try {
     assert.ok(inventory.tools.includes('wisp_ax_click_named'));
     assert.ok(inventory.tools.includes('wisp_ax_type_named'));
     assert.ok(inventory.tools.includes('wisp_ax_find_named'));
+    assert.ok(inventory.tools.includes('wisp_visual_click_drawn'));
     assert.equal(inventory.tools.includes('wisp_compatible_check'),false);
     assert.deepEqual(inventory.connections,[]);
     results.push({case:'default-excludes-mcp',ok:true,tools:inventory.tools});

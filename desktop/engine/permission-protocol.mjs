@@ -1,4 +1,5 @@
 import {describeAxTool,AX_TOOLS,SOURCE as AX_SOURCE} from './ax-actions.mjs';
+import {describeClickDrawn,SOURCE as VISUAL_SOURCE,VISUAL_OPERATION} from './visual-actions.mjs';
 const fields=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).sort().join()===keys.sort().join();
 const id=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(value);
 export function validateDecision(value) {
@@ -30,6 +31,12 @@ export function validateRequest(value) {
   if(value.source!==AX_SOURCE||value.operation!==a.operation)throw Error('PERMISSION_REQUEST');
   try {
    const described=describeAxTool(value.toolName,value.arguments);
+   if(described.operation!==value.operation||described.destination!==value.destination)throw Error('PERMISSION_REQUEST');
+  } catch { throw Error('PERMISSION_REQUEST'); }
+ } else if(value.toolName==='wisp_visual_click_drawn') {
+  if(value.source!==VISUAL_SOURCE||value.operation!==VISUAL_OPERATION)throw Error('PERMISSION_REQUEST');
+  try {
+   const described=describeClickDrawn(value.arguments);
    if(described.operation!==value.operation||described.destination!==value.destination)throw Error('PERMISSION_REQUEST');
   } catch { throw Error('PERMISSION_REQUEST'); }
  } else throw Error('PERMISSION_REQUEST');
