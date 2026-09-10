@@ -150,12 +150,18 @@ Required deliverables after plan approval; none claimed run in this no-code phas
 
 6. **Regressions and identities.** Existing `body-bridge`, `permission-protocol`, `reasoning-config`, `memory-context`, `plugin-config`, `connection-config`, `skill-config`, `pet-config`, hardware/ollama inspect, voice-protocol/seams, safe-actions, and spike client tests remain applicable. Pristine pin, byte-identical spike and archives 01–06. No 07, 08, 09, 10, 11, 12, or 13 Shipped claim. Final proof maps each Done when item to Linux-supplemental vs Mac/human evidence.
 ## Proof
-15-plan-087 APPROVE_PLAN consumed. Slice 15 Builder may start against contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 and baseline a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files) at HEAD c260f44e18c333eaa1414f13fdcd7f850ede1633. Not 15 acceptance. Slices 07–13 remain implemented with verification pending; historical 07-review-060 HUMAN_REQUIRED unchanged; 08-review-069, 09-review-073, 10-review-065, 11-review-077, 12-review-085 and 13-review-081 IMPLEMENTATION_READY unchanged; no `slices/07-*.md` through `slices/15-*.md`.
+15-build-088 Building complete. Product HEAD 7a276bac81b102fdba8b2d3c9595aac63a51ad22. Candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files). Contract unchanged eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539. Linux-supplemental 185/185 claimed. Native Swift uncompiled. Not 15 acceptance. Slices 07–13 remain implemented with verification pending; historical 07-review-060 HUMAN_REQUIRED unchanged; 08-review-069, 09-review-073, 10-review-065, 11-review-077, 12-review-085 and 13-review-081 IMPLEMENTATION_READY unchanged; no `slices/07-*.md` through `slices/15-*.md`.
+
+Builder 15-build-088 (worker bc-bd6d4b73-a9e0-5a28-b8b7-70af8dbbec41) implemented closed six wisp-ax Direct tools against the Wisp Accessibility Fixture, recording AX driver, consume-then-ax-request, Permissions TCC copy, docs/computer-control.md, evidence/15-accessibility.md. Handback $HOME/wisp-work/loop-state/15-build-088.md. Claims only until independent review.
+
+15-plan-087 APPROVE_PLAN consumed. Baseline a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files). Not 15 acceptance.
 
 Coordinator persisted Builder 15-draft-086 Proposed contract (worker bc-82e6970f-5554-539e-82db-7399c0feb7ee). No application code in the proposal commits.
 
 ## Review
-15-plan-087 APPROVE_PLAN — independent reviewer bc-2e118252-6db5-5eff-99e0-d95cafe62698. Contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 and candidate a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 match before/after (239 files). HEAD c260f44e18c333eaa1414f13fdcd7f850ede1633. Archives 01–06 untouched. 07–13 not Shipped. Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/15-plan-087.md. Consumed.
+Pending independent implementation review 15-review-089 of candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea. Not consumed.
+
+15-plan-087 APPROVE_PLAN — independent reviewer bc-2e118252-6db5-5eff-99e0-d95cafe62698. Contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 and candidate a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 match before/after (239 files). Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/15-plan-087.md. Consumed.
 
 15-draft-086 Builder draft-proposal complete (bc-82e6970f-5554-539e-82db-7399c0feb7ee). Handback $HOME/wisp-work/loop-state/15-draft-086.md. Not plan approval. Consumed.
 
@@ -168,25 +174,25 @@ loop-plan-061 APPROVE_PLAN — independent reviewer bc-d950b4e9-45b7-5209-ba88-2
 ## Loop state
 Tool adapter: Cursor Task generalPurpose subagent; coordinator persists dispatch ID then launches; waits for confirmed completion; Reviewer context is independent of Builder reasoning. One active worker per checkout. This Linux host cannot actuate macOS CUA; Mac physical tests remain participant-gated.
 Coordinator: cursor-cloud bc-81f7c99b-f70d-4a0a-83e5-180597760926
-Worker / role / phase: none (pending launch) / Builder / Building
-Dispatch ID / launch state / input identity: 15-build-088 / pending launch / approved contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539; baseline a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files)
-Pending result / last consumed dispatch: none / 15-plan-087
+Worker / role / phase: none (pending launch) / Reviewer / Ready for review
+Dispatch ID / launch state / input identity: 15-review-089 / pending launch / approved contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539; implementation candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files); baseline a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files)
+Pending result / last consumed dispatch: none / 15-build-088
 Snapshot capture and recheck commands / coverage / exclusions: Run `python3 tools/identity.py --repo .` from repository root (replacement of unavailable ../../work/loop-state/identity.py). SHA-256 sorted relative file manifest includes git tracked and non-ignored untracked files, bytes, types, executable bits, symlink targets. Excludes .git, tools/identity.py (hashed only into contract identity), and the WISP_LOOP_STATE store if it lies inside the checkout. BUILD.md and SLICES.md contribute canonicalized bytes: BUILD stops before ## Proof; SLICES omits Run status, Release evidence, Shipped/Now/Later/Implemented-verification-pending placement headings, Implementation ledger and Verification backlog while keeping mapped slice bodies and target membership ordered by slice ID. Contract hashes BUILD through Tests, the Loop-state snapshot capture line, that SLICES canonicalization, full AGENTS/LOOP/BUILDER/REVIEWER, and tools/identity.py bytes. Manifest JSON stored outside coverage at $WISP_LOOP_STATE (default $HOME/wisp-work/loop-state). No other dependency or generated paths currently excluded: place dependencies/test outputs outside checkout. Pinned upstream source remains an external reference; when present verify `git -C "$WISP_HARNESS" rev-parse HEAD` and porcelain status, default $HOME/wisp-work/deepseek-harness; only pristine pin d347e703908d0406b7a7ef80e3a0e594d86b2215 may support source claims. Historical identities below are records only and cannot be recomputed on this host. Changing identity.py rules requires plan re-review.
 Baseline snapshot: a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files; approved 15-plan-087 baseline). Parked 12 implementation candidate 35ab842b1f877fc9080d69e0bfa96618bbf79213443246ec92ea60c34be92416 (238 files) retained as record.
 Contract identity: eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 (approved 15-plan-087).
-Candidate snapshot: a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755 (239 files; implementation candidate after 15-build-088).
+Candidate snapshot: 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files; 15-build-088).
 Rejection count: 0
 Consecutive no-progress repairs: 0
-Open acceptance gaps / prior failing evidence: Slice 15 implementation not started. 07–13 Mac/runtime gates remain backlog and do not block 15. Native Swift/AX uncompiled here. Fixture-only AX; visual click remains 16; Windows remains 17.
+Open acceptance gaps / prior failing evidence: Linux 185/185 supplemental claimed by Builder; independent Reviewer must reproduce. Remaining: NativeChecks/Mac AX/TCC/GUI (missing-platform/human-test); pin-runtime initialize (missing-external-resource); 06/07/09/10/11/12 retest. Not 15 Shipped.
 Repair awaiting review: false
-Review events: 15-plan-087 APPROVE_PLAN contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 candidate a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755; reviewer bc-2e118252-6db5-5eff-99e0-d95cafe62698; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/15-plan-087.md. 15-draft-086 draft-proposal complete builder bc-82e6970f-5554-539e-82db-7399c0feb7ee; not a review verdict. 12-review-085 IMPLEMENTATION_READY contract 8d7b28860c42fe1be5917851ba5a8e1ed213b1bbd0399552936086b647c12d3b; reviewer bc-4ee49284-8de6-510d-affa-6d6331d95162. 13-review-081 IMPLEMENTATION_READY contract 10a33ba06c391c205ddbf579b33f2a6ccd1e3226a88b46f9fbdaa5be5d0c6d91; reviewer bc-c6ed81fc-4c5a-5699-8ea5-8bdec600c62d. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
+Review events: 15-build-088 Building complete candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539; builder bc-bd6d4b73-a9e0-5a28-b8b7-70af8dbbec41; not a review verdict. 15-plan-087 APPROVE_PLAN contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 candidate a7830c43786e0e6353266d9ecec314e74721e3425107cb64e723194827125755; reviewer bc-2e118252-6db5-5eff-99e0-d95cafe62698; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/15-plan-087.md. 15-draft-086 draft-proposal complete builder bc-82e6970f-5554-539e-82db-7399c0feb7ee; not a review verdict. 12-review-085 IMPLEMENTATION_READY contract 8d7b28860c42fe1be5917851ba5a8e1ed213b1bbd0399552936086b647c12d3b; reviewer bc-4ee49284-8de6-510d-affa-6d6331d95162. 13-review-081 IMPLEMENTATION_READY contract 10a33ba06c391c205ddbf579b33f2a6ccd1e3226a88b46f9fbdaa5be5d0c6d91; reviewer bc-c6ed81fc-4c5a-5699-8ea5-8bdec600c62d. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
 Budget limit / consumed / measurement: no global execution budget. Cloud05 allowance6/6 exhausted and immutable. Separate one-small-agent-cloud-greeting allowance0/1spent, max1024tokens/retry0, requires explicit physicalactivation and ledger reservation beforedispatch. Four user-operated successful connectiontests050 recorded separately, not agent calls. No extra connectiontest/keyinspection/download; local per-scenario modelnoncompliancecap2. Linux host must not consume the reserved cloud greeting.
-Blocker / resume status / resume action / recheck condition / deadline: none for slice 15 Building. Recheck: Builder 15-build-088 completion. No automatic paid calls/downloads. Counters0/0.
+Blocker / resume status / resume action / recheck condition / deadline: none for 15-review-089. Recheck: independent implementation review. No automatic paid calls/downloads. Counters0/0.
 Advance phase: none
-Next slice ID / draft: 15 / implementing
+Next slice ID / draft: 15 / ready for review
 
 ## Status
-Building
+Ready for review
 
 ## Next
-Independent Builder 15-build-088 against approved 15-plan-087. Do not mark 07, 08, 09, 10, 11, 12, 13, or 15 Shipped. Counters 0/0.
+Independent implementation review of dispatch 15-review-089. Do not mark 07, 08, 09, 10, 11, 12, 13, or 15 Shipped. Counters 0/0.
