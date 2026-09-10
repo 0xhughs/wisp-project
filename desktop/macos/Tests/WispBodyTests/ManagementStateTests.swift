@@ -18,6 +18,10 @@ func managementStateTests() throws {
     try check(!plugins.description.contains("Allow Always") && plugins.description.contains("Allow Once") && plugins.description.contains("mounted compatible plugin") && plugins.description.contains("Ask-each-time") && plugins.description.contains("Open URL") && plugins.description.contains("Accessibility") && plugins.description.contains("local time") && plugins.description.contains("Connection save is not a grant") && plugins.description.contains("MCP"), "permissions ask for 09 tools and mounted MCP; 15/16 stay unavailable")
     var models = ManagementState(); models.select(.models)
     try check(models.description.contains("hardware") && models.description.contains("Recommended") && models.description.contains("speech headroom") && !models.description.contains("No downloads or hardware recommendations"), "models onboarding copy")
+    var pets = ManagementState(); pets.select(.pets)
+    try check(pets.description.contains("Wisp orb") && pets.description.contains("Fox") && pets.description.contains("Robot") && pets.description.contains("same Wisp") && !pets.description.contains("body selection are unavailable") && !pets.description.contains("Additional bodies and body selection are unavailable"), "pets inventory-backed")
+    var skills = ManagementState(); skills.select(.skills)
+    try check(skills.description.contains("has not queried"), "skills still has not queried inventory")
     var diag = ManagementState(); diag.select(.diagnostics)
     try check(diag.description.contains("hardware snapshot") && !diag.description.contains("BEGIN") && !diag.description.contains("sk-") && diag.description.contains("never include credentials"), "diagnostics omit secrets")
 }

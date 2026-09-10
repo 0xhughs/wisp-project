@@ -30,6 +30,12 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private(set) var connectionSnapshot: ConnectionSnapshot?
     private(set) var connectionStatus="Choose a Wisp folder to manage connections."
     private(set) var connectionActive=false, connectionApplying=false
+    private var petStore: PetStore?
+    private(set) var petSnapshot: PetSnapshot?
+    private(set) var petStatus="Choose a Wisp folder to save a body."
+    private(set) var petApplying=false
+    private var petApplyingId: String?
+    private(set) var currentCatalogId="wisp-orb"
     private(set) var modelBusy=false, modelTesting=false
     private(set) var modelStatus="Choose a Wisp folder to configure reasoning."
     private(set) var activeModel: String?
@@ -112,8 +118,9 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
         if management.section == .plugins { return pluginDescription }
         if management.section == .connections { return connectionDescription }
+        if management.section == .pets { return petDescription }
         if management.section == .permissions { return permissionDescription }
-        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
+        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+petDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -187,6 +194,20 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in
                 self?.connectionSnapshot=connections
                 self?.connectionStatus=connections.configuration.enabled ? "Saved connection composition loaded. Apply to mount it." : "Demonstration connection is not installed."
+            }
+            do {
+                if petStore == nil { petStore = try PetStore(support:support) }
+                let pets = try petStore!.load()
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, !self.ending else { return }
+                    self.petSnapshot = pets
+                    self.petStatus = "Saved body: \(PetCatalog.title(pets.configuration.catalogId)). Same Wisp."
+                    if self.currentCatalogId != pets.configuration.catalogId { self.replaceBody(pets.configuration.catalogId) }
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.petStatus = PetError.invalid.message
+                }
             }
             do {
                 if resourcePlanStore == nil { resourcePlanStore = try ResourcePlanStore(support:support) }
@@ -329,6 +350,35 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             }
         }
     }
+    func applyPets(_ draft: PetConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { petStatus=PetError.invalid.message; render(); completed(false); return }
+        guard PetApply.allowed(homeBusy:homeBusy,ending:ending) else { return }
+        guard memorySnapshot != nil, petStore != nil else {
+            petStatus=PetApply.folderRequired; render(); completed(false); return
+        }
+        if let saved=petSnapshot, saved.configuration.catalogId == draft.catalogId {
+            petStatus="Saved body is unchanged."; completed(true); render(); return
+        }
+        petApplying=true; petApplyingId=draft.catalogId; homeBusy=true; petStatus="Applying saved body…"; render()
+        homeQueue.async { [weak self] in
+            guard let self else { return }
+            let result=Result { guard let store=self.petStore else { throw StoreError.unavailable }; return try store.save(draft,expected:expected) }
+            DispatchQueue.main.async {
+                self.homeBusy=false
+                guard !self.ending else { return }
+                switch result {
+                case .success(let saved):
+                    self.petSnapshot=saved; self.petApplying=false; self.petApplyingId=nil
+                    self.petStatus="Saved body: \(PetCatalog.title(saved.configuration.catalogId)). Same Wisp."
+                    completed(true); self.replaceBody(saved.configuration.catalogId)
+                case .failure(let error):
+                    self.petApplying=false; self.petApplyingId=nil
+                    self.petStatus=(error as? PetError)?.message ?? (error as? StoreError)?.message ?? PetError.invalid.message
+                    completed(false); self.render()
+                }
+            }
+        }
+    }
     var pluginCatalog: [PluginCatalogRow] {
         PluginCatalog.rows(snapshot:pluginSnapshot ?? PluginSnapshot(configuration:PluginConfiguration(),revision:""),applying:pluginApplying,active:pluginActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable,developer:developer,developerActive:developer)
     }
@@ -353,11 +403,22 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let demo=connectionCatalog.first{$0.kind == .demonstration}
         return "Connections: \(connectionActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed"). No secrets, overlay YAML or credential values."
     }
+    var petCatalog: [PetCatalogRow] {
+        PetCatalog.rows(savedId:petSnapshot?.configuration.catalogId ?? "wisp-orb",currentId:currentCatalogId,applying:petApplying,applyingId:petApplyingId)
+    }
+    var petDescription: String {
+        let rows=petCatalog
+        let current=rows.first{$0.status == .current} ?? rows.first{$0.id == currentCatalogId}
+        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins and connections stay the same. Additional official skins remain unavailable; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+    }
+    private var petDiagnostic: String {
+        "Body: \(currentCatalogId) (\(PetCatalog.title(currentCatalogId))). No secrets, overlay YAML or credential values."
+    }
     var permissionDescription: String {
         let mcp = connectionActive
             ? "The demonstration MCP tool mcp__wispdemo__record is Ask-each-time when mounted."
             : "MCP is unavailable until the demonstration Connection is mounted."
-        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. A mounted compatible plugin still requires Allow Once. \(mcp) Connection save is not a grant. Named SaaS connectors, MCP resources and prompts, skills, Accessibility, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save or memory instruction never grants action permission."
+        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. A mounted compatible plugin still requires Allow Once. \(mcp) Connection save is not a grant. Named SaaS connectors, MCP resources and prompts, skills, Accessibility, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction or pet Apply never grants action permission."
     }
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
@@ -474,21 +535,22 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         (body?.contentView as? MascotView)?.phase=phase; body?.title="Wisp \(phase.rawValue)"; management.refresh(state.phase); menuBar?.refresh(management); settings?.refresh(management) }
     private func unavailable() { voiceSession.apply(); permissionWindow?.invalidate(); operations.invalidate(); state.unavailable(); render(); emit(["event":"unavailable"]) }
     private func clamp() { if let body { body.setFrame(ScreenGeometry.clamp(body.frame,to:NSScreen.screens.map(\.visibleFrame)),display:true) } }
-    func replaceBody() {
+    func replaceBody(_ catalogId:String? = nil) {
         autoreleasepool {
         state.interrupt()
+        let id=PetConfiguration.normalized(catalogId ?? currentCatalogId)
         let oldFrame=body?.frame ?? NSRect(x:500,y:400,width:160,height:160)
         (body?.contentView as? MascotView)?.pause(); body?.contentView=nil
         let panel=body ?? MascotPanel(frame:ScreenGeometry.clamp(oldFrame,to:NSScreen.screens.map(\.visibleFrame)))
-        let view=MascotView(frame:NSRect(x:0,y:0,width:160,height:160))
-
+        let view=MascotView(frame:NSRect(x:0,y:0,width:160,height:160),catalogId:id)
+        currentCatalogId=id
         panel.contentView=view; body=panel; generationCount += 1
         render(); panel.orderFrontRegardless(); view.resume(); facts("body")
         }
     }
     private func facts(_ event:String) {
         guard let panel=body,let view=panel.contentView as? MascotView else { return }
-        emit(["event":event,"frame":[panel.frame.minX,panel.frame.minY,panel.frame.width,panel.frame.height],"key":panel.isKeyWindow,"visible":panel.isVisible,"animation":view.animationRunning,"liveViews":MascotView.liveViews,"activeTimers":MascotView.activeTimers,"bodyWindows":autoreleasepool { NSApp.windows.filter{$0 is MascotPanel}.count },"opaque":panel.isOpaque,"shadow":panel.hasShadow,"level":panel.level.rawValue,"reduceMotion":view.reducedMotion,"screens":NSScreen.screens.map{["frame":[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height],"scale":$0.backingScaleFactor]}])
+        emit(["event":event,"frame":[panel.frame.minX,panel.frame.minY,panel.frame.width,panel.frame.height],"key":panel.isKeyWindow,"visible":panel.isVisible,"animation":view.animationRunning,"liveViews":MascotView.liveViews,"activeTimers":MascotView.activeTimers,"bodyWindows":autoreleasepool { NSApp.windows.filter{$0 is MascotPanel}.count },"opaque":panel.isOpaque,"shadow":panel.hasShadow,"level":panel.level.rawValue,"reduceMotion":view.reducedMotion,"catalogId":view.catalogId,"screens":NSScreen.screens.map{["frame":[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height],"scale":$0.backingScaleFactor]}])
     }
     private func sequence() {
         guard state.phase == .idle else { return }
@@ -521,7 +583,12 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             case "show": body?.orderFrontRegardless(); (body?.contentView as? MascotView)?.resume(); facts("shown")
             case "status": facts("status"); shellFacts("shell-status")
             case "raster":
-                if let view=body?.contentView,let bitmap=view.bitmapImageRepForCachingDisplay(in:view.bounds) { view.cacheDisplay(in:view.bounds,to:bitmap); emit(["event":"raster","cornerAlpha":bitmap.colorAt(x:0,y:0)?.alphaComponent ?? -1,"gapAlpha":bitmap.colorAt(x:80,y:98)?.alphaComponent ?? -1]) }
+                if let view=body?.contentView,let bitmap=view.bitmapImageRepForCachingDisplay(in:view.bounds) {
+                    view.cacheDisplay(in:view.bounds,to:bitmap)
+                    let id=(view as? MascotView)?.catalogId ?? currentCatalogId
+                    let sample=PetRaster.samples(id)
+                    emit(["event":"raster","catalogId":id,"cornerAlpha":bitmap.colorAt(x:sample.corner.0,y:sample.corner.1)?.alphaComponent ?? -1,"gapAlpha":bitmap.colorAt(x:sample.gap.0,y:sample.gap.1)?.alphaComponent ?? -1,"uniqueOpaque":bitmap.colorAt(x:sample.uniqueOpaque.0,y:sample.uniqueOpaque.1)?.alphaComponent ?? -1])
+                }
             case "stop": NSApp.terminate(nil)
             default: unavailable(); bridge.stop(); return
             }
@@ -585,6 +652,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func shellFacts(_ event:String) {
         emit(["event":event,"section":management.section.rawValue,"lifecycle":management.lifecycle.rawValue,
               "companionId":memorySnapshot?.companionId ?? "","memoryRevision":memorySnapshot?.revision ?? "","attachedRevision":attachedRevision ?? "","memoryUsable":memoryUsable,"homeBusy":homeBusy,
+              "catalogId":currentCatalogId,
               "modelGeneration":bridgeGeneration,"modelBusy":modelBusy,"modelTesting":modelTesting,"selectedProvider":reasoningSnapshot?.configuration.provider ?? "","selectedModel":reasoningSnapshot?.configuration.model ?? "","activeModel":activeModel != nil,
               "voiceAvailable":management.voiceAvailable,"statusItems":menuBar?.item == nil ? 0:1,"statusFrame":menuBar?.item?.button?.window.map{[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height]} ?? [],
               "settingsAllocated":settings == nil ? 0:1,"settingsVisible":settings?.window?.isVisible ?? false,

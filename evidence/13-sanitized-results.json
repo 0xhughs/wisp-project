@@ -1,0 +1,19 @@
+{
+  "dispatch": "13-build-080",
+  "linuxJsTests": "136/136",
+  "contractIdentity": "10a33ba06c391c205ddbf579b33f2a6ccd1e3226a88b46f9fbdaa5be5d0c6d91",
+  "pin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
+  "pinRuntimeInitialize": "not-run",
+  "pinRuntimeInitializeGap": "not-a-new-13-obligation",
+  "nativeChecks": "uncompiled",
+  "nativeChecksGap": "missing-platform",
+  "slice07Shipped": false,
+  "slice08Shipped": false,
+  "slice09Shipped": false,
+  "slice10Shipped": false,
+  "slice11Shipped": false,
+  "slice13Shipped": false,
+  "slice07Retest": "CompanionController replaceBody/applyPets/prepareModels and MascotView changed; VoiceLifecycle/EngineBridge/permission allowlists unchanged; Mac 07 retest backlog",
+  "slice10Retest": "not-required; overlay/classifyInsert/wisp.inventory/startAttachment snapshot attach unchanged",
+  "deepSeekCall": 0
+}
