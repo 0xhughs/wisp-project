@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN (2026-09-10 execution-policy amendment; reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466). 07 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md. Historical 07-review-060 HUMAN_REQUIRED unchanged. Linux 37/37 supplemental; NativeChecks/Mac gates still pending. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene. WIPpublication doesnotmean07accepted or releasecomplete. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/10-*.md. 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,19 +93,13 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 10 Compatible plugin management
-Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
-Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
-Depends on: 01, 03, 06. Assess plugin-supplied models/providers, tools and dependent capabilities without exposing its engine UI.
-Target membership: inside the selected macOS release target. Out: promising every upstream plugin works unchanged.
-
-## Later
 ### 08 Hardware-aware local-model onboarding
 Goal: guide users to local reasoning models that run comfortably alongside speech, or a cloud API key.
 Provides: RAM, CPU, GPU/VRAM, unified-memory and disk inspection as applicable; Faster, Recommended and Stronger choices; Ollama download/setup feedback; explain unavailable hardware readings and model-fit uncertainty.
 Depends on: 05, 07. Avoid double-counting unified memory; recommendation evidence must include speech headroom and available disk. No fixed numeric thresholds have been specified.
 Target membership: inside the selected macOS release target. Out: guaranteeing every tier on every machine.
 
+## Later
 ### 09 Initial safe computer actions
 Goal: spoken requests produce useful, bounded desktop actions.
 Provides: open a URL, open a file and tell time through the same agent, with scoped inputs and appropriate permission handling. File/URL opening must not become an arbitrary command-execution bypass.
@@ -186,6 +180,12 @@ Provides: global shortcut → microphone → replaceable recognition → Harness
 Depends on: 02–06. Prove permission requests use Wisp surfaces and no text-chat fallback is introduced.
 Target membership: inside the selected macOS release target. Out: optional wake word and proactive listening.
 
+### 10 Compatible plugin management
+Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
+Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
+Depends on: 01, 03, 06. Assess plugin-supplied models/providers, tools and dependent capabilities without exposing its engine UI.
+Target membership: inside the selected macOS release target. Out: promising every upstream plugin works unchanged.
+
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
 
@@ -196,9 +196,9 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 05 Reasoning model and provider management — accepted (archive `slices/05-reasoning-model-and-provider-management.md`).
 - 06 Permission and approval enforcement — accepted (archive `slices/06-permission-and-approval-enforcement.md`).
 - 07 Shortcut-to-voice agent loop — implemented with verification pending. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED unchanged (not REJECT; counters 0/0). Parked 2026-09-10 after loop-plan-061 APPROVE_PLAN. Not Shipped. Unaccepted copy `evidence/07-contract-wip.md`. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
-- 08 Hardware-aware local-model onboarding — unstarted. Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. No model download without a resource plan.
+- 08 Hardware-aware local-model onboarding — in progress (draft-proposal 08-draft-066). Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). No model download without a resource plan.
 - 09 Initial safe computer actions — unstarted. Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. Must not become a command-execution bypass.
-- 10 Compatible plugin management — in progress (Ready for review 10-review-065; 10-build-064 candidate f8b24da6… 180 files). Depends only on accepted 01, 03, 06. 07 Apply/Quit retest obligation if CompanionController applyPlugins is accepted.
+- 10 Compatible plugin management — implemented with verification pending. 10-review-065 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 49/49 supplemental; NativeChecks/Mac GUI/live Ollama/pin-runtime initialize open. Unaccepted copy `evidence/10-contract-wip.md`. CompanionController applyPlugins creates 07 Apply/Quit retest obligation. Not Shipped.
 - 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
 - 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
@@ -229,4 +229,17 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 6. Slice 07 / Done when 6 — declared-Mac full roundtrip, second local request, continuity/no-orphan, NativeChecks compile, Keychain attach of saved DeepSeek (access denial, not invalid key). Requires declared Mac, participant Keychain prompt, NativeChecks. Reserved DeepSeek agent greeting 0/1 unspent — do not spend it on Linux. Procedure: `desktop/scripts/test-native.sh`; attach DeepSeek via normal Keychain; two local requests; quit and confirm no orphan processes. Expected: NativeChecks pass; attach succeeds after user approval; no leftover engine. Invalidated by native test sources, bootstrap/keychain, or lifecycle teardown edits.
 
 7. Slice 07 / Tests 1, 3, 8 native — compile and run NativeChecks / registered-shortcut tests on macOS. Requires macOS SDK / Xcode. Automated on Linux: none (uncompiled). Procedure: `desktop/scripts/test-native.sh /absolute/external/native-tests` and `desktop/scripts/build-macos.sh`. Expected: native assertions pass. Invalidated by any `desktop/macos` source change.
+
+8. Slice 10 / Done when 1–2 — declared-Mac Settings → Plugins: catalog labels, keyboard traversal, Install confirm vs cancel (zero overlay change on Cancel), Configure note, Apply, restart persistence, Remove, unsupported rows not enableable. Requires declared Mac and participant. Automated: Linux-supplemental catalog/overlay tests (`sh tools/linux-js-tests.sh`, 49/49 at candidate `f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8`). Procedure: isolated app, navigate Plugins, enable demo, Apply, relaunch, Remove. Expected: saved/active match; cancel install changes nothing. Invalidated by PluginsView/PluginStore/overlay composer edits.
+
+9. Slice 10 / Tests 2 — prepared pin runtime: `desktop/tests/plugin-overlay-runtime.mjs --runtime-root … --scratch …`. Requires pnpm 11.7.0 and a prepared `.wisp-spike.json` runtime (missing-external-resource here). Automated on this host: not run. Expected: default excludes demo tool; enabled inventory includes only admitted names; disable removes it; hostile extra tool fails initialize; 06 fixture still admits `wisp_plugin_check` when developer fixtures are on. Invalidated by overlay/admission/product-sdk inventory edits.
+
+10. Slice 10 / Done when 4 — live local Ollama demonstration-tool withhold/deny/cancel/allow-once 0/0/0/1; post-Remove absence; Install confirmation produces no ledger record; developer-mode `wisp_plugin_check` still 0/0/0/1 with demo disabled. Requires declared Mac, local model, native approval UI. Automated: protocol allowlist Linux-supplemental only. Procedure: after install, request the demo tool; native buttons; then Remove. Expected: 0/0/0/1; install is not a grant. Invalidated by admission/permission-protocol/compatible-plugin edits.
+
+11. Slice 10 / Tests 4 native — compile and run NativeChecks including PluginStoreTests. Requires macOS SDK. Automated on Linux: none (uncompiled). Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Expected: persist/reload, confirm-cancel, incompatible rows, draft vs saved, Apply while busy, no Allow Always. Invalidated by any `desktop/macos` source change.
+
+12. Shared Apply/restart after 10 — CompanionController `applyPlugins` uses `stopReasoning`/`startAttachment`. Re-run 07 backlog Apply/Quit/continuity/no-orphan and 06 pending-approval Apply. Do not treat 07 as accepted. Invalidated by CompanionController apply/lifecycle sources. Also confirm plugin save-failure after stopReasoning shows unavailable.
+
+13. Slice 11 obligation — plugin-delivered Connections remain unavailable after 10; 11 must not assume 10 mounted MCP. Invalidated if 10 later enables an MCP-class plugin (that would be a contract change).
+
 
