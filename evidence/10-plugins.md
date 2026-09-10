@@ -10,7 +10,7 @@ Harness pin clone at `$HOME/wisp-work/deepseek-harness`: `d347e703908d0406b7a7ef
 sh tools/linux-js-tests.sh
 ```
 
-Result: **48/48 pass**, identity self-test ok. Contract identity remained `7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636`. Tests include schema/unknown-version/oversize/invalid note, enable/disable overlay composition, incompatible refusal before `apply()`, no YAML interpolation, developer-fixture orthogonality, inventory honesty (enablement does not admit tools), and the closed `wisp_compatible_check` / `wisp-compatible-plugin` permission-protocol pair.
+Result: **49/49 pass**, identity self-test ok. Contract identity remained `7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636`. Tests include schema/unknown-version/oversize/invalid note, enable/disable overlay composition, incompatible refusal before `apply()`, no YAML interpolation, developer-fixture orthogonality, inventory honesty (enablement does not admit tools), native-store revision accepted on compose, and the closed `wisp_compatible_check` / `wisp-compatible-plugin` permission-protocol pair.
 
 `desktop/tests/plugin-overlay-runtime.mjs` is landed for isolated initialize/seal/registry 0/0/0/1 against a prepared pin runtime. This host has no prepared `.wisp-spike.json` runtime (pnpm 10.33.3 vs required 11.7.0 for `spike/prepare.mjs`). **Test 2 gap class: missing-external-resource.**
 
