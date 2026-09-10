@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/10-*.md. 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Slice 08 08-plan-067 APPROVE_PLAN; 08-build-068 complete; pending 08-review-069; not Shipped. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/08-*.md or slices/10-*.md. 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Next Now 09 (09-draft-070). User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,19 +93,13 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 08 Hardware-aware local-model onboarding
-Goal: guide users to local reasoning models that run comfortably alongside speech, or a cloud API key.
-Provides: RAM, CPU, GPU/VRAM, unified-memory and disk inspection as applicable; Faster, Recommended and Stronger choices; Ollama download/setup feedback; explain unavailable hardware readings and model-fit uncertainty.
-Depends on: 05, 07. Avoid double-counting unified memory; recommendation evidence must include speech headroom and available disk. No fixed numeric thresholds have been specified.
-Target membership: inside the selected macOS release target. Out: guaranteeing every tier on every machine.
-
-## Later
 ### 09 Initial safe computer actions
 Goal: spoken requests produce useful, bounded desktop actions.
 Provides: open a URL, open a file and tell time through the same agent, with scoped inputs and appropriate permission handling. File/URL opening must not become an arbitrary command-execution bypass.
 Depends on: 06, 07. Actions and failures are communicated through voice/Wisp surfaces.
 Target membership: inside the selected macOS release target. Out: broad application manipulation, sending or deletion automation.
 
+## Later
 ### 11 Connections and custom MCP
 Goal: configure external capabilities through friendly Wisp Connections or advanced MCP configuration.
 Provides: connection setup/status/removal, protected credentials, permissions and compatible custom MCP servers; enforce approvals through external tool routes.
@@ -180,6 +174,12 @@ Provides: global shortcut → microphone → replaceable recognition → Harness
 Depends on: 02–06. Prove permission requests use Wisp surfaces and no text-chat fallback is introduced.
 Target membership: inside the selected macOS release target. Out: optional wake word and proactive listening.
 
+### 08 Hardware-aware local-model onboarding
+Goal: guide users to local reasoning models that run comfortably alongside speech, or a cloud API key.
+Provides: RAM, CPU, GPU/VRAM, unified-memory and disk inspection as applicable; Faster, Recommended and Stronger choices; Ollama download/setup feedback; explain unavailable hardware readings and model-fit uncertainty.
+Depends on: 05, 07. Avoid double-counting unified memory; recommendation evidence must include speech headroom and available disk. No fixed numeric thresholds have been specified.
+Target membership: inside the selected macOS release target. Out: guaranteeing every tier on every machine.
+
 ### 10 Compatible plugin management
 Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
 Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
@@ -196,8 +196,8 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 05 Reasoning model and provider management — accepted (archive `slices/05-reasoning-model-and-provider-management.md`).
 - 06 Permission and approval enforcement — accepted (archive `slices/06-permission-and-approval-enforcement.md`).
 - 07 Shortcut-to-voice agent loop — implemented with verification pending. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED unchanged (not REJECT; counters 0/0). Parked 2026-09-10 after loop-plan-061 APPROVE_PLAN. Not Shipped. Unaccepted copy `evidence/07-contract-wip.md`. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
-- 08 Hardware-aware local-model onboarding — in progress (Ready for review 08-review-069 after 08-build-068). Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). Parked 10 is not an 08 dependency. No model download without a resource plan.
-- 09 Initial safe computer actions — unstarted. Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. Must not become a command-execution bypass.
+- 08 Hardware-aware local-model onboarding — implemented with verification pending. 08-review-069 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 68/68 supplemental; NativeChecks/Mac GUI/IOKit/live Ollama/07 Apply retest open. Unaccepted copy `evidence/08-contract-wip.md`. Depends on accepted 05 and unaccepted 07. Parked 10 is not an 08 dependency. Not Shipped.
+- 09 Initial safe computer actions — in progress (draft-proposal 09-draft-070). Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 and 08 are parked. Must not become a command-execution bypass.
 - 10 Compatible plugin management — implemented with verification pending. 10-review-065 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 49/49 supplemental; NativeChecks/Mac GUI/live Ollama/pin-runtime initialize open. Unaccepted copy `evidence/10-contract-wip.md`. CompanionController applyPlugins creates 07 Apply/Quit retest obligation. Not Shipped.
 - 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
@@ -241,5 +241,17 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 12. Shared Apply/restart after 10 — CompanionController `applyPlugins` uses `stopReasoning`/`startAttachment`. Re-run 07 backlog Apply/Quit/continuity/no-orphan and 06 pending-approval Apply. Do not treat 07 as accepted. Invalidated by CompanionController apply/lifecycle sources. Also confirm plugin save-failure after stopReasoning shows unavailable.
 
 13. Slice 11 obligation — plugin-delivered Connections remain unavailable after 10; 11 must not assume 10 mounted MCP. Invalidated if 10 later enables an MCP-class plugin (that would be a contract change).
+
+14. Slice 08 / Done when 1 — Settings → Models onboarding panel, keyboard tab order, Refresh, confirm vs cancel Apply, Diagnostics snapshot. Requires declared Mac and participant. Automated: Linux-supplemental hardware/ollama inspect (`sh tools/linux-js-tests.sh`, 68/68 at candidate `94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729`; product `9b8bd595487c40a0f8e27b374a0ee636bffec9ef`). Procedure: isolated app, Settings → Models, keyboard through onboarding controls, Refresh, Cancel Apply. Expected: four rows; cancel leaves route unchanged; no Harness UI. Invalidated by ModelsView/ModelsFocus/CompanionController onboarding edits.
+
+15. Slice 08 / Done when 2–3 — live IOKit/Metal/ProcessInfo/disk snapshot; unified not summed with VRAM; speech-headroom copy visible. Requires declared Mac. Automated: Linux `/proc` schema only. Procedure: Settings → Models and Diagnostics; record CPU, physicalMemory, hasUnifiedMemory, GPU name, disk available. Expected: per-field available or unavailable+reason; no `0` for missing GPU. Invalidated by HardwareProbe/recommend schema edits.
+
+16. Slice 08 / Done when 4 — live GET `/api/tags` includes existing `qwen3:8b` when present; Use Recommended applies that identifier without pull; Install disabled without plan. Requires declared Mac and local Ollama. Automated: loopback fixture only. Procedure: Refresh with Ollama up and stopped; Use Recommended. Expected: tags include installed names; stopped ⇒ unreachable; zero `/api/pull`. Invalidated by ollama-inspect/OnboardingInstall/endpoint parsing edits.
+
+17. Slice 08 / Tests 4 native — compile and run NativeChecks including HardwareProbe/OnboardingState. Requires macOS SDK. Automated on Linux: none (uncompiled). Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Expected: decode fixtures, unified-not-summed, confirm-cancel, no-op Apply, Install disabled without plan, Diagnostics omit secrets. Invalidated by any `desktop/macos` source listed in `test-native.sh`.
+
+18. Slice 08 / Done when 5 — 07 retest after onboarding Apply: shortcut/Wake still usable, no auto-listen, mute preserved, no grant revival, no orphan engine; restart persistence of the chosen 05 route. Requires declared Mac, participant, microphone/speakers as in 07 backlog. Do not spend reserved DeepSeek 0/1. Automated: Linux-supplemental applyModels no-op / reuse only. Procedure: Use Recommended confirm; then 07 shortcut/Wake, mute, no auto-listen, continuity/no-orphan (backlog items 1, 3, 4, 6). Expected: saved route is the recommended identifier; 07 still not Shipped. Invalidated by `applyModels`/`startAttachment`/VoiceLifecycle/onboarding Apply edits.
+
+19. Slice 08 download path — live pull remains unauthorized until a coordinator-recorded consented resource plan (source, purpose, size/location, consent). This Linux host must not run it. Control stays disabled without the plan. Invalidated by pull-transport/OnboardingInstall edits.
 
 

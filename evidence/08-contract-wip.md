@@ -1,3 +1,18 @@
+# NOT ACCEPTED — unaccepted slice 08 working contract
+
+This file is **not** an accepted-slice archive. Slice 08 is **not Shipped**.
+Do not treat this path as `slices/08-hardware-aware-local-model-onboarding.md`.
+
+Parked 2026-09-10 after independent **08-review-069 IMPLEMENTATION_READY** (reviewer `bc-e2b4ab93-9bc1-53d4-bff9-ffefcfa8d56c`). Remaining Mac/runtime/human gaps are backlog only. Historical **07-review-060** remains **HUMAN_REQUIRED**. Linux 08-build-068 seams are implemented with verification pending.
+
+Approved slice-08 contract: `b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6`.
+Implementation candidate: `94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729` (190 files).
+Verbatim reviews: `$HOME/wisp-work/loop-state/08-review-069.md`, `$HOME/wisp-work/loop-state/08-plan-067.md`.
+
+The body below is BUILD Slice through Tests at park time.
+
+---
+
 # BUILD — active contract
 
 Slice: 08 Hardware-aware local-model onboarding
@@ -110,51 +125,3 @@ Required deliverables after plan approval; none claimed run in this no-code phas
 5. **Mac GUI / live (verification backlog, not Linux proof).** On the declared Mac: Settings → Models onboarding, keyboard traversal, Refresh, unavailable-field copy if any reading fails, Faster/Recommended/Stronger/Cloud labels, confirm vs cancel Apply, restart persistence of the chosen 05 route, Diagnostics snapshot. Isolated home. Live local Ollama: GET tags includes existing `qwen3:8b` when that resource exists; Use Recommended applies that identifier without pull; speech headroom copy visible. Then **07 retest**: shortcut/Wake, no auto-listen after Apply, mute preserved, no orphan. Cloud row may be applied only if a key is already stored; do not spend the reserved greeting or a new connection test for 08 acceptance. NativeChecks pass. Record tested hardware, model/speech combination and measured observations without turning them into product thresholds.
 
 6. **Regressions and identities.** Existing `body-bridge`, `permission-protocol`, `reasoning-config`, `memory-context`, `plugin-config`, voice-protocol/seams, and spike client tests remain applicable. Pristine pin, byte-identical spike and archives 01–06. No 07 or 10 Shipped claim. Final proof maps each Done when item to Linux-supplemental vs Mac/human evidence.
-
-## Proof
-08-review-069 IMPLEMENTATION_READY consumed (reviewer bc-e2b4ab93-9bc1-53d4-bff9-ffefcfa8d56c). Slice 08 parked implemented with verification pending; not Shipped; no `slices/08-*.md`. Linux 68/68 supplemental independently reproduced. Remaining gaps are missing-platform / missing-external-resource / human-test only. Historical 07-review-060 HUMAN_REQUIRED unchanged. Unaccepted 08 contract copy: `evidence/08-contract-wip.md`. Next eligible Now is 09 (depends on accepted 06 and unaccepted 07; record 07 retest; must not become a command-execution bypass).
-
-Linux Builder 08-build-068 implemented the approved slice 08 contract on `cursor/macos-release-loop-linux-07-0926` HEAD `9b8bd595487c40a0f8e27b374a0ee636bffec9ef` (worker bc-b7335e7b-9dde-5a39-af00-1d2daa743d5a). Candidate `94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729` (190 files). Contract unchanged `b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6`. Native Swift uncompiled. Onboarding Apply reuses `applyModels` → `stopReasoning`/`startAttachment`: 07 Apply/Quit/continuity retest. Reserved DeepSeek call unspent. Not 08 acceptance. Not 07 Shipped.
-
-## Review
-08-review-069 IMPLEMENTATION_READY — independent reviewer bc-e2b4ab93-9bc1-53d4-bff9-ffefcfa8d56c. Contract b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6 and candidate 94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729 match before/after (190 files). HEAD 0fbffe9e58ef70705ae9e7ca35ec55522c18c2f8 bookkeeping; product 9b8bd59. Linux 68/68 supplemental. Not APPROVE_IMPLEMENTATION (Mac/runtime Done when still open). Not REJECT_IMPLEMENTATION (Linux work sound). Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/08-review-069.md. Consumed.
-
-Pending 08-review-069 implementation review of 08-build-068. Consumed.
-
-08-build-068 Builder complete (bc-b7335e7b-9dde-5a39-af00-1d2daa743d5a). Candidate 94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729 (190 files), contract unchanged. Handback $HOME/wisp-work/loop-state/08-build-068.md. Not implementation approval. Consumed.
-
-10-review-065 IMPLEMENTATION_READY — independent reviewer bc-ee11e687-2366-51a9-b9e5-bd56c66c9b01. Contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 and candidate f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8 match before/after (180 files). HEAD da375045b970ef24c72bb707afd8f269650513f7 bookkeeping; product df83f50. Linux 49/49 supplemental. Not APPROVE_IMPLEMENTATION (Mac/runtime Done when still open). Not REJECT_IMPLEMENTATION (Linux work sound). Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/10-review-065.md. Consumed.
-
-10-build-064 Builder complete (bc-b4a6dd58-da5b-58f7-a7e5-0e7a424d1c9e). Candidate f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8 (180 files), contract unchanged. Handback $HOME/wisp-work/loop-state/10-build-064.md. Not implementation approval. Consumed.
-
-10-plan-063 APPROVE_PLAN — independent reviewer bc-30670720-4361-5715-ac4c-7851fe429618. Contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 and candidate e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 match before/after (165 files). HEAD 9447a242f1ccef20601609a56216ce3f02b468f1. Archives 01–06 untouched. 07 not Shipped. Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/10-plan-063.md. Consumed.
-
-10-draft-062 Builder draft-proposal complete (bc-b155541c-2510-55c3-bb5f-da8089538218). Handback $HOME/wisp-work/loop-state/10-draft-062.md. Not plan approval. Consumed.
-
-loop-plan-061 APPROVE_PLAN — independent reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466. Amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07 parked verification-pending. Full verbatim $HOME/wisp-work/loop-state/loop-plan-061.md. Consumed.
-
-## Loop state
-Tool adapter: Cursor Task generalPurpose subagent; coordinator persists dispatch ID then launches; waits for confirmed completion; Reviewer context is independent of Builder reasoning. One active worker per checkout. This Linux host cannot actuate macOS CUA; Mac physical tests remain participant-gated.
-Coordinator: cursor-cloud bc-81f7c99b-f70d-4a0a-83e5-180597760926
-Worker / role / phase: none (pending launch) / Builder / draft-proposal
-Dispatch ID / launch state / input identity: 09-draft-070 / pending launch / parked 08 contract b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6; candidate 94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729 (190 files) plus evidence/08-contract-wip.md after park (parked tree d179bef2771bec6d42d1aadde24f6fa0b3989ca2d736ed5c4649c7a6c1bfbad1, 191 files)
-Pending result / last consumed dispatch: none / 08-review-069
-Snapshot capture and recheck commands / coverage / exclusions: Run `python3 tools/identity.py --repo .` from repository root (replacement of unavailable ../../work/loop-state/identity.py). SHA-256 sorted relative file manifest includes git tracked and non-ignored untracked files, bytes, types, executable bits, symlink targets. Excludes .git, tools/identity.py (hashed only into contract identity), and the WISP_LOOP_STATE store if it lies inside the checkout. BUILD.md and SLICES.md contribute canonicalized bytes: BUILD stops before ## Proof; SLICES omits Run status, Release evidence, Shipped/Now/Later/Implemented-verification-pending placement headings, Implementation ledger and Verification backlog while keeping mapped slice bodies and target membership ordered by slice ID. Contract hashes BUILD through Tests, the Loop-state snapshot capture line, that SLICES canonicalization, full AGENTS/LOOP/BUILDER/REVIEWER, and tools/identity.py bytes. Manifest JSON stored outside coverage at $WISP_LOOP_STATE (default $HOME/wisp-work/loop-state). No other dependency or generated paths currently excluded: place dependencies/test outputs outside checkout. Pinned upstream source remains an external reference; when present verify `git -C "$WISP_HARNESS" rev-parse HEAD` and porcelain status, default $HOME/wisp-work/deepseek-harness; only pristine pin d347e703908d0406b7a7ef80e3a0e594d86b2215 may support source claims. Historical identities below are records only and cannot be recomputed on this host. Changing identity.py rules requires plan re-review.
-Baseline snapshot: 1654a612b213c809c237f81546eff99776ad0e6200e36c377a059b1a6d570534 (181 files; approved 08-plan-067 baseline). Parked 10 implementation candidate f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8 (180 files) retained as record; parked tree after evidence/10-contract-wip.md was c4942a32f91ecd4c125b7fee54716ab71c30fdafef0b82789fa109d16ed0179a (181 files, 10 page).
-Contract identity: b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6 (approved 08-plan-067).
-Candidate snapshot: d179bef2771bec6d42d1aadde24f6fa0b3989ca2d736ed5c4649c7a6c1bfbad1 (191 files after park; added evidence/08-contract-wip.md). 08-build-068 candidate 94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729 (190 files) retained as implementation record.
-Rejection count: 0
-Consecutive no-progress repairs: 0
-Open acceptance gaps / prior failing evidence: 08 parked verification-pending. Remaining 08: NativeChecks; Mac GUI Models onboarding; live IOKit/Ollama; 07 Apply retest after onboarding Apply. 07 and 10 Mac gates remain backlog. Not 08 Shipped.
-Repair awaiting review: false
-Review events: 08-review-069 IMPLEMENTATION_READY contract b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6 candidate 94f7b01f0738f573470eca4c2be1bd93dffb2ffec76f0de95117ae29f920d729; reviewer bc-e2b4ab93-9bc1-53d4-bff9-ffefcfa8d56c; not APPROVE_IMPLEMENTATION; not REJECT; counters 0/0; verbatim $HOME/wisp-work/loop-state/08-review-069.md. 08-plan-067 APPROVE_PLAN contract b08394f1933e5dc1595a1ddff15a49b7a21e462b310b0fc9023782e6fac305d6 candidate 1654a612b213c809c237f81546eff99776ad0e6200e36c377a059b1a6d570534; reviewer bc-6bf9a197-7511-573a-93a6-48701ade0f01; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/08-plan-067.md. 08-draft-066 draft-proposal complete builder bc-cb6afe04-1588-598f-abcd-52445f39f1a2; not a review verdict. 10-review-065 IMPLEMENTATION_READY contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 candidate f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8; reviewer bc-ee11e687-2366-51a9-b9e5-bd56c66c9b01; not APPROVE_IMPLEMENTATION; not REJECT; counters 0/0; verbatim $HOME/wisp-work/loop-state/10-review-065.md. 10-build-064 Building complete candidate f8b24da610370c9575e04ef1d2d9dff54c9d552951812eb60df06b2029489fb8 contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636; builder bc-b4a6dd58-da5b-58f7-a7e5-0e7a424d1c9e; not a review verdict. 10-plan-063 APPROVE_PLAN contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 candidate e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052; reviewer bc-30670720-4361-5715-ac4c-7851fe429618; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/10-plan-063.md. 10-draft-062 draft-proposal complete builder bc-b155541c-2510-55c3-bb5f-da8089538218; not a review verdict. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66; reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466; counters 0/0. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
-Budget limit / consumed / measurement: no global execution budget. Cloud05 allowance6/6 exhausted and immutable. Separate one-small-agent-cloud-greeting allowance0/1spent, max1024tokens/retry0, requires explicit physicalactivation and ledger reservation beforedispatch. Four user-operated successful connectiontests050 recorded separately, not agent calls. No extra connectiontest/keyinspection/download; local per-scenario modelnoncompliancecap2. Linux host must not consume the reserved cloud greeting.
-Blocker / resume status / resume action / recheck condition / deadline: none for eligible continuation. 08, 10 and 07 Mac/runtime gates remain backlog, not a run stop. Recheck for 08 acceptance: Mac/runtime evidence then independent APPROVE_IMPLEMENTATION. Next action: Builder draft-proposal 09-draft-070. No automatic paid calls/downloads. Counters0/0.
-Advance phase: next selected
-Next slice ID / draft: 09 / 09-draft-070
-
-## Status
-Implemented, verification pending
-
-## Next
-Dispatch independent Builder 09-draft-070 for a Proposed slice-09 contract (no code; record 07 retest; URL/file open must not become a command-execution bypass). Do not mark 07, 08, or 10 Shipped. Counters 0/0.
