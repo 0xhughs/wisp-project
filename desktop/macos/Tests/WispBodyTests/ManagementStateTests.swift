@@ -14,4 +14,8 @@ func managementStateTests() throws {
     try check(!plugins.description.contains("has not queried an installed plugin inventory") && plugins.description.contains("closed local catalog"), "plugins inventory-backed")
     plugins.select(.permissions)
     try check(!plugins.description.contains("Allow Always") && plugins.description.contains("Allow Once") && plugins.description.contains("mounted compatible plugin"), "permissions still ask after plugin mount")
+    var models = ManagementState(); models.select(.models)
+    try check(models.description.contains("hardware") && models.description.contains("Recommended") && models.description.contains("speech headroom") && !models.description.contains("No downloads or hardware recommendations"), "models onboarding copy")
+    var diag = ManagementState(); diag.select(.diagnostics)
+    try check(diag.description.contains("hardware snapshot") && !diag.description.contains("BEGIN") && !diag.description.contains("sk-") && diag.description.contains("never include credentials"), "diagnostics omit secrets")
 }

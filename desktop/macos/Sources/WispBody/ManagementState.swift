@@ -24,7 +24,7 @@ struct ManagementState {
     var description: String {
         switch section {
         case .general: return "Your starter companion is available on this desktop. Engine: \(lifecycle.rawValue.lowercased()). This attachment lasts for the current app run. Voice is unavailable."
-        case .models: return "Choose local Ollama or optional DeepSeek cloud reasoning. Other providers and account sign-in methods are not supported in this build."
+        case .models: return "Choose local Ollama or optional DeepSeek cloud reasoning. This page also shows a hardware snapshot, Faster, Recommended and Stronger local rows, Ollama setup status and the existing DeepSeek cloud alternative. Recommendations always include speech headroom and disk and never invent GB, VRAM or latency cutoffs. Other providers and account sign-in methods are not supported in this build."
         case .voice: return "Voice is unavailable. Microphone capture, speech recognition and speech playback are not connected. Engine readiness does not enable voice."
         case .pets: return "Current body: Wisp starter. Additional bodies and body selection are unavailable. Your companion remains the same Wisp."
         case .plugins: return "Wisp lists a closed local catalog: one demonstration plugin, the developer verification fixture, and unavailable classes. Marketplace, arbitrary folders, stock executable tools, MCP, skills, web/chat UI and plugin-supplied models cannot be enabled. No marketplace was queried."
@@ -33,7 +33,7 @@ struct ManagementState {
         case .memory: return "No Wisp home or durable memory has been configured. Memory management and editing are unavailable."
         case .permissions: return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nA mounted compatible plugin still requires Allow Once. Computer actions, third-party plugins, Connections, MCP, skills and external sub-agents are unavailable in this build. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key or plugin installation never grants action permission."
         case .proactivity: return "No proactive behavior is configured. Autonomous triggers and proactivity management are unavailable."
-        case .diagnostics: return "Engine: \(lifecycle.rawValue). Voice: unavailable.\n\nReady means the hidden engine is attached; microphone capture, recognition and playback remain disconnected. Plugin diagnostics never include credentials, plugin paths or raw engine errors."
+        case .diagnostics: return "Engine: \(lifecycle.rawValue). Voice: unavailable.\n\nReady means the hidden engine is attached; microphone capture, recognition and playback remain disconnected. Diagnostics include a nonsecret hardware snapshot (CPU, memory kind, GPU/VRAM or unavailable reasons, disk, Ollama names/sizes) and never include credentials, keys, bootstrap frames, recognized text, plugin paths or raw engine errors."
         }
     }
 }

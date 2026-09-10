@@ -28,6 +28,12 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private(set) var modelBusy=false, modelTesting=false
     private(set) var modelStatus="Choose a Wisp folder to configure reasoning."
     private(set) var activeModel: String?
+    private(set) var hardwareSnapshot: HardwareSnapshot?
+    private(set) var ollamaInspect: OllamaInspectReport?
+    private(set) var onboarding: OnboardingRecord?
+    private(set) var resourcePlan: ResourcePlan?
+    private var resourcePlanStore: ResourcePlanStore?
+    private var onboardingRefreshing=false
     private let homeQueue = DispatchQueue(label:"wisp.home")
     private var homeStore: HomeStore?
     private(set) var memorySnapshot: MemorySnapshot?
@@ -100,7 +106,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         }
         if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
         if management.section == .plugins { return pluginDescription }
-        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic}
+        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -169,6 +175,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
                 self?.pluginSnapshot=plugins
                 self?.pluginStatus=plugins.configuration.enabled ? "Saved plugin composition loaded. Apply to mount it." : "Demonstration plugin is not installed."
             }
+            do {
+                if resourcePlanStore == nil { resourcePlanStore = try ResourcePlanStore(support:support) }
+                let plan = try resourcePlanStore!.load()
+                DispatchQueue.main.async { [weak self] in self?.resourcePlan = plan }
+            } catch {
+                DispatchQueue.main.async { [weak self] in self?.resourcePlan = nil }
+            }
         } catch {
             DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? (error as? PluginError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
         }
@@ -225,6 +238,9 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func applyModels(_ draft: ReasoningConfiguration, expected: String, key: String?, completed: @escaping (Bool)->Void) {
         do { try draft.validate() } catch { modelStatus=ReasoningError.invalid.message; render(); completed(false); return }
         guard !modelBusy,!homeBusy,!ending else { return }
+        if let saved=reasoningSnapshot, ModelsApply.isUnchanged(draft:draft,saved:saved.configuration,key:key) {
+            modelStatus="Saved reasoning choice is unchanged."; completed(true); render(); return
+        }
         modelBusy=true; modelStatus="Applying saved reasoning choice…"; render()
         stopReasoning { [weak self] in
             guard let self else { return }
@@ -294,6 +310,32 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
         modelTesting=true; modelStatus="Testing connection…"; bridge.testConnection(); render()
+    }
+    func refreshOnboarding() {
+        // Hardware collect + GET inspect only. Never starts capture, never tests the connection, never pulls a model, and never sends a prompt RPC.
+        guard !ending, !onboardingRefreshing else { return }
+        onboardingRefreshing=true
+        let endpoint=reasoningSnapshot?.configuration.localEndpoint
+        let home=memorySnapshot?.folder
+        let cloud=reasoningSnapshot?.configuration.cloudModel ?? "deepseek-v4-flash"
+        homeQueue.async { [weak self] in
+            let snapshot=HardwareProbe.collect(home:home,ollamaModels:ProcessInfo.processInfo.environment["OLLAMA_MODELS"])
+            let inspect=OllamaInspect.inspect(localEndpoint:endpoint)
+            let rec=Onboarding.recommend(snapshot:snapshot,ollama:inspect,cloudModel:cloud)
+            DispatchQueue.main.async {
+                guard let self, !self.ending else { return }
+                self.hardwareSnapshot=snapshot
+                self.ollamaInspect=inspect
+                self.onboarding=rec
+                self.onboardingRefreshing=false
+                self.render()
+            }
+        }
+    }
+    func requestOnboardingInstall() {
+        guard OnboardingInstall.enabled(plan:resourcePlan) else { return }
+        modelStatus="A consented resource plan is present. Live Ollama pull is not started from this session."
+        render()
     }
     private func modelFailure(_ error: Error) {
         modelStatus=ReasoningError.describe(error)
@@ -461,10 +503,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         guard !ending else { return }
         if let section { management.select(section) }
         if settings == nil { settings=SettingsWindowController(owner:self) }
+        if management.section == .models || management.section == .diagnostics { refreshOnboarding() }
         settings?.refresh(management); settings?.present(); shellFacts("settings-opened")
     }
     func selectSection(_ section:ManagementSection) {
-        management.select(section); settings?.refresh(management); shellFacts("section-selected")
+        management.select(section)
+        if section == .models || section == .diagnostics { refreshOnboarding() }
+        settings?.refresh(management); shellFacts("section-selected")
     }
     func showCompanion() {
         guard !ending else { return }; clamp(); body?.orderFrontRegardless()
