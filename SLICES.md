@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/08-*.md or slices/09-*.md or slices/10-*.md. 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Next Now 11 (11-review-077). User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10 and 11 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/11-*.md. 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Next Now 13 (13-draft-078). User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 11 Connections and custom MCP
-Goal: configure external capabilities through friendly Wisp Connections or advanced MCP configuration.
-Provides: connection setup/status/removal, protected credentials, permissions and compatible custom MCP servers; enforce approvals through external tool routes.
-Depends on: 01, 03, 06; 10 when a connection is plugin-delivered. GitHub, Google Drive, Notion, Calendar and Slack are examples, not a promise to ship all connectors together.
-Target membership: inside the selected macOS release target. Out: a required online account or unconfirmed external writes.
+### 13 Interchangeable mascot bodies
+Goal: change the pet without changing the underlying companion.
+Provides: pet selection and body assets/animation integration; prove identity, memory, tools, models, connections and skills persist across changes.
+Depends on: 02–05, 07. Fox, robot and bird are illustrative designs; selected starter assets are decided when this slice is contracted.
+Target membership: inside the selected macOS release target. Out: the eventual approximately twenty official skins.
 
 ## Later
 ### 12 Reusable skills for the same Wisp
@@ -105,12 +105,6 @@ Goal: install or learn reusable behaviors on the existing identity.
 Provides: Wisp skill management backed by Harness; a skill can orchestrate tools/connections and use internal sub-agents with inherited permission constraints.
 Depends on: 04, 06, 07, 10–11 as required by the selected skill. Example meeting preparation checks calendar, researches attendees, retrieves relevant documents, summarizes and speaks; choose a supported demonstration when contracting this slice.
 Target membership: inside the selected macOS release target. Out: separate assistants and a mandatory meeting integration bundle.
-
-### 13 Interchangeable mascot bodies
-Goal: change the pet without changing the underlying companion.
-Provides: pet selection and body assets/animation integration; prove identity, memory, tools, models, connections and skills persist across changes.
-Depends on: 02–05, 07. Fox, robot and bird are illustrative designs; selected starter assets are decided when this slice is contracted.
-Target membership: inside the selected macOS release target. Out: the eventual approximately twenty official skins.
 
 ### 14 macOS integrated readiness
 Goal: verify a coherent local-first macOS product across slices 01–13.
@@ -186,6 +180,12 @@ Provides: plugin discovery/configuration and installation/lifecycle operations s
 Depends on: 01, 03, 06. Assess plugin-supplied models/providers, tools and dependent capabilities without exposing its engine UI.
 Target membership: inside the selected macOS release target. Out: promising every upstream plugin works unchanged.
 
+### 11 Connections and custom MCP
+Goal: configure external capabilities through friendly Wisp Connections or advanced MCP configuration.
+Provides: connection setup/status/removal, protected credentials, permissions and compatible custom MCP servers; enforce approvals through external tool routes.
+Depends on: 01, 03, 06; 10 when a connection is plugin-delivered. GitHub, Google Drive, Notion, Calendar and Slack are examples, not a promise to ship all connectors together.
+Target membership: inside the selected macOS release target. Out: a required online account or unconfirmed external writes.
+
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
 
@@ -199,9 +199,9 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 08 Hardware-aware local-model onboarding — implemented with verification pending. 08-review-069 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 68/68 supplemental; NativeChecks/Mac GUI/IOKit/live Ollama/07 Apply retest open. Unaccepted copy `evidence/08-contract-wip.md`. Depends on accepted 05 and unaccepted 07. Parked 10 is not an 08 dependency. Not Shipped.
 - 09 Initial safe computer actions — implemented with verification pending. 09-review-073 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 109/109 supplemental; NativeChecks/Mac GUI/NSWorkspace/live Ollama/07 retest/pin-runtime initialize open. Unaccepted copy `evidence/09-contract-wip.md`. Depends on accepted 06 and unaccepted 07. Not Shipped.
 - 10 Compatible plugin management — implemented with verification pending. 10-review-065 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 49/49 supplemental; NativeChecks/Mac GUI/live Ollama/pin-runtime initialize open. Unaccepted copy `evidence/10-contract-wip.md`. CompanionController applyPlugins creates 07 Apply/Quit retest obligation. Not Shipped.
-- 11 Connections and custom MCP — in progress (Ready for review 11-review-077). Depends on accepted 01, 03, 06; parked 10 when a connection is plugin-delivered (record 10 obligation). Non-plugin MCP may proceed with that recorded obligation.
+- 11 Connections and custom MCP — implemented with verification pending. 11-review-077 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 130/130 supplemental; NativeChecks/Mac GUI/Keychain/live Ollama/07 retest/10 overlay retest/pin-runtime initialize open. Unaccepted copy `evidence/11-contract-wip.md`. Depends on accepted 01, 03, 06; parked 10 obligation for plugin-delivered Connections. Not Shipped.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
-- 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
+- 13 Interchangeable mascot bodies — in progress (draft-proposal 13-draft-078). Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
 - 15 macOS accessibility computer control — unstarted. Depends on accepted 06 and 09. Linux native work is uncompiled/unverified here.
 - 16 Visual computer-control fallback — unstarted. Depends on 15. Not eligible before 15.
@@ -264,3 +264,16 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 
 24. Slice 15 obligation — Accessibility computer control remains unavailable after 09; 11/15 must not assume 09 admitted AX APIs. Invalidated if 09 later admits those tools (that would be a contract change).
 
+25. Slice 11 / Done when 1–2 — declared-Mac Settings → Connections: catalog labels, keyboard traversal, Enable confirm vs cancel (zero overlay change on Cancel), Advanced Wisp-fixed fields, Apply, restart persistence, Remove, unsupported rows not enableable. Requires declared Mac and participant. Automated: Linux-supplemental catalog/overlay tests (`sh tools/linux-js-tests.sh`, 130/130 at candidate `ded171f18adafe167b7df0ddb5fdaa256e36b818633969f46a0125cccbcd1ca0`; product `f58ac2f10c1f3b331ab601f17c355ca481c2ec6d`). Procedure: isolated app, navigate Connections, enable demo, Apply, relaunch, Remove. Expected: saved/active match; cancel install changes nothing. Invalidated by ConnectionsView/ConnectionStore/overlay composer edits.
+
+26. Slice 11 / Done when 3–4 — live local stdio fixture withhold/deny/cancel/allow-once 0/0/0/1 on actual tools/call + ledger; list-change after seal yields zero further RPC; connection save is not a grant. Requires declared Mac, native approval UI; live Ollama when claiming model-path 0/0/0/1. Automated: real stdio analogue in linux-js-tests. Invalidated by mcp-connection/mcp-wrap/admission/permission-protocol edits.
+
+27. Slice 11 / Tests 4 native — compile NativeChecks including ConnectionStore and isolated-test-keychain CRUD. Requires macOS SDK. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by any `desktop/macos` source listed in `test-native.sh`.
+
+28. Slice 11 / Tests 2 — prepared pin runtime initialize: default excludes `mcp__` names; enabled inventory includes only admitted names; disable removes them; hostile extra tool fails initialize. Requires pnpm 11.7.0 and prepared `.wisp-spike.json` (missing-external-resource here). Invalidated by overlay/admission/product-sdk inventory edits.
+
+29. Slice 11 / credential isolation (Mac) — isolated test Keychain: save/remove opaque connection credential; overlay/memory.json/Diagnostics contain no secret; disabled connection injects nothing. Never inspect production keys. Invalidated by ConnectionStore/credential inject/overlay compose edits.
+
+30. Shared 07 retest after 11 — CompanionController `applyConnections` uses `stopReasoning`/`startAttachment`. Re-run 07 backlog Apply/Quit/continuity/no-orphan and 06 pending-approval Apply. Do not treat 07 as accepted. Do not spend DeepSeek 0/1. Invalidated by CompanionController apply/lifecycle, EngineBridge, VoiceLifecycle, or permission allowlists.
+
+31. Shared 10 overlay/inventory retest after 11 — demonstration plugin still absent until enabled; extra unadmitted tools still fail initialize; `mcp-connection-plugin` still not enableable; 09 Direct names still present when 09 sources load. Invalidated by overlay composer, `classifyInsert`, `wisp.inventory`, or startAttachment snapshot attach.
