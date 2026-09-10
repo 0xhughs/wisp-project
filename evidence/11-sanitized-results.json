@@ -1,6 +1,6 @@
 {
   "dispatch": "11-build-076",
-  "linuxJsTests": "pending",
+  "linuxJsTests": "130/130",
   "contractIdentity": "744e61e833cbf3dddbd9ee44ae04de77f6620255f9429fb7f653bb64ce3736f6",
   "pin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
   "connectionOverlayRuntime": "not-run",
