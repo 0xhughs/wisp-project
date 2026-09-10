@@ -16,7 +16,7 @@ Implementation target: slices 01–21, expanded by the user on 2026-09-10. This 
 During this run, inside-implementation-target Later entries may become successive Now slices when eligible. A pending human or Mac check is not automatically a dependency blocker and does not stop the entire project. Outside-implementation-target work never starts automatically. Implemented with verification pending is not Shipped.
 
 ## Run status
-Human required
+Running
 
 ## Open decisions
 - Runtime source is confirmed below. Its Wisp integration, dependency/distribution constraints and approval bridge still require execution evidence; source inspection is not a passed feasibility test.
@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived.07 plan058 approved Linux snapshot replacement and execution-order track; build059 Linux seams independently reviewed 07-review-060 HUMAN_REQUIRED (not REJECT; counters 0/0). Linux 37/37 supplemental; NativeChecks/Mac gates still pending. Full07implementationapproval pending actualsafety/permission/lifecycle gates; participant unavailable. Linux recovery 2026-09-10: original identity.py/baseline/harness/raw logs/build10 binary absent. Alltestapps/workersstopped. SavedDeepSeekrestored; mostrecentattachKeychainfailure needsnormaluserapproval. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene, with all152stagedfileschecked. WIPpublication doesnotmean07accepted or releasecomplete. Covered07evidence retains failures and exactresume. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN (2026-09-10 execution-policy amendment; reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466). 07 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md. Historical 07-review-060 HUMAN_REQUIRED unchanged. Linux 37/37 supplemental; NativeChecks/Mac gates still pending. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene. WIPpublication doesnotmean07accepted or releasecomplete. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 07 Shortcut-to-voice agent loop
-Goal: wake, speak, reason and hear a response from the same companion.
-Provides: global shortcut → microphone → replaceable recognition → Harness agent/model → replaceable synthesis → speaker; synchronized mascot listening/speaking states, mute and recoverable voice failures.
-Depends on: 02–06. Prove permission requests use Wisp surfaces and no text-chat fallback is introduced.
-Target membership: inside the selected macOS release target. Out: optional wake word and proactive listening.
+### 10 Compatible plugin management
+Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
+Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
+Depends on: 01, 03, 06. Assess plugin-supplied models/providers, tools and dependent capabilities without exposing its engine UI.
+Target membership: inside the selected macOS release target. Out: promising every upstream plugin works unchanged.
 
 ## Later
 ### 08 Hardware-aware local-model onboarding
@@ -111,12 +111,6 @@ Goal: spoken requests produce useful, bounded desktop actions.
 Provides: open a URL, open a file and tell time through the same agent, with scoped inputs and appropriate permission handling. File/URL opening must not become an arbitrary command-execution bypass.
 Depends on: 06, 07. Actions and failures are communicated through voice/Wisp surfaces.
 Target membership: inside the selected macOS release target. Out: broad application manipulation, sending or deletion automation.
-
-### 10 Compatible plugin management
-Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
-Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
-Depends on: 01, 03, 06. Assess plugin-supplied models/providers, tools and dependent capabilities without exposing its engine UI.
-Target membership: inside the selected macOS release target. Out: promising every upstream plugin works unchanged.
 
 ### 11 Connections and custom MCP
 Goal: configure external capabilities through friendly Wisp Connections or advanced MCP configuration.
@@ -186,7 +180,11 @@ Target membership: inside the authorized 01–21 implementation target (2026-09-
 Out: making remote chat the main product, creating another agent or requiring a chat-history desktop UI.
 
 ## Implemented, verification pending
-None yet. After independent plan approval of the 2026-09-10 execution-policy amendment, park slice 07 here without writing `slices/07-shortcut-to-voice-agent-loop.md`. Historical review event 07-review-060 remains HUMAN_REQUIRED and is not rewritten into APPROVE_IMPLEMENTATION or Shipped.
+### 07 Shortcut-to-voice agent loop
+Goal: wake, speak, reason and hear a response from the same companion.
+Provides: global shortcut → microphone → replaceable recognition → Harness agent/model → replaceable synthesis → speaker; synchronized mascot listening/speaking states, mute and recoverable voice failures.
+Depends on: 02–06. Prove permission requests use Wisp surfaces and no text-chat fallback is introduced.
+Target membership: inside the selected macOS release target. Out: optional wake word and proactive listening.
 
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
@@ -197,10 +195,10 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 04 Local home and durable memory — accepted (archive `slices/04-local-home-and-durable-memory.md`).
 - 05 Reasoning model and provider management — accepted (archive `slices/05-reasoning-model-and-provider-management.md`).
 - 06 Permission and approval enforcement — accepted (archive `slices/06-permission-and-approval-enforcement.md`).
-- 07 Shortcut-to-voice agent loop — in progress. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED (not REJECT; counters 0/0). Proposed post-approval status: implemented with verification pending. Not Shipped. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
+- 07 Shortcut-to-voice agent loop — implemented with verification pending. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED unchanged (not REJECT; counters 0/0). Parked 2026-09-10 after loop-plan-061 APPROVE_PLAN. Not Shipped. Unaccepted copy `evidence/07-contract-wip.md`. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
 - 08 Hardware-aware local-model onboarding — unstarted. Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. No model download without a resource plan.
 - 09 Initial safe computer actions — unstarted. Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. Must not become a command-execution bypass.
-- 10 Compatible plugin management — unstarted. Depends only on accepted 01, 03, 06. First eligible Now after 07 is parked.
+- 10 Compatible plugin management — in progress (draft-proposal 10-draft-062). Depends only on accepted 01, 03, 06. First eligible Now after 07 park.
 - 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
 - 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
