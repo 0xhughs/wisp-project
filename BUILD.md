@@ -106,10 +106,14 @@ Required deliverables after plan approval; none claimed run in this no-code phas
 6. **Regressions and identities.** Existing `body-bridge`, `permission-protocol`, `reasoning-config`, `memory-context`, spike client, and 06 queue/lifecycle tests remain applicable. Pristine pin, byte-identical spike and archives 01–06. No 07 Shipped claim. Final proof maps each Done when item to Linux-supplemental vs Mac/human evidence.
 
 ## Proof
-Coordinator persisted Builder 10-draft-062 Proposed contract (worker bc-b155541c-2510-55c3-bb5f-da8089538218). No application code. Not plan approval. Not 10 acceptance. Slice 07 remains implemented with verification pending; unaccepted copy `evidence/07-contract-wip.md`; historical 07-review-060 HUMAN_REQUIRED unchanged; no `slices/07-*.md`.
+10-plan-063 APPROVE_PLAN consumed. Slice 10 Builder may start against contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 and baseline e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files). Not 10 acceptance. Slice 07 remains implemented with verification pending; historical 07-review-060 HUMAN_REQUIRED unchanged.
+
+Coordinator persisted Builder 10-draft-062 Proposed contract (worker bc-b155541c-2510-55c3-bb5f-da8089538218). No application code in the proposal commits.
 
 ## Review
-Pending 10-plan-063 plan review of the slice 10 Proposed contract. Not consumed. Not implementation approval.
+10-plan-063 APPROVE_PLAN — independent reviewer bc-30670720-4361-5715-ac4c-7851fe429618. Contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 and candidate e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 match before/after (165 files). HEAD 9447a242f1ccef20601609a56216ce3f02b468f1. Archives 01–06 untouched. 07 not Shipped. Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/10-plan-063.md. Consumed.
+
+Pending 10-plan-063 plan review of the slice 10 Proposed contract. Consumed.
 
 10-draft-062 Builder draft-proposal complete (bc-b155541c-2510-55c3-bb5f-da8089538218). Handback $HOME/wisp-work/loop-state/10-draft-062.md. Not plan approval. Consumed.
 
@@ -118,25 +122,25 @@ loop-plan-061 APPROVE_PLAN — independent reviewer bc-d950b4e9-45b7-5209-ba88-2
 ## Loop state
 Tool adapter: Cursor Task generalPurpose subagent; coordinator persists dispatch ID then launches; waits for confirmed completion; Reviewer context is independent of Builder reasoning. One active worker per checkout. This Linux host cannot actuate macOS CUA; Mac physical tests remain participant-gated.
 Coordinator: cursor-cloud bc-81f7c99b-f70d-4a0a-83e5-180597760926
-Worker / role / phase: none (pending launch) / Reviewer / Proposed
-Dispatch ID / launch state / input identity: 10-plan-063 / pending launch / proposed contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636; candidate e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files)
-Pending result / last consumed dispatch: none / 10-draft-062
+Worker / role / phase: none (pending launch) / Builder / Building
+Dispatch ID / launch state / input identity: 10-build-064 / pending launch / approved contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636; baseline e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files)
+Pending result / last consumed dispatch: none / 10-plan-063
 Snapshot capture and recheck commands / coverage / exclusions: Run `python3 tools/identity.py --repo .` from repository root (replacement of unavailable ../../work/loop-state/identity.py). SHA-256 sorted relative file manifest includes git tracked and non-ignored untracked files, bytes, types, executable bits, symlink targets. Excludes .git, tools/identity.py (hashed only into contract identity), and the WISP_LOOP_STATE store if it lies inside the checkout. BUILD.md and SLICES.md contribute canonicalized bytes: BUILD stops before ## Proof; SLICES omits Run status, Release evidence, Shipped/Now/Later/Implemented-verification-pending placement headings, Implementation ledger and Verification backlog while keeping mapped slice bodies and target membership ordered by slice ID. Contract hashes BUILD through Tests, the Loop-state snapshot capture line, that SLICES canonicalization, full AGENTS/LOOP/BUILDER/REVIEWER, and tools/identity.py bytes. Manifest JSON stored outside coverage at $WISP_LOOP_STATE (default $HOME/wisp-work/loop-state). No other dependency or generated paths currently excluded: place dependencies/test outputs outside checkout. Pinned upstream source remains an external reference; when present verify `git -C "$WISP_HARNESS" rev-parse HEAD` and porcelain status, default $HOME/wisp-work/deepseek-harness; only pristine pin d347e703908d0406b7a7ef80e3a0e594d86b2215 may support source claims. Historical identities below are records only and cannot be recomputed on this host. Changing identity.py rules requires plan re-review.
-Baseline snapshot: e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files; proposed 10-plan-063 baseline if approved). Approved amendment LOOP/SLICES/roles contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66 is superseded for BUILD Goal-through-Tests by this slice-10 page. Parked 07 candidate c84db7a5baaf3bf67c2761a5b9f1a46bf09da7dbf84e0ea3c3f3cff3eea36c10 (165 files, 07 page).
-Contract identity: 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 (proposed 10-plan-063).
-Candidate snapshot: e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files).
+Baseline snapshot: e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files; approved 10-plan-063 baseline).
+Contract identity: 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 (approved 10-plan-063).
+Candidate snapshot: e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052 (165 files; implementation candidate after 10-build-064).
 Rejection count: 0
 Consecutive no-progress repairs: 0
-Open acceptance gaps / prior failing evidence: Slice 10 is Proposed only. 07 Mac gates remain backlog and do not block this plan review. No local Harness clone on this host (implementation must re-verify pin). Native Swift uncompiled here.
+Open acceptance gaps / prior failing evidence: Slice 10 implementation not started. 07 Mac gates remain backlog and do not block 10. No local Harness clone (implementation must re-verify pin). Native Swift uncompiled here.
 Repair awaiting review: false
-Review events: 10-plan-063 pending plan review of slice 10; not consumed. 10-draft-062 draft-proposal complete builder bc-b155541c-2510-55c3-bb5f-da8089538218; not a review verdict. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66; reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466; counters 0/0. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
+Review events: 10-plan-063 APPROVE_PLAN contract 7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636 candidate e6c939d979dff98819477f31ffdd49f46fd364bb70d6973e1a9112f246c57052; reviewer bc-30670720-4361-5715-ac4c-7851fe429618; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/10-plan-063.md. 10-draft-062 draft-proposal complete builder bc-b155541c-2510-55c3-bb5f-da8089538218; not a review verdict. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66; reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466; counters 0/0. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
 Budget limit / consumed / measurement: no global execution budget. Cloud05 allowance6/6 exhausted and immutable. Separate one-small-agent-cloud-greeting allowance0/1spent, max1024tokens/retry0, requires explicit physicalactivation and ledger reservation beforedispatch. Four user-operated successful connectiontests050 recorded separately, not agent calls. No extra connectiontest/keyinspection/download; local per-scenario modelnoncompliancecap2. Linux host must not consume the reserved cloud greeting.
-Blocker / resume status / resume action / recheck condition / deadline: none for this slice-10 plan review. Recheck: independent Reviewer verdict on 10-plan-063. No automatic paid calls/downloads. Counters0/0.
+Blocker / resume status / resume action / recheck condition / deadline: none for slice 10 Building. Recheck: Builder 10-build-064 completion. No automatic paid calls/downloads. Counters0/0.
 Advance phase: none
-Next slice ID / draft: 10 / 10-draft-062 consumed; 10-plan-063 pending
+Next slice ID / draft: 10 / implementing
 
 ## Status
-Proposed
+Building
 
 ## Next
-Independent plan review of dispatch 10-plan-063 (slice 10 Compatible plugin management). Do not start 10 code before APPROVE_PLAN. Do not mark 07 Shipped. Counters 0/0.
+Independent Builder 10-build-064 against approved 10-plan-063. Do not mark 07 or 10 Shipped. Counters 0/0.
