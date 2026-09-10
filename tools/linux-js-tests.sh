@@ -23,5 +23,20 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/body-bridge.test.mjs \
   desktop/tests/permission-protocol.test.mjs \
   desktop/tests/reasoning-config.test.mjs \
-  desktop/tests/memory-context.test.mjs
+  desktop/tests/memory-context.test.mjs \
+  desktop/tests/plugin-config.test.mjs \
+  desktop/tests/hardware-inspect.test.mjs \
+  desktop/tests/ollama-inspect.test.mjs \
+  desktop/tests/safe-actions.test.mjs \
+  desktop/tests/safe-actions-protocol.test.mjs \
+  desktop/tests/ax-actions.test.mjs \
+  desktop/tests/ax-actions-protocol.test.mjs \
+  desktop/tests/visual-actions.test.mjs \
+  desktop/tests/visual-actions-protocol.test.mjs \
+  desktop/tests/connection-config.test.mjs \
+  desktop/tests/pet-config.test.mjs \
+  desktop/tests/skill-config.test.mjs \
+  desktop/tests/windows-home.test.mjs \
+  desktop/tests/windows-body-state.test.mjs \
+  desktop/tests/diagnostics-snapshot.test.mjs
 python3 tools/identity.py --self-test --repo "$root"

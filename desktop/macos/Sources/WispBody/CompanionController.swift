@@ -17,13 +17,40 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     private var permissionWindow:PermissionWindow?
     private var operations=BridgeOperationState()
+    private var workspaceOpener:WorkspaceOpening=NativeWorkspaceOpener()
+    private var accessibilityDriver:AccessibilityPerforming=NativeAccessibilityDriver()
+    private var visualDriver:VisualClickPerforming=NativeVisualClickDriver()
     private var bridgeGeneration=0
     private var restartAction: (() -> Void)?
     private var reasoningStore: ReasoningStore?
     private(set) var reasoningSnapshot: ReasoningSnapshot?
+    private var pluginStore: PluginStore?
+    private(set) var pluginSnapshot: PluginSnapshot?
+    private(set) var pluginStatus="Choose a Wisp folder to manage plugins."
+    private(set) var pluginActive=false, pluginApplying=false
+    private var connectionStore: ConnectionStore?
+    private(set) var connectionSnapshot: ConnectionSnapshot?
+    private(set) var connectionStatus="Choose a Wisp folder to manage connections."
+    private(set) var connectionActive=false, connectionApplying=false
+    private var skillStore: SkillStore?
+    private(set) var skillSnapshot: SkillSnapshot?
+    private(set) var skillStatus="Choose a Wisp folder to manage skills."
+    private(set) var skillActive=false, skillApplying=false
+    private var petStore: PetStore?
+    private(set) var petSnapshot: PetSnapshot?
+    private(set) var petStatus="Choose a Wisp folder to save a body."
+    private(set) var petApplying=false
+    private var petApplyingId: String?
+    private(set) var currentCatalogId="wisp-orb"
     private(set) var modelBusy=false, modelTesting=false
     private(set) var modelStatus="Choose a Wisp folder to configure reasoning."
     private(set) var activeModel: String?
+    private(set) var hardwareSnapshot: HardwareSnapshot?
+    private(set) var ollamaInspect: OllamaInspectReport?
+    private(set) var onboarding: OnboardingRecord?
+    private(set) var resourcePlan: ResourcePlan?
+    private var resourcePlanStore: ResourcePlanStore?
+    private var onboardingRefreshing=false
     private let homeQueue = DispatchQueue(label:"wisp.home")
     private var homeStore: HomeStore?
     private(set) var memorySnapshot: MemorySnapshot?
@@ -37,6 +64,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private var moveObserver:NSObjectProtocol?
     private var inputBuffer=Data()
     private var ending=false, bridgeExited=false
+    private(set) var lastStop: LastStopCategory = .none
     private var runtimePID:Int=0, sessionId=""
     private var generationCount=0
     private var developer:Bool { options["--developer"] == "true" }
@@ -95,7 +123,12 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             return folder + memoryStatus + (management.section == .general ? "\nEngine: \(management.lifecycle.rawValue.lowercased()). Voice: \(voice.state.phase.rawValue)." : "")
         }
         if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
-        if management.section == .diagnostics{return voiceDescription}
+        if management.section == .plugins { return pluginDescription }
+        if management.section == .connections { return connectionDescription }
+        if management.section == .skills { return skillDescription }
+        if management.section == .pets { return petDescription }
+        if management.section == .permissions { return permissionDescription }
+        if management.section == .diagnostics { return diagnosticsText }
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -158,8 +191,56 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in self?.voice.configure(speech) }
             let saved = try reasoningStore!.load()
             DispatchQueue.main.async { [weak self] in self?.reasoningSnapshot=saved }
+            if pluginStore == nil { pluginStore = try PluginStore(support:support) }
+            let plugins = try pluginStore!.load()
+            DispatchQueue.main.async { [weak self] in
+                self?.pluginSnapshot=plugins
+                self?.pluginStatus=plugins.configuration.enabled ? "Saved plugin composition loaded. Apply to mount it." : "Demonstration plugin is not installed."
+            }
+            if connectionStore == nil { connectionStore = try ConnectionStore(support:support) }
+            let connections = try connectionStore!.load()
+            DispatchQueue.main.async { [weak self] in
+                self?.connectionSnapshot=connections
+                self?.connectionStatus=connections.configuration.enabled ? "Saved connection composition loaded. Apply to mount it." : "Demonstration connection is not installed."
+            }
+            do {
+                if skillStore == nil { skillStore = try SkillStore(support:support) }
+                let skills = try skillStore!.load()
+                DispatchQueue.main.async { [weak self] in
+                    self?.skillSnapshot=skills
+                    self?.skillStatus=skills.configuration.enabled ? "Saved skill composition loaded. Apply to mount it." : "Local time briefing is not installed."
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.skillStatus = SkillError.invalid.message
+                    if self?.skillSnapshot == nil {
+                        self?.skillSnapshot = SkillSnapshot(configuration:SkillConfiguration(),revision:"")
+                    }
+                }
+            }
+            do {
+                if petStore == nil { petStore = try PetStore(support:support) }
+                let pets = try petStore!.load()
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, !self.ending else { return }
+                    self.petSnapshot = pets
+                    self.petStatus = "Saved body: \(PetCatalog.title(pets.configuration.catalogId)). Same Wisp."
+                    if self.currentCatalogId != pets.configuration.catalogId { self.replaceBody(pets.configuration.catalogId) }
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.petStatus = PetError.invalid.message
+                }
+            }
+            do {
+                if resourcePlanStore == nil { resourcePlanStore = try ResourcePlanStore(support:support) }
+                let plan = try resourcePlanStore!.load()
+                DispatchQueue.main.async { [weak self] in self?.resourcePlan = plan }
+            } catch {
+                DispatchQueue.main.async { [weak self] in self?.resourcePlan = nil }
+            }
         } catch {
-            DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
+            DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? (error as? PluginError)?.message ?? (error as? ConnectionError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
         }
     }
     func reloadModels(completed: @escaping (Bool)->Void) {
@@ -189,16 +270,19 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         current.onExit = { [weak self] code in
             guard let self,self.bridgeGeneration == generation else { return }
             self.voiceSession.engineStopped(); self.invalidatePermissions(); self.bridgeExited=true; self.modelTesting=false; self.activeModel=nil
-            if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
+            if self.ending {
+                if self.lastStop == .none { self.lastStop = .clean }
+                self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil)
+            }
             else if let next=self.restartAction {
                 self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
-            } else { self.modelBusy=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
+            } else { self.modelBusy=false; self.pluginApplying=false; self.pluginActive=false; self.connectionApplying=false; self.connectionActive=false; self.skillApplying=false; self.skillActive=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
         }
     }
     private func waitForOldRuntime(generation: Int, remaining: Int, then action: @escaping () -> Void) {
         guard !ending,bridgeGeneration == generation else { return }
         if runtimePID == 0 || kill(-Int32(runtimePID),0) != 0 && errno == ESRCH { action(); return }
-        guard remaining > 0 else { modelBusy=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
+        guard remaining > 0 else { modelBusy=false; pluginApplying=false; connectionApplying=false; skillApplying=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
         DispatchQueue.main.asyncAfter(deadline:.now()+0.1) { [weak self] in self?.waitForOldRuntime(generation:generation,remaining:remaining-1,then:action) }
     }
     private func stopReasoning(then action: @escaping () -> Void) {
@@ -214,6 +298,9 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func applyModels(_ draft: ReasoningConfiguration, expected: String, key: String?, completed: @escaping (Bool)->Void) {
         do { try draft.validate() } catch { modelStatus=ReasoningError.invalid.message; render(); completed(false); return }
         guard !modelBusy,!homeBusy,!ending else { return }
+        if let saved=reasoningSnapshot, ModelsApply.isUnchanged(draft:draft,saved:saved.configuration,key:key) {
+            modelStatus="Saved reasoning choice is unchanged."; completed(true); render(); return
+        }
         modelBusy=true; modelStatus="Applying saved reasoning choice…"; render()
         stopReasoning { [weak self] in
             guard let self else { return }
@@ -247,9 +334,174 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             }
         }
     }
+    func applyPlugins(_ draft: PluginConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { pluginStatus=PluginError.invalid.message; render(); completed(false); return }
+        guard PluginApply.allowed(modelBusy:modelBusy,homeBusy:homeBusy,ending:ending) else { return }
+        modelBusy=true; pluginApplying=true; pluginStatus="Applying saved plugin composition…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.pluginStore else { throw PluginError.invalid }; return try store.save(draft,expected:expected) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.pluginSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error):
+                        self.pluginApplying=false; self.modelBusy=false
+                        self.pluginStatus=(error as? PluginError)?.message ?? (error as? StoreError)?.message ?? "Plugin settings could not be saved. The previous composition was kept."
+                        completed(false); self.render()
+                    }
+                }
+            }
+        }
+    }
+    func applyConnections(_ draft: ConnectionConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { connectionStatus=ConnectionError.invalid.message; render(); completed(false); return }
+        guard ConnectionApply.allowed(modelBusy:modelBusy,homeBusy:homeBusy,ending:ending) else { return }
+        modelBusy=true; connectionApplying=true; connectionStatus="Applying saved connection composition…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.connectionStore else { throw ConnectionError.invalid }; return try store.save(draft,expected:expected) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.connectionSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error):
+                        self.connectionApplying=false; self.modelBusy=false
+                        self.connectionStatus=(error as? ConnectionError)?.message ?? (error as? StoreError)?.message ?? "Connection settings could not be saved. The previous composition was kept."
+                        completed(false); self.render()
+                    }
+                }
+            }
+        }
+    }
+    func applySkills(_ draft: SkillConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { skillStatus=SkillError.invalid.message; render(); completed(false); return }
+        guard memorySnapshot != nil, skillStore != nil else {
+            skillStatus=SkillApply.folderRequired; render(); completed(false); return
+        }
+        guard SkillApply.allowed(modelBusy:modelBusy,homeBusy:homeBusy,ending:ending) else { return }
+        if let saved=skillSnapshot, saved.configuration.enabled == draft.enabled, saved.configuration.catalogId == draft.catalogId {
+            skillStatus="Saved skill enablement is unchanged."; completed(true); render(); return
+        }
+        modelBusy=true; skillApplying=true; skillStatus="Applying saved skill composition…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.skillStore else { throw SkillError.invalid }; return try store.save(draft,expected:expected) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.skillSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error):
+                        self.skillApplying=false; self.modelBusy=false
+                        self.skillStatus=(error as? SkillError)?.message ?? (error as? StoreError)?.message ?? "Skill settings could not be saved. The previous composition was kept."
+                        completed(false); self.render()
+                    }
+                }
+            }
+        }
+    }
+    func applyPets(_ draft: PetConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { petStatus=PetError.invalid.message; render(); completed(false); return }
+        guard PetApply.allowed(homeBusy:homeBusy,ending:ending) else { return }
+        guard memorySnapshot != nil, petStore != nil else {
+            petStatus=PetApply.folderRequired; render(); completed(false); return
+        }
+        if let saved=petSnapshot, saved.configuration.catalogId == draft.catalogId {
+            petStatus="Saved body is unchanged."; completed(true); render(); return
+        }
+        petApplying=true; petApplyingId=draft.catalogId; homeBusy=true; petStatus="Applying saved body…"; render()
+        homeQueue.async { [weak self] in
+            guard let self else { return }
+            let result=Result { guard let store=self.petStore else { throw StoreError.unavailable }; return try store.save(draft,expected:expected) }
+            DispatchQueue.main.async {
+                self.homeBusy=false
+                guard !self.ending else { return }
+                switch result {
+                case .success(let saved):
+                    self.petSnapshot=saved; self.petApplying=false; self.petApplyingId=nil
+                    self.petStatus="Saved body: \(PetCatalog.title(saved.configuration.catalogId)). Same Wisp."
+                    completed(true); self.replaceBody(saved.configuration.catalogId)
+                case .failure(let error):
+                    self.petApplying=false; self.petApplyingId=nil
+                    self.petStatus=(error as? PetError)?.message ?? (error as? StoreError)?.message ?? PetError.invalid.message
+                    completed(false); self.render()
+                }
+            }
+        }
+    }
+    var pluginCatalog: [PluginCatalogRow] {
+        PluginCatalog.rows(snapshot:pluginSnapshot ?? PluginSnapshot(configuration:PluginConfiguration(),revision:""),applying:pluginApplying,active:pluginActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable,developer:developer,developerActive:developer)
+    }
+    var pluginDescription: String {
+        let rows=pluginCatalog
+        let demo=rows.first{$0.kind == .demonstration}
+        return "Mounted plugins: \(pluginActive ? 1 : 0). Demonstration: \(demo?.status.rawValue ?? "not installed"). Marketplace catalogs were not queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)."}.joined(separator:" ")
+    }
+    var connectionCatalog: [ConnectionCatalogRow] {
+        ConnectionCatalog.rows(snapshot:connectionSnapshot ?? ConnectionSnapshot(configuration:ConnectionConfiguration(),revision:""),applying:connectionApplying,active:connectionActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable)
+    }
+    var connectionDescription: String {
+        let rows=connectionCatalog
+        let demo=rows.first{$0.kind == .demonstration}
+        return "Mounted connections: \(connectionActive ? 1 : 0). Demonstration: \(demo?.status.rawValue ?? "not installed"). Named services were not queried. Plugin-delivered Connections remain unavailable; use this Connections page. Connection save is not a grant.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)."}.joined(separator:" ")
+    }
+    var skillCatalog: [SkillCatalogRow] {
+        SkillCatalog.rows(snapshot:skillSnapshot ?? SkillSnapshot(configuration:SkillConfiguration(),revision:""),applying:skillApplying,active:skillActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable)
+    }
+    var skillDescription: String {
+        let rows=skillCatalog
+        let demo=rows.first{$0.kind == .demonstration}
+        return "This is the same Wisp. Skills are reusable instructions of that companion, not a second assistant. Demonstration: \(demo?.status.rawValue ?? "not installed") — Local time briefing. Marketplace catalogs were not queried. Enable is not Allow Once.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+    }
+    var petCatalog: [PetCatalogRow] {
+        PetCatalog.rows(savedId:petSnapshot?.configuration.catalogId ?? "wisp-orb",currentId:currentCatalogId,applying:petApplying,applyingId:petApplyingId)
+    }
+    var petDescription: String {
+        let rows=petCatalog
+        let current=rows.first{$0.status == .current} ?? rows.first{$0.id == currentCatalogId}
+        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Further official skins remain later; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+    }
+    var permissionDescription: String {
+        let mcp = connectionActive
+            ? "The demonstration MCP tool mcp__wispdemo__record is Ask-each-time when mounted."
+            : "MCP is unavailable until the demonstration Connection is mounted."
+        let skill = skillActive
+            ? "The skill tool is Ask-each-time when the demonstration is mounted. Loading skill instructions does not run wisp_tell_time."
+            : "Skill invocation is unavailable until Local time briefing is mounted."
+        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. Focus, move, read, press, type and search against the Wisp Accessibility Fixture are Ask-each-time. macOS Accessibility (TCC) is also required. Grant Accessibility in System Settings → Privacy & Security → Accessibility. Wisp will not act without both TCC and Allow Once. Granting Accessibility is not a tool grant and is not Allow Once.\n\nVisual click of Drawn Canary inside the Wisp Accessibility Fixture is Ask-each-time. It is a fallback when Accessibility cannot reach a control, not a click on Fixture Button. Fixture Button stays on the Accessibility path. This visual click does not request Screen Recording or Input Monitoring. Screen Recording is not a grant.\n\nA mounted compatible plugin still requires Allow Once. \(mcp) \(skill) Connection save is not a grant. Skill Enable is not a grant. Named SaaS connectors, MCP resources and prompts, Windows computer control, general desktop click, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction, skill Enable, pet Apply, granting Accessibility or Screen Recording never grants action permission."
+    }
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
         modelTesting=true; modelStatus="Testing connection…"; bridge.testConnection(); render()
+    }
+    func refreshOnboarding() {
+        // Hardware collect + GET inspect only. Never starts capture, never tests the connection, never pulls a model, and never sends a prompt RPC.
+        guard !ending, !onboardingRefreshing else { return }
+        onboardingRefreshing=true
+        let endpoint=reasoningSnapshot?.configuration.localEndpoint
+        let home=memorySnapshot?.folder
+        let cloud=reasoningSnapshot?.configuration.cloudModel ?? "deepseek-v4-flash"
+        homeQueue.async { [weak self] in
+            let snapshot=HardwareProbe.collect(home:home,ollamaModels:ProcessInfo.processInfo.environment["OLLAMA_MODELS"])
+            let inspect=OllamaInspect.inspect(localEndpoint:endpoint)
+            let rec=Onboarding.recommend(snapshot:snapshot,ollama:inspect,cloudModel:cloud)
+            DispatchQueue.main.async {
+                guard let self, !self.ending else { return }
+                self.hardwareSnapshot=snapshot
+                self.ollamaInspect=inspect
+                self.onboarding=rec
+                self.onboardingRefreshing=false
+                self.render()
+            }
+        }
+    }
+    func requestOnboardingInstall() {
+        guard OnboardingInstall.enabled(plan:resourcePlan) else { return }
+        modelStatus="A consented resource plan is present. Live Ollama pull is not started from this session."
+        render()
     }
     private func modelFailure(_ error: Error) {
         modelStatus=ReasoningError.describe(error)
@@ -257,27 +509,40 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     private func startAttachment() {
         guard let snapshot=memorySnapshot,memoryUsable,!attachmentStarting,!ending,
-              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { unavailable(); return }
+              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { pluginApplying=false; connectionApplying=false; skillApplying=false; unavailable(); return }
         attachmentStarting=true; modelBusy=true; modelStatus="Attaching saved reasoning configuration…"; render()
         let script=Bundle.main.resourceURL!.appendingPathComponent("desktop/engine/body-bridge.mjs").path
         homeQueue.async { [weak self] in
             guard let self else { return }
-            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any]) in
+            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any],PluginSnapshot?,URL?,ConnectionSnapshot?,URL?,SkillSnapshot?,URL?) in
                 guard let store=self.reasoningStore else { throw ReasoningError.unavailable }
                 let saved=try store.load(); let bootstrap=try store.bootstrap(saved)
-                return (try self.homeStore!.stage(snapshot),saved,bootstrap)
+                var pluginSaved: PluginSnapshot?; var pluginFile: URL?
+                if let plugins=self.pluginStore { pluginSaved=try plugins.load(); pluginFile=try plugins.stage(pluginSaved!) }
+                var connectionSaved: ConnectionSnapshot?; var connectionFile: URL?
+                if let connections=self.connectionStore { connectionSaved=try connections.load(); connectionFile=try connections.stage(connectionSaved!) }
+                var skillSaved: SkillSnapshot?; var skillFile: URL?
+                if let skills=self.skillStore { skillSaved=try skills.load(); skillFile=try skills.stage(skillSaved!) }
+                return (try self.homeStore!.stage(snapshot),saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile,skillSaved,skillFile)
             }
             DispatchQueue.main.async {
                 self.attachmentStarting=false
                 guard !self.ending else { return }
                 do {
-                    let (path,saved,bootstrap)=try staged.get(); self.reasoningSnapshot=saved
+                    let (path,saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile,skillSaved,skillFile)=try staged.get(); self.reasoningSnapshot=saved
+                    if let pluginSaved { self.pluginSnapshot=pluginSaved }
+                    if let connectionSaved { self.connectionSnapshot=connectionSaved }
+                    if let skillSaved { self.skillSnapshot=skillSaved }
                     self.bridge=EngineBridge(); self.bridgeGeneration += 1; self.bridgeExited=false; self.runtimePID=0; self.sessionId=""
                     self.installBridgeCallbacks(self.bridge,generation:self.bridgeGeneration)
                     let section=self.management.section; self.state=BodyState(); self.management=ManagementState(); self.management.select(section)
-                    try self.bridge.start(node:node,script:script,arguments:["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path],bootstrap:bootstrap)
+                    var arguments=["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path]
+                    if let pluginFile { arguments += ["--plugin-file",pluginFile.path] }
+                    if let connectionFile { arguments += ["--connection-file",connectionFile.path] }
+                    if let skillFile { arguments += ["--skill-file",skillFile.path] }
+                    try self.bridge.start(node:node,script:script,arguments:arguments,bootstrap:bootstrap)
                     self.attachedRevision=snapshot.revision; self.render()
-                } catch { self.bridgeExited=true; self.modelBusy=false; self.modelFailure(error) }
+                } catch { self.bridgeExited=true; self.modelBusy=false; self.pluginApplying=false; self.connectionApplying=false; self.skillApplying=false; self.modelFailure(error) }
             }
         }
     }
@@ -289,7 +554,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         switch event["event"] as? String {
         case "ready":
             if let generation=event["permissionGeneration"] as? String,let companion=memorySnapshot?.companionId {permissions.attach(generation:generation,companionID:companion);operations.attach(generation);voice.attach(generation:generation,companion:companion)}
-            modelBusy=false; activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
+            modelBusy=false; pluginApplying=false; pluginActive=(event["plugins"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-compatible-plugin"} == true
+            pluginStatus = pluginActive ? "Demonstration plugin is mounted. Wisp still asks before each action." : (pluginSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Demonstration plugin is not installed.")
+            connectionApplying=false; connectionActive=(event["connections"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-demo-connection"} == true
+            connectionStatus = connectionActive ? "Demonstration connection is mounted. Wisp still asks before each action. Connection save is not a grant." : (connectionSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Demonstration connection is not installed.")
+            skillApplying=false; skillActive=(event["skills"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-local-time-briefing"} == true
+            skillStatus = skillActive ? "Local time briefing is mounted. Enable is not Allow Once. Wisp still asks before loading instructions and before telling time." : (skillSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Local time briefing is not installed.")
+            activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
         case "testing": if operations.start(event) {modelTesting=true;render()}
         case "connection-test": if operations.verifiedConnection(event) {modelStatus="Connection verified by a completed response.";render()}
         case "tested": if operations.finish(event) {modelTesting=false;render()}
@@ -299,13 +570,42 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             do {try permissions.receive(PermissionRequest(event));voice.approval(pending:true);if permissionWindow == nil {permissionWindow=PermissionWindow(owner:self)};permissionWindow?.refresh(present:true)} catch {invalidatePermissions();bridge.stop();unavailable()}
         case "approval-closed":
             if !permissions.generation.isEmpty {do {try permissions.closed(event);voice.approval(pending:!permissions.requests.isEmpty);permissionWindow?.refresh()}catch {invalidatePermissions();bridge.stop();unavailable()}}
-        case "unavailable": modelBusy=false; modelTesting=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; clearStage(); unavailable()
+        case "open-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {
+                let completion=try SafeActionOpener.handle(event,expectedGeneration:permissions.generation,opener:workspaceOpener)
+                bridge.completeOpen(completion)
+            } catch {
+                if let failed=SafeActionOpener.failed(from:event) {bridge.completeOpen(failed)}
+                else {invalidatePermissions();bridge.stop();unavailable()}
+            }
+        case "ax-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {
+                let completion=try AccessibilityDriver.handle(event,expectedGeneration:permissions.generation,driver:accessibilityDriver)
+                bridge.completeAx(completion)
+            } catch {
+                if let failed=AccessibilityDriver.failed(from:event) {bridge.completeAx(failed)}
+                else {invalidatePermissions();bridge.stop();unavailable()}
+            }
+        case "visual-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {
+                let completion=try VisualClickDriver.handle(event,expectedGeneration:permissions.generation,driver:visualDriver)
+                bridge.completeVisual(completion)
+            } catch {
+                if let failed=VisualClickDriver.failed(from:event) {bridge.completeVisual(failed)}
+                else {invalidatePermissions();bridge.stop();unavailable()}
+            }
+        case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; connectionApplying=false; connectionActive=false; skillApplying=false; skillActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; if connectionSnapshot?.configuration.enabled==true { connectionStatus="Engine unavailable. Saved connection composition was kept." }; if skillSnapshot?.configuration.enabled==true { skillStatus="Engine unavailable. Saved skill composition was kept." }; clearStage(); unavailable()
         default: break
         }
-        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
+        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if event["event"] as? String == "open-request" {emit(["event":"open-request","openRequestId":event["openRequestId"] ?? "","kind":event["kind"] ?? ""])}else if event["event"] as? String == "ax-request" {emit(["event":"ax-request","axRequestId":event["axRequestId"] ?? "","operation":event["operation"] ?? ""])}else if event["event"] as? String == "visual-request" {emit(["event":"visual-request","visualRequestId":event["visualRequestId"] ?? "","operation":event["operation"] ?? ""])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
     }
     func decidePermission(_ id:String,decision:String) {guard !ending,memoryUsable,let frame=permissions.decide(id,action:decision)else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
     func cancelPermissions() {guard !ending,memoryUsable,let frame=permissions.cancelAll() else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
+    func openAccessibilityPrivacySettings() { AccessibilityDriver.openPrivacySettings() }
+    func showAccessibilityFixture() { AccessibilityFixtureWindow.shared.present() }
     private func invalidatePermissions() {permissions.invalidate();permissionWindow?.invalidate();operations.invalidate()}
     private func render() {
         let phase:BodyPhase
@@ -314,21 +614,22 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         (body?.contentView as? MascotView)?.phase=phase; body?.title="Wisp \(phase.rawValue)"; management.refresh(state.phase); menuBar?.refresh(management); settings?.refresh(management) }
     private func unavailable() { voiceSession.apply(); permissionWindow?.invalidate(); operations.invalidate(); state.unavailable(); render(); emit(["event":"unavailable"]) }
     private func clamp() { if let body { body.setFrame(ScreenGeometry.clamp(body.frame,to:NSScreen.screens.map(\.visibleFrame)),display:true) } }
-    func replaceBody() {
+    func replaceBody(_ catalogId:String? = nil) {
         autoreleasepool {
         state.interrupt()
+        let id=PetConfiguration.normalized(catalogId ?? currentCatalogId)
         let oldFrame=body?.frame ?? NSRect(x:500,y:400,width:160,height:160)
         (body?.contentView as? MascotView)?.pause(); body?.contentView=nil
         let panel=body ?? MascotPanel(frame:ScreenGeometry.clamp(oldFrame,to:NSScreen.screens.map(\.visibleFrame)))
-        let view=MascotView(frame:NSRect(x:0,y:0,width:160,height:160))
-
+        let view=MascotView(frame:NSRect(x:0,y:0,width:160,height:160),catalogId:id)
+        currentCatalogId=id
         panel.contentView=view; body=panel; generationCount += 1
         render(); panel.orderFrontRegardless(); view.resume(); facts("body")
         }
     }
     private func facts(_ event:String) {
         guard let panel=body,let view=panel.contentView as? MascotView else { return }
-        emit(["event":event,"frame":[panel.frame.minX,panel.frame.minY,panel.frame.width,panel.frame.height],"key":panel.isKeyWindow,"visible":panel.isVisible,"animation":view.animationRunning,"liveViews":MascotView.liveViews,"activeTimers":MascotView.activeTimers,"bodyWindows":autoreleasepool { NSApp.windows.filter{$0 is MascotPanel}.count },"opaque":panel.isOpaque,"shadow":panel.hasShadow,"level":panel.level.rawValue,"reduceMotion":view.reducedMotion,"screens":NSScreen.screens.map{["frame":[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height],"scale":$0.backingScaleFactor]}])
+        emit(["event":event,"frame":[panel.frame.minX,panel.frame.minY,panel.frame.width,panel.frame.height],"key":panel.isKeyWindow,"visible":panel.isVisible,"animation":view.animationRunning,"liveViews":MascotView.liveViews,"activeTimers":MascotView.activeTimers,"bodyWindows":autoreleasepool { NSApp.windows.filter{$0 is MascotPanel}.count },"opaque":panel.isOpaque,"shadow":panel.hasShadow,"level":panel.level.rawValue,"reduceMotion":view.reducedMotion,"catalogId":view.catalogId,"screens":NSScreen.screens.map{["frame":[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height],"scale":$0.backingScaleFactor]}])
     }
     private func sequence() {
         guard state.phase == .idle else { return }
@@ -361,7 +662,12 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             case "show": body?.orderFrontRegardless(); (body?.contentView as? MascotView)?.resume(); facts("shown")
             case "status": facts("status"); shellFacts("shell-status")
             case "raster":
-                if let view=body?.contentView,let bitmap=view.bitmapImageRepForCachingDisplay(in:view.bounds) { view.cacheDisplay(in:view.bounds,to:bitmap); emit(["event":"raster","cornerAlpha":bitmap.colorAt(x:0,y:0)?.alphaComponent ?? -1,"gapAlpha":bitmap.colorAt(x:80,y:98)?.alphaComponent ?? -1]) }
+                if let view=body?.contentView,let bitmap=view.bitmapImageRepForCachingDisplay(in:view.bounds) {
+                    view.cacheDisplay(in:view.bounds,to:bitmap)
+                    let id=(view as? MascotView)?.catalogId ?? currentCatalogId
+                    let sample=PetRaster.samples(id)
+                    emit(["event":"raster","catalogId":id,"cornerAlpha":bitmap.colorAt(x:sample.corner.0,y:sample.corner.1)?.alphaComponent ?? -1,"gapAlpha":bitmap.colorAt(x:sample.gap.0,y:sample.gap.1)?.alphaComponent ?? -1,"uniqueOpaque":bitmap.colorAt(x:sample.uniqueOpaque.0,y:sample.uniqueOpaque.1)?.alphaComponent ?? -1])
+                }
             case "stop": NSApp.terminate(nil)
             default: unavailable(); bridge.stop(); return
             }
@@ -372,13 +678,51 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if settings?.allowQuit() == false { return .terminateCancel }
         ending=true; voiceSession.apply(); voiceShortcut.dispose(); permissionWindow?.invalidate(); operations.invalidate(); clearStage(); state.stop(); render(); menuBar?.dispose(); settings?.window?.orderOut(nil); settings?.close(); settings=nil; (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil)
         FileHandle.standardInput.readabilityHandler=nil
-        if !bridge.started || bridgeExited { return .terminateNow }
+        if !bridge.started || bridgeExited {
+            if lastStop == .none { lastStop = .clean }
+            return .terminateNow
+        }
         bridge.stop()
         DispatchQueue.main.asyncAfter(deadline:.now()+32) { [weak self] in
-            guard let self,!self.bridgeExited else { return }; self.bridge.terminateBridge(); self.emit(["event":"forced-bridge-stop"])
+            guard let self,!self.bridgeExited else { return }
+            self.lastStop = .forced
+            self.bridge.terminateBridge(); self.emit(["event":"forced-bridge-stop"])
         }
         return .terminateCancel
     }
+    var diagnosticsFacts: DiagnosticsFacts {
+        let selected = reasoningSnapshot?.configuration.selected
+        let modelsSelected = selected == "local" || selected == "deepseek" ? selected! : "none"
+        let homeConfigured = memorySnapshot != nil
+        return DiagnosticsFacts(
+            engineLifecycle: management.lifecycle.rawValue,
+            voicePhase: voice.state.phase.rawValue,
+            voiceMuted: voice.state.muted,
+            voiceLocale: voice.configuration.locale,
+            shortcutRegistered: voiceShortcut.available,
+            shortcutCopy: VoiceActivation.shortcutStatus(registered: voiceShortcut.available),
+            speechPermission: SystemRecognition.permissionStatus,
+            modelsSelected: modelsSelected,
+            modelsDisclosure: VoiceReasoningRoute(selected: selected).disclosure,
+            hardwareText: OnboardingDiagnostics.diagnosticText(snapshot: hardwareSnapshot, inspect: ollamaInspect, record: onboarding),
+            pluginsMounted: pluginActive ? 1 : 0,
+            pluginsDemonstration: pluginCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            connectionsMounted: connectionActive ? 1 : 0,
+            connectionsDemonstration: connectionCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            skillsMounted: skillActive ? 1 : 0,
+            skillsDemonstration: skillCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            bodyCatalogId: currentCatalogId,
+            bodyTitle: PetCatalog.title(currentCatalogId),
+            accessibilityTcc: AccessibilityDriver.trustedStatus(),
+            telemetryDisabled: true,
+            telemetryCopy: DiagnosticsSnapshot.telemetryCopy,
+            homeConfigured: homeConfigured,
+            lastStop: lastStop,
+            accountRequired: false,
+            recoveryCopy: DiagnosticsSnapshot.recovery(homeConfigured: homeConfigured)
+        )
+    }
+    var diagnosticsText: String { DiagnosticsSnapshot.render(diagnosticsFacts) }
     var voiceRouteDescription:String {
         guard activeModel != nil else{return "Reasoning is not attached. Apply a model in Models before speaking."}
         return VoiceReasoningRoute(selected:reasoningSnapshot?.configuration.selected).disclosure
@@ -410,10 +754,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         guard !ending else { return }
         if let section { management.select(section) }
         if settings == nil { settings=SettingsWindowController(owner:self) }
+        if management.section == .models || management.section == .diagnostics { refreshOnboarding() }
         settings?.refresh(management); settings?.present(); shellFacts("settings-opened")
     }
     func selectSection(_ section:ManagementSection) {
-        management.select(section); settings?.refresh(management); shellFacts("section-selected")
+        management.select(section)
+        if section == .models || section == .diagnostics { refreshOnboarding() }
+        settings?.refresh(management); shellFacts("section-selected")
     }
     func showCompanion() {
         guard !ending else { return }; clamp(); body?.orderFrontRegardless()
@@ -422,6 +769,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func shellFacts(_ event:String) {
         emit(["event":event,"section":management.section.rawValue,"lifecycle":management.lifecycle.rawValue,
               "companionId":memorySnapshot?.companionId ?? "","memoryRevision":memorySnapshot?.revision ?? "","attachedRevision":attachedRevision ?? "","memoryUsable":memoryUsable,"homeBusy":homeBusy,
+              "catalogId":currentCatalogId,
               "modelGeneration":bridgeGeneration,"modelBusy":modelBusy,"modelTesting":modelTesting,"selectedProvider":reasoningSnapshot?.configuration.provider ?? "","selectedModel":reasoningSnapshot?.configuration.model ?? "","activeModel":activeModel != nil,
               "voiceAvailable":management.voiceAvailable,"statusItems":menuBar?.item == nil ? 0:1,"statusFrame":menuBar?.item?.button?.window.map{[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height]} ?? [],
               "settingsAllocated":settings == nil ? 0:1,"settingsVisible":settings?.window?.isVisible ?? false,

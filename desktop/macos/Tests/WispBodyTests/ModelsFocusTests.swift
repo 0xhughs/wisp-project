@@ -1,12 +1,15 @@
 import AppKit
 func modelsFocusTests() throws {
     let provider=ModelsPopup(), local=NSTextField(), cloud=ModelsPopup(), apply=ModelsButton(), test=ModelsButton()
+    let refresh=ModelsButton(), useRecommended=ModelsButton(), install=ModelsButton()
+    install.isEnabled=false
     let group=NSView(); group.addSubview(cloud); group.isHidden=true
-    let order:[NSControl]=[provider,local,cloud,apply,test]
+    let order:[NSControl]=[refresh,useRecommended,install,provider,local,cloud,apply,test]
     test.isEnabled=false
     try check(ModelsFocus.next(after:local,in:order,backward:false) === apply,"Tab skips hidden route and disabled action")
     try check(ModelsFocus.next(after:apply,in:order,backward:true) === local,"Shift-Tab skips hidden ancestor")
-    try check(ModelsFocus.next(after:apply,in:order,backward:false) === provider,"forward wraps past disabled test")
+    try check(ModelsFocus.next(after:apply,in:order,backward:false) === refresh,"forward wraps past disabled test to refresh")
+    try check(ModelsFocus.next(after:refresh,in:order,backward:false) === useRecommended,"Tab skips disabled Install")
     group.isHidden=false; local.isHidden=true
     try check(ModelsFocus.next(after:provider,in:order,backward:false) === cloud,"cloud selector joins visible order")
     try check(provider.acceptsFirstResponder && apply.acceptsFirstResponder,"selectors and actions accept explicit focus")

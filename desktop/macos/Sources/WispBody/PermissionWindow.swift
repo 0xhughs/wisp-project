@@ -59,7 +59,31 @@ final class PermissionWindow:NSWindowController,NSWindowDelegate {
         guard let state=companion?.permissions else{return}
         let next=state.requests.map(\.requestID)
         if ids != next {
-            ids=next;choices.removeAllItems();choices.addItems(withTitles:state.requests.enumerated().map{"Request \($0.offset+1) — \($0.element.source == "wisp-direct" ? "Wisp check":"Local plugin check")"})
+            ids=next;choices.removeAllItems();            choices.addItems(withTitles:state.requests.enumerated().map{
+                let source=$0.element.source
+                let label:String
+                if source == "wisp-safe-action" {
+                    label=$0.element.tool == "wisp_open_url" ? "Open URL" : $0.element.tool == "wisp_open_file" ? "Open file" : "Tell time"
+                } else if source == "wisp-ax" {
+                    switch $0.element.tool {
+                    case "wisp_ax_focus_window": label="Focus fixture"
+                    case "wisp_ax_move_window": label="Move fixture"
+                    case "wisp_ax_read_focused": label="Read fixture"
+                    case "wisp_ax_click_named": label="Press control"
+                    case "wisp_ax_type_named": label="Set text"
+                    default: label="Search fixture"
+                    }
+                } else if source == "wisp-visual" {
+                    label="Click Drawn Canary"
+                } else if source == "wisp-mcp" {
+                    label="Wisp MCP demonstration"
+                } else if source == "wisp-skill" {
+                    label="Wisp skill"
+                } else {
+                    label=source == "wisp-direct" ? "Wisp check" : source == "wisp-compatible-plugin" ? "Compatible plugin check" : "Local plugin check"
+                }
+                return "Request \($0.offset+1) — \(label)"
+            })
             if !ids.contains(selected) {selected=ids.first ?? ""}
             if let index=ids.firstIndex(of:selected){choices.selectItem(at:index)}
         }
