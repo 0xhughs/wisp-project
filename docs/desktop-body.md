@@ -53,3 +53,8 @@ The current app now provides its own menu bar and retained native Settings windo
 ## Current durable home (04)
 
 General/Memory now chooses and retains a user folder with editable categorized knowledge. Normal launch restores it from private application-support bookmark state; no home is chosen by default. The hidden runtime starts only with valid configured memory, and its internal cwd/DSH_HOME stays outside that folder. Read `local-home-memory.md` for first selection, next-launch snapshot semantics, recovery and isolated verification. Never run developer tests without explicit test-support isolation. Historical02/03 evidence remains unchanged.
+
+## Windows companion (17)
+
+A separate Win32 host for the **same** companion identity is documented in `windows-companion.md`. This macOS document and accepted-02 evidence are unchanged as macOS proof. Slice 17 on Windows is body + click-through + tray + Ctrl+Alt+W + the same `wisp-home.json` UUID; engine attach, voice, models, eleven-section Settings, 09 openers, UI Automation, and installer remain 17.x. Linux authors of `desktop/windows` sources do not compile them here (`missing-platform`).
+
