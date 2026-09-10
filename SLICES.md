@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12 and 13 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/13-*.md. 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 12-review-085 IMPLEMENTATION_READY parked 12 verification-pending; NOT Shipped; no slices/12-*.md. Next Now 15 (15-build-088 complete; 15-review-089 pending). 12 candidate 35ab842b1f877fc9080d69e0bfa96618bbf79213443246ec92ea60c34be92416 (238 files); Linux 151/151 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13 and 15 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/15-*.md. 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 15-review-089 IMPLEMENTATION_READY parked 15 verification-pending; NOT Shipped; no slices/15-*.md. Next Now 17 (17-draft-090). 15 candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files); Linux 185/185 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 15 macOS accessibility computer control
-Goal: act on applications primarily through structured macOS Accessibility APIs.
-Provides: focus/move windows, read focused interfaces, click named controls, type and search the desktop, with visible permission guidance and action-specific approval enforcement.
-Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
+### 17 Windows companion
+Goal: bring the same Wisp identity and product model to Windows.
+Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
+Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
 
 ## Later
 ### 14 macOS integrated readiness
@@ -111,12 +111,6 @@ Goal: complete an authorized action when structured accessibility cannot reach a
 Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
 Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
 Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
-
-### 17 Windows companion
-Goal: bring the same Wisp identity and product model to Windows.
-Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
-Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
 
 ### 18 Optional voice wake
 Goal: optionally wake the existing voice companion by voice.
@@ -185,6 +179,12 @@ Provides: pet selection and body assets/animation integration; prove identity, m
 Depends on: 02–05, 07. Fox, robot and bird are illustrative designs; selected starter assets are decided when this slice is contracted.
 Target membership: inside the selected macOS release target. Out: the eventual approximately twenty official skins.
 
+### 15 macOS accessibility computer control
+Goal: act on applications primarily through structured macOS Accessibility APIs.
+Provides: focus/move windows, read focused interfaces, click named controls, type and search the desktop, with visible permission guidance and action-specific approval enforcement.
+Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
+
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
 
@@ -202,15 +202,15 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 12 Reusable skills for the same Wisp — implemented with verification pending. 12-review-085 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 151/151 supplemental; NativeChecks/Mac GUI/live Ollama skill-then-time/pin-runtime initialize/07/09/10/11 retest open. Unaccepted copy `evidence/12-contract-wip.md`. Chosen demo `wisp-local-time-briefing` then 09 `wisp_tell_time`. Depends on accepted 04, 06; unaccepted 07; parked 09/10/11/13. Not Shipped.
 - 13 Interchangeable mascot bodies — implemented with verification pending. 13-review-081 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 136/136 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/07 retest open. Unaccepted copy `evidence/13-contract-wip.md`. Depends on accepted 02–05 and unaccepted 07. Not Shipped.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
-- 15 macOS accessibility computer control — in progress (Ready for review 15-review-089 after 15-build-088). Closed fixture-only Direct AX catalog. Linux 185/185 claimed. Native AX uncompiled. Depends on accepted 06 and parked 09. Out: silent privilege escalation and visual fallback (16). Not Shipped.
+- 15 macOS accessibility computer control — implemented with verification pending. 15-review-089 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 185/185 supplemental; NativeChecks/Mac AX/TCC/GUI/live Ollama/pin-runtime initialize/06/07/09/10/11/12 retest open. Unaccepted copy `evidence/15-contract-wip.md`. Closed fixture-only Direct AX catalog. Depends on accepted 06 and parked 09. Not Shipped.
 - 16 Visual computer-control fallback — unstarted. Depends on 15. Not eligible before 15.
-- 17 Windows companion — unstarted. Depends on accepted macOS architecture. Linux may author sources marked uncompiled/unverified. macOS tests do not prove Windows.
+- 17 Windows companion — unstarted (next Now; 17-draft-090). Depends on accepted macOS architecture. Linux may author sources marked uncompiled/unverified. macOS tests do not prove Windows. Re-scope into coherent sub-slices if discovery shows multiple substantial independent outcomes.
 - 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
 - 19 Official skin collection — unstarted. Depends on 13.
 - 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
 - 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
 
-Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 12 parked; next Now 15.
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 15 parked; next Now 17.
 
 ## Verification backlog
 Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
@@ -308,3 +308,23 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 46. Slice 13 copy obligation — Pets “has not queried” skills assertion is replaced by same-Wisp persistence copy. Pet Apply still must not restart the engine or change skill snapshot bytes. Invalidated by PetStore/applyPets/replaceBody or SkillStore sibling isolation.
 
 47. Slice 14/19/20 — additional skills, marketplaces, learned-skill authoring, and proactivity remain unavailable rows after 12. Invalidated if 12 later enables extra catalog ids (that would be a contract change).
+
+48. Slice 15 / Done when 1–3 — declared-Mac native Allow Once / Deny / Cancel for each of the six AX tools against the fixture; exact destination visible; deny/cancel zero canary; Allow Once one corresponding AX effect; unknown names never allowable. Requires declared Mac, participant, Accessibility TCC as specified per case. Automated: Linux-supplemental recording driver (`sh tools/linux-js-tests.sh`, 185/185 at candidate `0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea`; product `7a276bac81b102fdba8b2d3c9595aac63a51ad22`). Procedure: isolated app; request each tool; native buttons; observe fixture canaries. Expected: 0/0/0/1 per tool; other-app titles never returned. Invalidated by ax-actions/permission-protocol/PermissionState/AccessibilityDriver edits.
+
+49. Slice 15 / Done when 2 — TCC denied: zero `AXUIElement` calls and `untrusted` complete; Settings Permissions copy + user-initiated open of Accessibility settings does not execute a tool; granting TCC is not Allow Once. Requires declared Mac and participant. Automated: none on Linux. Invalidated by AccessibilityDriver TCC branch or ManagementState Permissions copy.
+
+50. Slice 15 / Done when 4 — 07 retest after 15 bridge/permission edits: shortcut/Wake, no auto-listen, mute preserved, pending-approval speech suppression, no grant/reply revival, no orphan. Requires declared Mac. Do not spend DeepSeek 0/1. Automated: Linux voice-seams analogue. Invalidated by CompanionController/EngineBridge/VoiceLifecycle/permission-protocol edits.
+
+51. Slice 15 / Tests 4 native — compile NativeChecks including PermissionRequest AX tuples, confirm-cancel zero driver calls, ManagementState TCC copy. Requires macOS SDK. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by any `desktop/macos` source listed in `test-native.sh`.
+
+52. Slice 15 / Tests 2 — prepared pin runtime initialize: inventory includes six AX + three 09 names; excludes gated 10/11/12 names; hostile extra tool fails initialize. Requires pnpm 11.7.0 and prepared `.wisp-spike.json` (missing-external-resource here). Invalidated by product-sdk inventory/seal or overlay composer.
+
+53. Shared 09 retest after 15 — Direct names still present; `wisp_tell_time` still 0/0/0/1; `file:` and `/etc` still fail; recording-opener 0/0/0/1; open-request still independent of ax-request. Invalidated by permission-protocol, PermissionState, SafeActionOpener, Direct admission, or body-bridge open path.
+
+54. Shared 06 retest after 15 — permission-protocol / PermissionState / consume() still fail-closed for fixtures; queue 8; Cancel-first; no Allow Always. Invalidated by those sources.
+
+55. Shared 10/11/12 overlay/inventory retest after 15 — demonstration plugin / `mcp__` / `skill` still absent until enabled; extra unadmitted tools still fail initialize; AX names present in default inventory. Invalidated by overlay composer, `classifyInsert`, `wisp.inventory`, or startAttachment snapshot attach.
+
+56. Slice 16/17 obligation — visual click and Windows UI Automation remain unavailable after 15; 15 must not add screenshot targeting or UIA. Invalidated if 15 later admits those tools (that would be a contract change).
+
+57. Slice 15.x remainder — other apps, Spotlight, menu bar/Dock, drag/scroll beyond ±64 remain unavailable. Invalidated if 15 later expands the closed title/name enum or target beyond the fixture (that would be a contract change).
