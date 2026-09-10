@@ -33,6 +33,8 @@ struct PermissionRequest {
             do { try SafeActionOpener.rejectPrivilegedDestination(destination) } catch { throw PermissionFailure.invalid }
         case "wisp_tell_time":
             guard source=="wisp-safe-action",operation=="read-local-clock",args.isEmpty,destination=="local-system-clock" else { throw PermissionFailure.invalid }
+        case "wisp_ax_focus_window","wisp_ax_move_window","wisp_ax_read_focused","wisp_ax_click_named","wisp_ax_type_named","wisp_ax_find_named":
+            do { try AccessibilityDriver.validatePermission(tool:tool,source:source,operation:operation,arguments:args,destination:destination) } catch { throw PermissionFailure.invalid }
         case "skill":
             guard source=="wisp-skill",operation=="load-skill-instructions",Set(args.keys)==["name"],args["name"]=="wisp-local-time-briefing" else { throw PermissionFailure.invalid }
         default:
@@ -51,6 +53,18 @@ struct PermissionRequest {
             let label=tool=="wisp_open_url" ? "Open URL" : tool=="wisp_open_file" ? "Open file for viewing" : "Tell local time"
             let operationLine=tool=="wisp_tell_time" ? "Read this device’s local clock once" : tool=="wisp_open_url" ? "Open one http(s) address with the default handler" : "Open one viewable file with the default handler"
             return "Wisp is acting on your behalf.\n\nOperation: \(operationLine)\nSource: Wisp safe action (\(label))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nThis decision applies to this one action only. No account permission or future consent is granted. A spoken or typed yes is not a grant."
+        }
+        if source=="wisp-ax" {
+            let label:String
+            switch tool {
+            case "wisp_ax_focus_window": label="Focus fixture window"
+            case "wisp_ax_move_window": label="Move fixture window"
+            case "wisp_ax_read_focused": label="Read fixture interface"
+            case "wisp_ax_click_named": label="Press named control"
+            case "wisp_ax_type_named": label="Set named text"
+            default: label="Search fixture tree"
+            }
+            return "Wisp is acting on your behalf.\n\nOperation: \(label)\nSource: Wisp Accessibility (\(label))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nThis decision applies to this one action only. Granting Accessibility in System Settings is not this grant. A spoken or typed yes is not a grant. There is no Allow Always."
         }
         if source=="wisp-mcp" {
             return "Wisp is acting on your behalf.\n\nOperation: Append one verification record\nSource: Wisp MCP demonstration (\(tool))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nActual record label: \((wire["arguments"] as? [String:String])?["label"] ?? "")\n\nThis decision applies to this one action only. No account permission or future consent is granted. A spoken or typed yes is not a grant. Saving a connection is not a grant. There is no Allow Always."

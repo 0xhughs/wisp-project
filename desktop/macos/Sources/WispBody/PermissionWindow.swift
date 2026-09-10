@@ -64,6 +64,15 @@ final class PermissionWindow:NSWindowController,NSWindowDelegate {
                 let label:String
                 if source == "wisp-safe-action" {
                     label=$0.element.tool == "wisp_open_url" ? "Open URL" : $0.element.tool == "wisp_open_file" ? "Open file" : "Tell time"
+                } else if source == "wisp-ax" {
+                    switch $0.element.tool {
+                    case "wisp_ax_focus_window": label="Focus fixture"
+                    case "wisp_ax_move_window": label="Move fixture"
+                    case "wisp_ax_read_focused": label="Read fixture"
+                    case "wisp_ax_click_named": label="Press control"
+                    case "wisp_ax_type_named": label="Set text"
+                    default: label="Search fixture"
+                    }
                 } else if source == "wisp-mcp" {
                     label="Wisp MCP demonstration"
                 } else if source == "wisp-skill" {

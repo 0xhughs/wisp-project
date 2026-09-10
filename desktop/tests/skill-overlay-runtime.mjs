@@ -62,6 +62,12 @@ try {
     assert.ok(inventory.tools.includes('wisp_open_url'));
     assert.ok(inventory.tools.includes('wisp_open_file'));
     assert.ok(inventory.tools.includes('wisp_tell_time'));
+    assert.ok(inventory.tools.includes('wisp_ax_focus_window'));
+    assert.ok(inventory.tools.includes('wisp_ax_move_window'));
+    assert.ok(inventory.tools.includes('wisp_ax_read_focused'));
+    assert.ok(inventory.tools.includes('wisp_ax_click_named'));
+    assert.ok(inventory.tools.includes('wisp_ax_type_named'));
+    assert.ok(inventory.tools.includes('wisp_ax_find_named'));
     assert.equal(inventory.tools.includes('wisp_compatible_check'),false);
     assert.equal(inventory.tools.some(t=>String(t).startsWith('mcp__')),false);
     assert.deepEqual(inventory.skills,[]);

@@ -61,12 +61,35 @@ func permissionStateTests() throws {
     do {_=try PermissionRequest(extraSkill); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
     var wrongSkillSource=skillFrame; wrongSkillSource["source"]="wisp-direct"
     do {_=try PermissionRequest(wrongSkillSource); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    let axFocus:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-ax","rootCallId":"call-ax","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_focus_window","source":"wisp-ax","revision":"1","arguments":["title":"Wisp Accessibility Fixture"],"operation":"focus-fixture-window","destination":"ax-fixture-window","fields":[["label":"Window","value":"Wisp Accessibility Fixture"]]]
+    let axRequest=try PermissionRequest(axFocus)
+    try check(axRequest.summary.contains("Wisp Accessibility Fixture") && axRequest.summary.contains("Focus fixture") && axRequest.summary.contains("Granting Accessibility") && !axRequest.summary.contains("Allow Always"), "ax focus summary")
+    var badTitle=axFocus; badTitle["arguments"]=["title":"Safari"]
+    do {_=try PermissionRequest(badTitle); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    let axMove:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-move","rootCallId":"call-move","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_move_window","source":"wisp-ax","revision":"1","arguments":["title":"Wisp Accessibility Fixture","dx":"0","dy":"0"],"operation":"move-fixture-window","destination":"ax-fixture-window","fields":[["label":"Delta","value":"dx 0, dy 0"]]]
+    do {_=try PermissionRequest(axMove); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var extraAx=axFocus; extraAx["arguments"]=["title":"Wisp Accessibility Fixture","bundle":"com.apple.Safari"]
+    do {_=try PermissionRequest(extraAx); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var wrongAxSource=axFocus; wrongAxSource["source"]="wisp-safe-action"
+    do {_=try PermissionRequest(wrongAxSource); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    let axClick:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-click","rootCallId":"call-click","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_click_named","source":"wisp-ax","revision":"1","arguments":["name":"Fixture Button"],"operation":"press-named-control","destination":"ax-fixture-control:Fixture Button","fields":[["label":"Control","value":"Fixture Button"]]]
+    try check(try PermissionRequest(axClick).summary.contains("Press named control"), "ax click decode")
+    let axRead:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-read","rootCallId":"call-read","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_read_focused","source":"wisp-ax","revision":"1","arguments":[:] as [String:String],"operation":"read-fixture-interface","destination":"ax-fixture-focused","fields":[["label":"Effect","value":"Read fixture focus"]]]
+    try check(try PermissionRequest(axRead).destination=="ax-fixture-focused", "ax read decode")
+    let axType:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-type","rootCallId":"call-type","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_type_named","source":"wisp-ax","revision":"1","arguments":["name":"Fixture Field","text":"hello"],"operation":"set-named-text","destination":"ax-fixture-field:Fixture Field","fields":[["label":"Text","value":"hello"]]]
+    try check(try PermissionRequest(axType).summary.contains("Set named text"), "ax type decode")
+    let axFind:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-find","rootCallId":"call-find","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_find_named","source":"wisp-ax","revision":"1","arguments":["name":"Fixture Marker"],"operation":"search-fixture-tree","destination":"ax-fixture-search:Fixture Marker","fields":[["label":"Name","value":"Fixture Marker"]]]
+    try check(try PermissionRequest(axFind).destination=="ax-fixture-search:Fixture Marker", "ax find decode")
+    let axMoveOk:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-move-ok","rootCallId":"call-move-ok","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"wisp_ax_move_window","source":"wisp-ax","revision":"1","arguments":["title":"Wisp Accessibility Fixture","dx":"4","dy":"-2"],"operation":"move-fixture-window","destination":"ax-fixture-window","fields":[["label":"Delta","value":"dx 4, dy -2"]]]
+    try check(try PermissionRequest(axMoveOk).summary.contains("Move fixture"), "ax move decode")
     var stateCancel=PermissionState(); stateCancel.attach(generation:generation,companionID:companion)
     let cancelable=try PermissionRequest(urlFrame)
     try stateCancel.receive(cancelable)
     let opener=RecordingWorkspaceOpener()
+    let axDriver=RecordingAccessibilityDriver()
     _=stateCancel.decide(cancelable.requestID,action:"cancel")
     try check(opener.count==0, "confirm-cancel performs zero opener calls")
+    try check(axDriver.count==0, "confirm-cancel performs zero AX-driver calls")
     let mcpFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-mcp","rootCallId":"call-mcp","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"mcp__wispdemo__record","source":"wisp-mcp","revision":"1","arguments":["label":"once"],"operation":"append-test-record","destination":"/owned/mcp-ledger","fields":[["label":"Public tool","value":"mcp__wispdemo__record"],["label":"Record label","value":"once"]]]
     let mcpRequest=try PermissionRequest(mcpFrame)
     try check(mcpRequest.summary.contains("mcp__wispdemo__record") && mcpRequest.summary.contains("Wisp MCP demonstration") && mcpRequest.summary.contains("Append one verification record") && mcpRequest.summary.contains("Saving a connection is not a grant") && mcpRequest.summary.contains("spoken or typed yes is not a grant") && !mcpRequest.summary.contains("Allow Always"), "MCP request decode and copy")

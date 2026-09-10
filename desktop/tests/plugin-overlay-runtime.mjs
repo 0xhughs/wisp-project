@@ -58,6 +58,9 @@ try {
   try {
     const inventory=await initialize(off);
     assert.equal(inventory.tools.includes('wisp_compatible_check'),false);
+    assert.ok(inventory.tools.includes('wisp_open_url'));
+    assert.ok(inventory.tools.includes('wisp_ax_focus_window'));
+    assert.ok(inventory.tools.includes('wisp_ax_find_named'));
     assert.deepEqual(inventory.plugins,[]);
     results.push({case:'default-excludes-demo',ok:true,tools:inventory.tools});
     await off.client.shutdown();

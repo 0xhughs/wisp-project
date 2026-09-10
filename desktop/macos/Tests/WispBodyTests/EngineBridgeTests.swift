@@ -16,6 +16,7 @@ func engineBridgeTests() throws {
     try check(!operations.finish(frame("tested","test","two","generation-b")),"completion replay rejected")
     var openParser=BridgeFrames()
     try check(try openParser.append(Data("{\"event\":\"open-request\"}\n".utf8)).count==1, "open-request is a closed bridge event")
+    try check(try openParser.append(Data("{\"event\":\"ax-request\"}\n".utf8)).count==1, "ax-request is a closed bridge event")
     try check(try openParser.append(Data("{\"event\":\"voice-result\",\"generation\":\"aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa\",\"companionId\":\"bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb\",\"utteranceId\":\"cccccccc-cccc-4ccc-cccc-cccccccccccc\",\"text\":\"no\",\"messageId\":\"dddddddd-dddd-4ddd-dddd-dddddddddddd\",\"turn\":1}\n".utf8)).count==1, "voice-result still distinct from opener")
     var parser=BridgeFrames()
     try check(try parser.append(Data("{\"event\":\"rea".utf8)).isEmpty,"fragment retained")

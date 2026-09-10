@@ -29,6 +29,8 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/ollama-inspect.test.mjs \
   desktop/tests/safe-actions.test.mjs \
   desktop/tests/safe-actions-protocol.test.mjs \
+  desktop/tests/ax-actions.test.mjs \
+  desktop/tests/ax-actions-protocol.test.mjs \
   desktop/tests/connection-config.test.mjs \
   desktop/tests/pet-config.test.mjs \
   desktop/tests/skill-config.test.mjs

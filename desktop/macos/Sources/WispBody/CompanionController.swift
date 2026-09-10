@@ -18,6 +18,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private var permissionWindow:PermissionWindow?
     private var operations=BridgeOperationState()
     private var workspaceOpener:WorkspaceOpening=NativeWorkspaceOpener()
+    private var accessibilityDriver:AccessibilityPerforming=NativeAccessibilityDriver()
     private var bridgeGeneration=0
     private var restartAction: (() -> Void)?
     private var reasoningStore: ReasoningStore?
@@ -125,7 +126,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if management.section == .skills { return skillDescription }
         if management.section == .pets { return petDescription }
         if management.section == .permissions { return permissionDescription }
-        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+skillDiagnostic+"\n"+petDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
+        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+skillDiagnostic+"\n"+petDiagnostic+"\n"+"Accessibility TCC: "+AccessibilityDriver.trustedStatus()+". Granting Accessibility is not Allow Once.\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -480,7 +481,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let skill = skillActive
             ? "The skill tool is Ask-each-time when the demonstration is mounted. Loading skill instructions does not run wisp_tell_time."
             : "Skill invocation is unavailable until Local time briefing is mounted."
-        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. A mounted compatible plugin still requires Allow Once. \(mcp) \(skill) Connection save is not a grant. Skill Enable is not a grant. Named SaaS connectors, MCP resources and prompts, Accessibility, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction, skill Enable or pet Apply never grants action permission."
+        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. Focus, move, read, press, type and search against the Wisp Accessibility Fixture are Ask-each-time. macOS Accessibility (TCC) is also required. Grant Accessibility in System Settings → Privacy & Security → Accessibility. Wisp will not act without both TCC and Allow Once. Granting Accessibility is not a tool grant and is not Allow Once.\n\nA mounted compatible plugin still requires Allow Once. \(mcp) \(skill) Connection save is not a grant. Skill Enable is not a grant. Named SaaS connectors, MCP resources and prompts, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction, skill Enable, pet Apply or granting Accessibility never grants action permission."
     }
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
@@ -588,13 +589,24 @@ final class CompanionController:NSObject,NSApplicationDelegate {
                 if let failed=SafeActionOpener.failed(from:event) {bridge.completeOpen(failed)}
                 else {invalidatePermissions();bridge.stop();unavailable()}
             }
+        case "ax-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {
+                let completion=try AccessibilityDriver.handle(event,expectedGeneration:permissions.generation,driver:accessibilityDriver)
+                bridge.completeAx(completion)
+            } catch {
+                if let failed=AccessibilityDriver.failed(from:event) {bridge.completeAx(failed)}
+                else {invalidatePermissions();bridge.stop();unavailable()}
+            }
         case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; connectionApplying=false; connectionActive=false; skillApplying=false; skillActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; if connectionSnapshot?.configuration.enabled==true { connectionStatus="Engine unavailable. Saved connection composition was kept." }; if skillSnapshot?.configuration.enabled==true { skillStatus="Engine unavailable. Saved skill composition was kept." }; clearStage(); unavailable()
         default: break
         }
-        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if event["event"] as? String == "open-request" {emit(["event":"open-request","openRequestId":event["openRequestId"] ?? "","kind":event["kind"] ?? ""])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
+        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if event["event"] as? String == "open-request" {emit(["event":"open-request","openRequestId":event["openRequestId"] ?? "","kind":event["kind"] ?? ""])}else if event["event"] as? String == "ax-request" {emit(["event":"ax-request","axRequestId":event["axRequestId"] ?? "","operation":event["operation"] ?? ""])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
     }
     func decidePermission(_ id:String,decision:String) {guard !ending,memoryUsable,let frame=permissions.decide(id,action:decision)else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
     func cancelPermissions() {guard !ending,memoryUsable,let frame=permissions.cancelAll() else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
+    func openAccessibilityPrivacySettings() { AccessibilityDriver.openPrivacySettings() }
+    func showAccessibilityFixture() { AccessibilityFixtureWindow.shared.present() }
     private func invalidatePermissions() {permissions.invalidate();permissionWindow?.invalidate();operations.invalidate()}
     private func render() {
         let phase:BodyPhase

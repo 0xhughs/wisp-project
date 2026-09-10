@@ -10,6 +10,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     private var connectionsEditor: ConnectionsView!
     private var skillsEditor: SkillsView!
     private var petsEditor: PetsView!
+    private var permissionsEditor: PermissionsView!
     private let navigation = NSTableView()
     private let heading = NSTextField(labelWithString: "General")
     private let detail = NSTextField(wrappingLabelWithString: "")
@@ -39,11 +40,12 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         connectionsEditor = ConnectionsView(owner: owner)
         skillsEditor = SkillsView(owner: owner)
         petsEditor = PetsView(owner: owner)
-        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,petsEditor,pluginsEditor,connectionsEditor,skillsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
+        permissionsEditor = PermissionsView(owner: owner)
+        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,petsEditor,pluginsEditor,connectionsEditor,skillsEditor,permissionsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
         for view in [scroll,content] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: root.leadingAnchor,constant: 12), scroll.topAnchor.constraint(equalTo: root.topAnchor,constant: 14), scroll.bottomAnchor.constraint(equalTo: root.bottomAnchor,constant: -14), scroll.widthAnchor.constraint(equalToConstant: 180),
-            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),petsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),connectionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),skillsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
+            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),petsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),connectionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),skillsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),permissionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
         ])
         refresh(owner.management)
     }
@@ -68,6 +70,8 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         pluginsEditor.isHidden = state.section != .plugins; pluginsEditor.refresh()
         connectionsEditor.isHidden = state.section != .connections; connectionsEditor.refresh()
         skillsEditor.isHidden = state.section != .skills; skillsEditor.refresh()
+        permissionsEditor.isHidden = state.section != .permissions
+        if state.section == .permissions { permissionsEditor.refresh() }
         memoryEditor.isHidden = state.section != .memory; memoryEditor.refresh()
         showButton.isHidden = state.section != .general; showButton.isEnabled = state.canShowCompanion
         navigation.isEnabled = state.canNavigate

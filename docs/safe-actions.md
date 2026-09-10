@@ -29,3 +29,6 @@ Wisp reads the process-local clock once after Allow Once. Tests inject that cloc
 The engine child has no AppKit. After consume, URL and file tools notify `wisp.open.requested` and wait for `wisp/open.complete`. Native re-validates, then calls `NSWorkspace.shared.open` once (default handler, no application identifier, no extra argv). Linux checks use a recording opener and must never spawn `xdg-open`. Lost acknowledgement is not retried.
 
 Stock `tool-bash`, `tool-fs`, `tool-web` and shell wrappers stay disabled. Outcomes use existing voice and Wisp surfaces; there is no chat composer. Slice 07 is not assumed working.
+
+Slice 15 Accessibility fixture tools are a separate Direct catalog (`wisp-ax`) with their own `wisp.ax.requested` channel. They do not reuse this opener, `NSWorkspace`, or pin helper binaries. See `computer-control.md`. Visual click remains unavailable.
+
