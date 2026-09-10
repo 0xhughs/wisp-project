@@ -198,7 +198,7 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 07 Shortcut-to-voice agent loop — implemented with verification pending. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED unchanged (not REJECT; counters 0/0). Parked 2026-09-10 after loop-plan-061 APPROVE_PLAN. Not Shipped. Unaccepted copy `evidence/07-contract-wip.md`. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
 - 08 Hardware-aware local-model onboarding — unstarted. Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. No model download without a resource plan.
 - 09 Initial safe computer actions — unstarted. Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. Must not become a command-execution bypass.
-- 10 Compatible plugin management — in progress (draft-proposal 10-draft-062). Depends only on accepted 01, 03, 06. First eligible Now after 07 park.
+- 10 Compatible plugin management — in progress (Proposed 10-draft-062; awaiting 10-plan-063). Depends only on accepted 01, 03, 06.
 - 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
 - 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
