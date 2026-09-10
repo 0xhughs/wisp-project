@@ -1,4 +1,6 @@
+import { createHash } from 'node:crypto';
 import { QueueVerification } from './queue-verification.ts';
+import { CompatibleVerification } from './compatible-verification.ts';
 import { ChildVerification } from './child-verification.ts';
 import type { Context } from '@deepseek-ai/cordis';
 import { JsonRpcLineTransport } from '@deepseek-ai/dsh-sdk-protocol';
@@ -6,6 +8,20 @@ import { HarnessSdkJsonRpcServer } from '@deepseek-ai/dsh-sdk-jsonrpc-server';
 import { SessionId } from '@deepseek-ai/dsh-session';
 import { PermissionPolicy, strict } from './approval-policy.ts';
 import { registerFixture } from './permission-fixtures.ts';
+function pluginSnapshotFromEnv() {
+  const raw=process.env.WISP_PLUGIN_SNAPSHOT;
+  if(!raw)return {version:1 as const,catalogId:'wisp-compatible-plugin',enabled:false,config:{note:''},revision:''};
+  const o=JSON.parse(raw);
+  if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).sort().join()!=='catalogId,config,enabled,revision,version'||o.version!==1||o.catalogId!=='wisp-compatible-plugin'||typeof o.enabled!=='boolean'||typeof o.revision!=='string'||(o.revision!==''&&!/^[a-f0-9]{64}$/.test(o.revision))||!o.config||typeof o.config!=='object'||Array.isArray(o.config)||Object.keys(o.config).join()!=='note'||typeof o.config.note!=='string'||(o.config.note!==''&&!/^[A-Za-z0-9_-]{1,40}$/.test(o.config.note)))throw Error('WISP_PLUGIN_SNAPSHOT');
+  if(o.enabled&&!o.revision)throw Error('WISP_PLUGIN_SNAPSHOT');
+  return o as {version:1;catalogId:'wisp-compatible-plugin';enabled:boolean;config:{note:string};revision:string};
+}
+function pluginInventoryPayload(tools:string[]) {
+  const snap=pluginSnapshotFromEnv(),has=tools.includes('wisp_compatible_check');
+  if(snap.enabled){if(!has)throw Error('WISP_INVENTORY');}
+  else if(has)throw Error('WISP_INVENTORY');
+  return {tools,transport:'stdio',plugins:snap.enabled?[{id:'wisp-compatible-plugin',revision:snap.revision,tools:['wisp_compatible_check'],configDigest:createHash('sha256').update(JSON.stringify({note:snap.config.note})).digest('hex')}]:[]};
+}
 export const name='wisp-product-sdk';
 export const inject=['sdkAppStartup','loader','agents','tools','approval','subagents'];
 // Pinned Cordis has concurrent effect teardown and no pre-disposal hook. The
@@ -36,8 +52,9 @@ export function apply(ctx:Context) {
   const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
   if(!companionId||!generation||!uuid.test(companionId)||!uuid.test(generation))throw Error('WISP_IDENTITY');
   const queue=new QueueVerification(ctx);
+  const compatible=new CompatibleVerification(ctx);
   const children=new ChildVerification(ctx,()=>sessionId?ctx.agents.get(SessionId(sessionId)):undefined,(m,p)=>transport.notify(m,p));
-  const bridge=new PermissionPolicy(ctx,{companionId,generation},exec=>busy&&!!exec.agent&&(String(exec.agent.session.id)===sessionId||children.owned.has(exec.agent)||queue.owned===exec.agent)&&ctx.agents.get(exec.agent.session.id)===exec.agent,(m,p)=>transport.notify(m,p));
+  const bridge=new PermissionPolicy(ctx,{companionId,generation},exec=>busy&&!!exec.agent&&(String(exec.agent.session.id)===sessionId||children.owned.has(exec.agent)||queue.owned===exec.agent||compatible.owned===exec.agent)&&ctx.agents.get(exec.agent.session.id)===exec.agent,(m,p)=>transport.notify(m,p));
   bridge.install();
   ctx.provide('wispPermissions',bridge);
   if(process.env.WISP_PERMISSION_FIXTURES==='1') {
@@ -48,12 +65,12 @@ export function apply(ctx:Context) {
   ctx.on('agent/status',({agent,status})=>{if(String(agent.session.id)===sessionId&&status==='idle'&&turnEnded)busy=false;});
   const failDisposal=():never=>{process.stderr.write('WISP_DISPOSAL_FAILED\n');process.exit(1);};
   installDisposalBarrier(ctx.root.fiber,async()=>{
-    closing=true;bridge.cancel();children.cancel();queue.cancel();
+    closing=true;bridge.cancel();children.cancel();queue.cancel();compatible.cancel();
     const agent=sessionId?ctx.agents.get(SessionId(sessionId)):undefined;
     if(agent){agent.cancel({kind:'user'});await agent.whenIdle();}
     // Session persistence remains attached until the driver has written the
     // cancellation audit and turn/end. Server handle disposal then drains it.
-    await children.quiesce();await queue.quiesce();await server.shutdown();await transport.flush();
+    await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();
   },failDisposal);
   let exitTask:Promise<void>|undefined;
   const exit=()=>exitTask??=(async()=>{
@@ -73,7 +90,7 @@ export function apply(ctx:Context) {
           await ctx.get('loader')?.await();
           bridge.seal();
           const result=await server.handleRequest(method,params);initialized=true;
-          transport.notify('wisp.inventory',{tools:ctx.tools.schemas().map(s=>s.name),transport:'stdio'});return result;
+          transport.notify('wisp.inventory',pluginInventoryPayload(ctx.tools.schemas().map(s=>s.name)));return result;
         } finally {initializing=false;}
       }
       case 'session/prompt': {
@@ -91,6 +108,10 @@ export function apply(ctx:Context) {
         if(params&&Object.keys(params).length||!initialized||busy)throw Error('WISP_QUEUE_UNAVAILABLE');
         busy=true;try{return await queue.start();}finally{busy=false;}
       }
+      case 'wisp/verification.compatible': {
+        if(params&&Object.keys(params).length||!initialized||busy)throw Error('WISP_QUEUE_UNAVAILABLE');
+        busy=true;try{return await compatible.start();}finally{busy=false;}
+      }
       case 'wisp/verification.child': {
         strict(params,['provider']);
         if(!initialized||busy||!sessionId||!['spawn','fork'].includes(String(params.provider)))throw Error('WISP_CHILD_UNAVAILABLE');
@@ -98,7 +119,7 @@ export function apply(ctx:Context) {
       }
       case 'wisp/approval.decide': {
         const result=bridge.decide(params);
-        if((params as any).decision==='cancel'){bridge.cancel();queue.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
+        if((params as any).decision==='cancel'){bridge.cancel();queue.cancel();compatible.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
         return result;
       }
       case 'wisp/voice.cancel': {
@@ -106,14 +127,14 @@ export function apply(ctx:Context) {
         if(!initialized||params.sessionId!==sessionId||!lastPromptId||params.messageId!==lastPromptId)throw Error('WISP_UNOWNED_VOICE');
         const agent=ctx.agents.get(SessionId(sessionId!));
         if(!agent)throw Error('WISP_UNOWNED_VOICE');
-        if(busy){bridge.cancel();children.cancel();queue.cancel();agent.cancel({kind:'user'});}
+        if(busy){bridge.cancel();children.cancel();queue.cancel();compatible.cancel();agent.cancel({kind:'user'});}
         await agent.whenIdle();
         return {settled:true,messageId:lastPromptId};
       }
       case 'wisp/session.cancel': {
         strict(params,['sessionId']);
         if(!busy||params.sessionId!==sessionId)throw new Error('WISP_NO_ACTIVE_SESSION');
-        bridge.cancel();children.cancel();queue.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
+        bridge.cancel();children.cancel();queue.cancel();compatible.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
       }
       case 'shutdown': {
         if(params&&Object.keys(params).length)throw new Error('WISP_INVALID_PARAMS');
@@ -124,5 +145,5 @@ export function apply(ctx:Context) {
       default:throw new Error('WISP_UNKNOWN_METHOD');
     }
   });
-  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();await children.quiesce();await queue.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
+  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
 }

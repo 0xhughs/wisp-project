@@ -21,6 +21,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private var restartAction: (() -> Void)?
     private var reasoningStore: ReasoningStore?
     private(set) var reasoningSnapshot: ReasoningSnapshot?
+    private var pluginStore: PluginStore?
+    private(set) var pluginSnapshot: PluginSnapshot?
+    private(set) var pluginStatus="Choose a Wisp folder to manage plugins."
+    private(set) var pluginActive=false, pluginApplying=false
     private(set) var modelBusy=false, modelTesting=false
     private(set) var modelStatus="Choose a Wisp folder to configure reasoning."
     private(set) var activeModel: String?
@@ -95,7 +99,8 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             return folder + memoryStatus + (management.section == .general ? "\nEngine: \(management.lifecycle.rawValue.lowercased()). Voice: \(voice.state.phase.rawValue)." : "")
         }
         if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
-        if management.section == .diagnostics{return voiceDescription}
+        if management.section == .plugins { return pluginDescription }
+        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic}
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -158,8 +163,14 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in self?.voice.configure(speech) }
             let saved = try reasoningStore!.load()
             DispatchQueue.main.async { [weak self] in self?.reasoningSnapshot=saved }
+            if pluginStore == nil { pluginStore = try PluginStore(support:support) }
+            let plugins = try pluginStore!.load()
+            DispatchQueue.main.async { [weak self] in
+                self?.pluginSnapshot=plugins
+                self?.pluginStatus=plugins.configuration.enabled ? "Saved plugin composition loaded. Apply to mount it." : "Demonstration plugin is not installed."
+            }
         } catch {
-            DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
+            DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? (error as? PluginError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
         }
     }
     func reloadModels(completed: @escaping (Bool)->Void) {
@@ -192,13 +203,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
             else if let next=self.restartAction {
                 self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
-            } else { self.modelBusy=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
+            } else { self.modelBusy=false; self.pluginApplying=false; self.pluginActive=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
         }
     }
     private func waitForOldRuntime(generation: Int, remaining: Int, then action: @escaping () -> Void) {
         guard !ending,bridgeGeneration == generation else { return }
         if runtimePID == 0 || kill(-Int32(runtimePID),0) != 0 && errno == ESRCH { action(); return }
-        guard remaining > 0 else { modelBusy=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
+        guard remaining > 0 else { modelBusy=false; pluginApplying=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
         DispatchQueue.main.asyncAfter(deadline:.now()+0.1) { [weak self] in self?.waitForOldRuntime(generation:generation,remaining:remaining-1,then:action) }
     }
     private func stopReasoning(then action: @escaping () -> Void) {
@@ -247,6 +258,39 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             }
         }
     }
+    func applyPlugins(_ draft: PluginConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { pluginStatus=PluginError.invalid.message; render(); completed(false); return }
+        guard PluginApply.allowed(modelBusy:modelBusy,homeBusy:homeBusy,ending:ending) else { return }
+        modelBusy=true; pluginApplying=true; pluginStatus="Applying saved plugin composition…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.pluginStore else { throw PluginError.invalid }; return try store.save(draft,expected:expected) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.pluginSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error):
+                        self.pluginApplying=false; self.modelBusy=false
+                        self.pluginStatus=(error as? PluginError)?.message ?? (error as? StoreError)?.message ?? "Plugin settings could not be saved. The previous composition was kept."
+                        completed(false); self.render()
+                    }
+                }
+            }
+        }
+    }
+    var pluginCatalog: [PluginCatalogRow] {
+        PluginCatalog.rows(snapshot:pluginSnapshot ?? PluginSnapshot(configuration:PluginConfiguration(),revision:""),applying:pluginApplying,active:pluginActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable,developer:developer,developerActive:developer)
+    }
+    var pluginDescription: String {
+        let rows=pluginCatalog
+        let demo=rows.first{$0.kind == .demonstration}
+        return "Mounted plugins: \(pluginActive ? 1 : 0). Demonstration: \(demo?.status.rawValue ?? "not installed"). Marketplace catalogs were not queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)."}.joined(separator:" ")
+    }
+    private var pluginDiagnostic: String {
+        let demo=pluginCatalog.first{$0.kind == .demonstration}
+        return "Plugins: \(pluginActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed"). No plugin paths, raw errors or credentials."
+    }
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
         modelTesting=true; modelStatus="Testing connection…"; bridge.testConnection(); render()
@@ -257,27 +301,32 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     private func startAttachment() {
         guard let snapshot=memorySnapshot,memoryUsable,!attachmentStarting,!ending,
-              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { unavailable(); return }
+              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { pluginApplying=false; unavailable(); return }
         attachmentStarting=true; modelBusy=true; modelStatus="Attaching saved reasoning configuration…"; render()
         let script=Bundle.main.resourceURL!.appendingPathComponent("desktop/engine/body-bridge.mjs").path
         homeQueue.async { [weak self] in
             guard let self else { return }
-            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any]) in
+            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any],PluginSnapshot?,URL?) in
                 guard let store=self.reasoningStore else { throw ReasoningError.unavailable }
                 let saved=try store.load(); let bootstrap=try store.bootstrap(saved)
-                return (try self.homeStore!.stage(snapshot),saved,bootstrap)
+                var pluginSaved: PluginSnapshot?; var pluginFile: URL?
+                if let plugins=self.pluginStore { pluginSaved=try plugins.load(); pluginFile=try plugins.stage(pluginSaved!) }
+                return (try self.homeStore!.stage(snapshot),saved,bootstrap,pluginSaved,pluginFile)
             }
             DispatchQueue.main.async {
                 self.attachmentStarting=false
                 guard !self.ending else { return }
                 do {
-                    let (path,saved,bootstrap)=try staged.get(); self.reasoningSnapshot=saved
+                    let (path,saved,bootstrap,pluginSaved,pluginFile)=try staged.get(); self.reasoningSnapshot=saved
+                    if let pluginSaved { self.pluginSnapshot=pluginSaved }
                     self.bridge=EngineBridge(); self.bridgeGeneration += 1; self.bridgeExited=false; self.runtimePID=0; self.sessionId=""
                     self.installBridgeCallbacks(self.bridge,generation:self.bridgeGeneration)
                     let section=self.management.section; self.state=BodyState(); self.management=ManagementState(); self.management.select(section)
-                    try self.bridge.start(node:node,script:script,arguments:["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path],bootstrap:bootstrap)
+                    var arguments=["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path]
+                    if let pluginFile { arguments += ["--plugin-file",pluginFile.path] }
+                    try self.bridge.start(node:node,script:script,arguments:arguments,bootstrap:bootstrap)
                     self.attachedRevision=snapshot.revision; self.render()
-                } catch { self.bridgeExited=true; self.modelBusy=false; self.modelFailure(error) }
+                } catch { self.bridgeExited=true; self.modelBusy=false; self.pluginApplying=false; self.modelFailure(error) }
             }
         }
     }
@@ -289,7 +338,9 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         switch event["event"] as? String {
         case "ready":
             if let generation=event["permissionGeneration"] as? String,let companion=memorySnapshot?.companionId {permissions.attach(generation:generation,companionID:companion);operations.attach(generation);voice.attach(generation:generation,companion:companion)}
-            modelBusy=false; activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
+            modelBusy=false; pluginApplying=false; pluginActive=(event["plugins"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-compatible-plugin"} == true
+            pluginStatus = pluginActive ? "Demonstration plugin is mounted. Wisp still asks before each action." : (pluginSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Demonstration plugin is not installed.")
+            activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
         case "testing": if operations.start(event) {modelTesting=true;render()}
         case "connection-test": if operations.verifiedConnection(event) {modelStatus="Connection verified by a completed response.";render()}
         case "tested": if operations.finish(event) {modelTesting=false;render()}
@@ -299,7 +350,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             do {try permissions.receive(PermissionRequest(event));voice.approval(pending:true);if permissionWindow == nil {permissionWindow=PermissionWindow(owner:self)};permissionWindow?.refresh(present:true)} catch {invalidatePermissions();bridge.stop();unavailable()}
         case "approval-closed":
             if !permissions.generation.isEmpty {do {try permissions.closed(event);voice.approval(pending:!permissions.requests.isEmpty);permissionWindow?.refresh()}catch {invalidatePermissions();bridge.stop();unavailable()}}
-        case "unavailable": modelBusy=false; modelTesting=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; clearStage(); unavailable()
+        case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; clearStage(); unavailable()
         default: break
         }
         if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}

@@ -23,5 +23,6 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/body-bridge.test.mjs \
   desktop/tests/permission-protocol.test.mjs \
   desktop/tests/reasoning-config.test.mjs \
-  desktop/tests/memory-context.test.mjs
+  desktop/tests/memory-context.test.mjs \
+  desktop/tests/plugin-config.test.mjs
 python3 tools/identity.py --self-test --repo "$root"

@@ -10,4 +10,8 @@ func managementStateTests() throws {
     state.refresh(.stopped); state.refresh(.unavailable); state.select(.models)
     try check(state.lifecycle == .stopping && !state.canNavigate && state.section == .memory, "stop is terminal")
     try check(ManagementSection.allCases.count == 11, "complete navigation")
+    var plugins = ManagementState(); plugins.select(.plugins)
+    try check(!plugins.description.contains("has not queried an installed plugin inventory") && plugins.description.contains("closed local catalog"), "plugins inventory-backed")
+    plugins.select(.permissions)
+    try check(!plugins.description.contains("Allow Always") && plugins.description.contains("Allow Once") && plugins.description.contains("mounted compatible plugin"), "permissions still ask after plugin mount")
 }

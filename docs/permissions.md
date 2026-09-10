@@ -17,14 +17,14 @@ Cancellation and teardown revoke pending/unused grants before disposing agents a
 | Route | Slice 06 status | Required before future admission |
 | --- | --- | --- |
 | Direct | Developer-only real registry fixture proved; no general tools | Each action's destination and deny/cancel/allow effect contract |
-| Local Cordis plugin | One loader-mounted developer fixture proved | Installation/reload provenance and startup side-effect review in 10 |
+| Local Cordis plugin | One Wisp-authored demonstration (`wisp-compatible-plugin` / `wisp_compatible_check`) can be mounted from Settings → Plugins via overlay insert + restart. Installation is not Allow Once. The 06 developer fixture remains `--developer` only | Classifier + admission adapter; unknown/third-party/MCP/skill plugins stay unavailable (11/12) |
 | MCP | Not registered or executable | Real server tools/call, identity/generation, reconnect and credential endpoint tests in 11 |
 | Skills | Invocation/discovery disabled | Real registry load/invoke and subsequent gated actions in 12 |
 | In-process spawn/fork | Developer fixture proves both actual child policies and cancellation | General delegation disabled; consequential child asks retain upstream `never`; no parent grant transfer |
 | External children | Disabled | Process-boundary ownership, credentials, approvals and cancellation proof |
 | Nested/PTC, stock shell/filesystem/web/jobs/workflows/goals | Disabled | Actual dispatch lineage and guarded effect proof before availability |
 
-Cordis is not an OS sandbox. Arbitrary executable plugins can run code outside tool bodies, so installation cannot itself establish safety. A future credential-bearing action requires opaque references, explicit endpoint binding and safe complete rendering; secret-bearing argument strings are not an admitted shortcut.
+Cordis is not an OS sandbox. Arbitrary executable plugins can run code outside tool bodies, so installation cannot itself establish safety. Slice 10 admits only the covered demonstration path after static classification; Install confirmation is not a grant. A future credential-bearing action requires opaque references, explicit endpoint binding and safe complete rendering; secret-bearing argument strings are not an admitted shortcut.
 
 ## Development proof
 

@@ -6,6 +6,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     private var memoryEditor: MemoryEditorView!
     private var voiceEditor:VoiceView!
     private var modelsEditor: ModelsView!
+    private var pluginsEditor: PluginsView!
     private let navigation = NSTableView()
     private let heading = NSTextField(labelWithString: "General")
     private let detail = NSTextField(wrappingLabelWithString: "")
@@ -31,11 +32,12 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         memoryEditor = MemoryEditorView(owner: owner)
         modelsEditor = ModelsView(owner: owner)
         voiceEditor = VoiceView(owner:owner)
-        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
+        pluginsEditor = PluginsView(owner: owner)
+        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,pluginsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
         for view in [scroll,content] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: root.leadingAnchor,constant: 12), scroll.topAnchor.constraint(equalTo: root.topAnchor,constant: 14), scroll.bottomAnchor.constraint(equalTo: root.bottomAnchor,constant: -14), scroll.widthAnchor.constraint(equalToConstant: 180),
-            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
+            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
         ])
         refresh(owner.management)
     }
@@ -56,6 +58,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         chooseButton.isEnabled = companion?.homeBusy == false
         voiceEditor.isHidden = state.section != .voice;voiceEditor.refresh()
         modelsEditor.isHidden = state.section != .models; modelsEditor.refresh()
+        pluginsEditor.isHidden = state.section != .plugins; pluginsEditor.refresh()
         memoryEditor.isHidden = state.section != .memory; memoryEditor.refresh()
         showButton.isHidden = state.section != .general; showButton.isEnabled = state.canShowCompanion
         navigation.isEnabled = state.canNavigate
@@ -65,7 +68,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         NSApp.activate(ignoringOtherApps: true)
         window?.makeKeyAndOrderFront(nil); window?.makeFirstResponder(navigation)
     }
-    func allowQuit() -> Bool { memoryEditor.allowQuit() && modelsEditor.allowQuit() }
+    func allowQuit() -> Bool { memoryEditor.allowQuit() && modelsEditor.allowQuit() && pluginsEditor.allowQuit() }
     @objc private func chooseFolder() {
         guard let window else { return }
         let panel = NSOpenPanel(); panel.canChooseDirectories = true; panel.canChooseFiles = false; panel.allowsMultipleSelection = false; panel.resolvesAliases = false

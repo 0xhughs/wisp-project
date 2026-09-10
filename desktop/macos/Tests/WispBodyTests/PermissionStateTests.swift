@@ -28,6 +28,11 @@ func permissionStateTests() throws {
     var rejected=0
     for mutation in ["extra","version","boolean","destination","generation","arguments"] {var frame=request();switch mutation {case "version":frame[mutation]=2;case "boolean":frame["version"]=true;case "destination":frame[mutation]="hidden\u{202e}target";case "generation":frame[mutation]="wrong";case "arguments":frame[mutation]=["label":"unsafe\n"];default:frame[mutation]=true};do {_=try PermissionRequest(frame)}catch{rejected+=1}}
     try check(rejected==6,"malformed scope rejected")
+    var rejectedPair=false
+    do {_=try PermissionRequest(["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call1","rootCallId":"call1","actionDigest":String(repeating:"a",count:64),"turn":1,"toolName":"wisp_compatible_check","source":"wisp-direct","revision":"1","arguments":["label":"verification"],"operation":"append-test-record","destination":"/isolated/ledger","fields":[["label":"Label","value":"verification"]]]); rejectedPair=false} catch {rejectedPair=true}
+    try check(rejectedPair,"compatible tool with the wrong source is refused")
+    let compatible=try PermissionRequest(["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call1","rootCallId":"call1","actionDigest":String(repeating:"a",count:64),"turn":1,"toolName":"wisp_compatible_check","source":"wisp-compatible-plugin","revision":"1","arguments":["label":"verification"],"operation":"append-test-record","destination":"/isolated/ledger","fields":[["label":"Label","value":"verification"],["label":"Plugin note","value":"lab_1"]]] )
+    try check(compatible.summary.contains("Compatible plugin check") && compatible.summary.contains("lab_1") && !compatible.summary.contains("Allow Always"), "compatible plugin still uses Allow Once")
     for _ in 0..<8 {try state.receive(PermissionRequest(request()))}
     do {try state.receive(PermissionRequest(request()));throw PermissionFailure.invalid}catch PermissionFailure.overflow {}
     state.invalidate();try check(state.requests.isEmpty&&state.deciding.isEmpty,"invalidate revokes all")

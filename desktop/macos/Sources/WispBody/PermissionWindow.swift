@@ -59,7 +59,11 @@ final class PermissionWindow:NSWindowController,NSWindowDelegate {
         guard let state=companion?.permissions else{return}
         let next=state.requests.map(\.requestID)
         if ids != next {
-            ids=next;choices.removeAllItems();choices.addItems(withTitles:state.requests.enumerated().map{"Request \($0.offset+1) — \($0.element.source == "wisp-direct" ? "Wisp check":"Local plugin check")"})
+            ids=next;choices.removeAllItems();choices.addItems(withTitles:state.requests.enumerated().map{
+                let source=$0.element.source
+                let label=source == "wisp-direct" ? "Wisp check" : source == "wisp-compatible-plugin" ? "Compatible plugin check" : "Local plugin check"
+                return "Request \($0.offset+1) — \(label)"
+            })
             if !ids.contains(selected) {selected=ids.first ?? ""}
             if let index=ids.firstIndex(of:selected){choices.selectItem(at:index)}
         }

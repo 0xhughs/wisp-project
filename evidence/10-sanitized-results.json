@@ -1,0 +1,12 @@
+{
+  "dispatch": "10-build-064",
+  "linuxJsTests": "48/48",
+  "contractIdentity": "7f1000a6a82ea105753ba332957e871dd1b8a10e8ebcce7e9321404cd8ad1636",
+  "pin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
+  "pluginOverlayRuntime": "not-run",
+  "pluginOverlayRuntimeGap": "missing-external-resource",
+  "nativeChecks": "uncompiled",
+  "nativeChecksGap": "missing-platform",
+  "slice07Shipped": false,
+  "deepSeekCall": 0
+}

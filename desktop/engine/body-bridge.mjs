@@ -3,6 +3,8 @@ import { productFiles } from './prepare-product.mjs';
 import { validateDecision, validateRequest } from './permission-protocol.mjs';
 import { bootstrap, profileFor } from './reasoning-config.mjs';
 import { readSnapshot } from './memory-schema.mjs';
+import { composeOverlay } from './plugin-overlay.mjs';
+import { readPluginSnapshot, defaultPluginSnapshot, pluginInventory } from './plugin-config.mjs';
 import { Client, completedTurn } from '../../spike/client.mjs';
 import { PIN, environment } from '../../spike/prepare.mjs';
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, realpathSync, existsSync } from 'node:fs';
@@ -36,7 +38,7 @@ export function denyApproval(descriptor) {
 export async function run(argv) {
   const options = {};
   for (let i=0;i<argv.length;i+=2) {
-    if (!['--runtime-root','--scratch','--developer','--memory-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
+    if (!['--runtime-root','--scratch','--developer','--memory-file','--plugin-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
     options[argv[i]]=argv[i+1];
   }
   const send = value => { if (!process.stdout.destroyed) process.stdout.write(JSON.stringify(value)+'\n'); };
@@ -162,6 +164,7 @@ export async function run(argv) {
     if (!existsSync(join(scratch,'.wisp-owned'))) throw new Error('BODY_ROOT');
     const home=mkdtempSync(join(scratch,'body-')); mkdirSync(join(home,'workspace'),{mode:0o700}); mkdirSync(join(home,'dsh-home'),{mode:0o700}); mkdirSync(join(home,'tmp'),{mode:0o700});
     memory=readSnapshot(options['--memory-file']);
+    const plugin=options['--plugin-file']?readPluginSnapshot(options['--plugin-file']):defaultPluginSnapshot();
     let launch=await incoming; clearTimeout(bootstrapTimer); if(ending)return;
     voiceProvider=launch.configuration.selected;
     const route=profileFor(launch.configuration);
@@ -169,11 +172,16 @@ export async function run(argv) {
     writeFileSync(join(home,'dsh-home/settings.yaml'),JSON.stringify(settings),{mode:0o600});
     const patch=join(home,'wisp.patch.yml');
     const memoryPlugin=join(dirname(fileURLToPath(import.meta.url)),'memory-context.mjs');
-    // A JSON flow mapping is YAML data; user strings never form patch syntax.
-    const memoryPatch='\n- insert:\n    - '+JSON.stringify({id:'wisp-memory',name:memoryPlugin,inject:['systemPrompt'],config:memory})+'\n';
-    writeFileSync(patch,readFileSync(join(product,'product.patch.yml'),'utf8').replace('__WISP_PRODUCT_ADAPTER__',JSON.stringify(join(up,'wisp-product/engine/product-sdk.ts')))+memoryPatch+(options['--developer']==='true'?'\n- insert:\n    - '+JSON.stringify({id:'wisp-local-permission-plugin',name:join(up,'wisp-product/engine/local-permission-plugin.ts'),inject:['tools','wispPermissions']})+'\n':''),{mode:0o600});
+    writeFileSync(patch,composeOverlay({
+      basePatch:readFileSync(join(product,'product.patch.yml'),'utf8'),
+      adapterPath:join(up,'wisp-product/engine/product-sdk.ts'),
+      memoryPath:memoryPlugin,
+      memoryConfig:memory,
+      developerPath:options['--developer']==='true'?join(up,'wisp-product/engine/local-permission-plugin.ts'):null,
+      compatible:plugin.enabled?{path:join(up,'wisp-product/engine/compatible-plugin.ts'),config:plugin.config,snapshot:plugin}:null,
+    }),{mode:0o600});
     ledger=join(home,'ledger.jsonl');
-    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
+    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,WISP_PLUGIN_SNAPSHOT:JSON.stringify({version:plugin.version,catalogId:plugin.catalogId,enabled:plugin.enabled,config:plugin.config,revision:plugin.revision}),...(plugin.enabled?{WISP_COMPATIBLE_LEDGER:join(home,'ledger.compatible.jsonl')}:{}),...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
     launch=undefined;
     client=new Client(m.node,['--import',m.tsx,join(up,'apps/cli/src/bin.ts'),'--profile','sdk','--patch',patch],{cwd:join(home,'workspace'),env});
     delete env.WISP_REASONING_CLOUD_KEY;
@@ -185,7 +193,10 @@ export async function run(argv) {
     },20);
     await client.request('initialize',{cwd:join(home,'workspace'),provider:route.provider,model:route.model});
     if (ending) return;
-    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,observation:client.observe()});
+    const notified=client.frames.find(f=>f.method==='wisp.inventory')?.params;
+    const inventory=pluginInventory({snapshot:plugin,tools:notified?.tools,transport:notified?.transport||'stdio'});
+    if(JSON.stringify(notified?.plugins)!==JSON.stringify(inventory.plugins))throw Error('WISP_INVENTORY');
+    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,plugins:inventory.plugins,pluginRevision:plugin.revision,observation:client.observe()});
   } catch (error) { await fail(error); }
 }
 if (process.argv[1] && resolve(process.argv[1])===fileURLToPath(import.meta.url)) run(process.argv.slice(2)).catch(()=>{process.exitCode=1;});
