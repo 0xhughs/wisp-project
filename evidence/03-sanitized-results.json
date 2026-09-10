@@ -1,0 +1,254 @@
+{
+  "dispatch": "03-build-020",
+  "platform": {
+    "macOS": "26.5.2",
+    "build": "25F84",
+    "sdk": "26.5",
+    "swift": "6.3.3",
+    "architecture": "arm64",
+    "displayPoints": [
+      3440,
+      1440
+    ],
+    "scale": 1,
+    "reduceMotionChanged": false
+  },
+  "nativeAssertions": "passed",
+  "javascriptTests": {
+    "passed": 12,
+    "failed": 0
+  },
+  "shellScenarios": {
+    "shell-final": {
+      "passed": true,
+      "checks": {
+        "exitZero": true,
+        "cleanup": true,
+        "noForcedStop": true,
+        "bodyNeverKey": true,
+        "oneStatus": true,
+        "oneSettings": true,
+        "voiceNeverReady": true,
+        "settingsOpened": true,
+        "twoDistinctTurns": true,
+        "sameIdentity": true,
+        "recreated": true,
+        "allSections": true,
+        "sameWindow": true,
+        "closed": true
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    "shell-bridge-loss": {
+      "passed": true,
+      "checks": {
+        "exitZero": true,
+        "cleanup": true,
+        "noForcedStop": true,
+        "bodyNeverKey": true,
+        "oneStatus": true,
+        "oneSettings": true,
+        "voiceNeverReady": true,
+        "settingsOpened": true,
+        "faultInjected": true,
+        "unavailable": true,
+        "noRestart": true
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    "shell-engine-failure": {
+      "passed": true,
+      "checks": {
+        "exitZero": true,
+        "cleanup": true,
+        "noForcedStop": true,
+        "bodyNeverKey": true,
+        "oneStatus": true,
+        "oneSettings": true,
+        "voiceNeverReady": true,
+        "settingsOpened": true,
+        "faultInjected": true,
+        "unavailable": true,
+        "noRestart": true
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    "shell-missing-config": {
+      "passed": true,
+      "checks": {
+        "exitZero": true,
+        "cleanup": true,
+        "noForcedStop": true,
+        "bodyNeverKey": true,
+        "oneStatus": true,
+        "oneSettings": true,
+        "voiceNeverReady": true,
+        "settingsOpened": true,
+        "noEngine": true
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    "shell-repeat": {
+      "passed": true,
+      "checks": {
+        "exitZero": true,
+        "cleanup": true,
+        "noForcedStop": true,
+        "bodyNeverKey": true,
+        "oneStatus": true,
+        "oneSettings": true,
+        "voiceNeverReady": true,
+        "settingsOpened": true
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  },
+  "bodyRegression": [
+    {
+      "scenario": "normal",
+      "noOrphans": true,
+      "unavailable": null,
+      "exit": null,
+      "sameSession": true,
+      "distinctTurns": true
+    },
+    {
+      "scenario": "native-signal",
+      "noOrphans": true,
+      "unavailable": null,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    },
+    {
+      "scenario": "native-kill",
+      "noOrphans": true,
+      "unavailable": null,
+      "exit": {
+        "code": null,
+        "signal": "SIGKILL"
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    },
+    {
+      "scenario": "bridge-signal",
+      "noOrphans": true,
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    },
+    {
+      "scenario": "bridge-kill",
+      "noOrphans": true,
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    },
+    {
+      "scenario": "engine-kill",
+      "noOrphans": true,
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    },
+    {
+      "scenario": "startup-failure",
+      "noOrphans": null,
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sameSession": null,
+      "distinctTurns": null
+    }
+  ],
+  "resources": {
+    "settingsWindowIdentities": 1,
+    "statusItems": [
+      1
+    ],
+    "appWindowsObserved": [
+      2,
+      3,
+      4
+    ],
+    "ownerObservers": [
+      2
+    ],
+    "signalSources": [
+      2
+    ],
+    "liveBodyViews": [
+      1
+    ],
+    "bodyWindows": [
+      1
+    ],
+    "activeBodyTimers": [
+      0,
+      1
+    ],
+    "settingsCloseEvents": 11,
+    "settingsOpenEvents": 15,
+    "minimizedObserved": true
+  },
+  "manualGui": {
+    "allDestinationsPointer": true,
+    "arrowKeyboardNavigation": true,
+    "statusMenuSectionJumps": true,
+    "actualStatusMenuQuitEveryCase": true,
+    "closeReopenStressCycles": 10,
+    "showCompanion": true,
+    "minimumSize": [
+      620,
+      440
+    ],
+    "independentDesktopClicks": 5,
+    "independentFullscreenClicks": 1,
+    "scrollOffsets": [
+      240,
+      480
+    ],
+    "fixedTypingRetained": true,
+    "opaqueDragDisplacement": [
+      100,
+      -100
+    ],
+    "menuDismissRetainsTargetFocus": true,
+    "launchRetainsTargetFocus": true,
+    "fullScreenSpace": true,
+    "popupScreenshotAvailable": false
+  }
+}

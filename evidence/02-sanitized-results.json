@@ -1,0 +1,405 @@
+{
+  "dispatch": "02-build-016",
+  "nativeAssertions": "passed",
+  "bridgeTests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "runtimeCases": [
+    {
+      "scenario": "normal",
+      "sameController": true,
+      "sameSession": true,
+      "sameRuntime": true,
+      "distinctTurns": true,
+      "turns": [
+        {
+          "bodyGeneration": 1,
+          "bridgePID": 78531,
+          "controller": "2D86B773-F250-4F43-82AA-8EF54F83055E",
+          "effects": 0,
+          "event": "smoke",
+          "eventCount": 14,
+          "nonemptyText": true,
+          "observation": {
+            "browserProcesses": 0,
+            "ownedProcesses": 2,
+            "tcpListeners": 0
+          },
+          "pid": 78536,
+          "runtimePID": 78536,
+          "sessionId": "wisp-d1a4b259-8751-4064-99cb-dace072c5361",
+          "state": "idle",
+          "turn": 1
+        },
+        {
+          "bodyGeneration": 2,
+          "bridgePID": 78531,
+          "controller": "2D86B773-F250-4F43-82AA-8EF54F83055E",
+          "effects": 0,
+          "event": "smoke",
+          "eventCount": 8,
+          "nonemptyText": true,
+          "observation": {
+            "browserProcesses": 0,
+            "ownedProcesses": 2,
+            "tcpListeners": 0
+          },
+          "pid": 78536,
+          "runtimePID": 78536,
+          "sessionId": "wisp-d1a4b259-8751-4064-99cb-dace072c5361",
+          "state": "idle",
+          "turn": 2
+        }
+      ],
+      "stalePresentationCleared": true,
+      "hiddenAnimationPaused": true,
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 2,
+        "bridgePID": 78531,
+        "clean": true,
+        "controller": "2D86B773-F250-4F43-82AA-8EF54F83055E",
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "eof",
+        "runtimePID": 78536,
+        "sessionId": "wisp-d1a4b259-8751-4064-99cb-dace072c5361",
+        "state": "stopped"
+      }
+    },
+    {
+      "scenario": "native-signal",
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "bridgePID": 78556,
+        "clean": true,
+        "controller": "AC1AEB30-4D8C-4745-94AE-659D294393C4",
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "eof",
+        "runtimePID": 78561,
+        "sessionId": "wisp-a5bb0d16-ec40-4049-add2-05ae73f26308",
+        "state": "stopped"
+      }
+    },
+    {
+      "scenario": "native-kill",
+      "exit": {
+        "code": null,
+        "signal": "SIGKILL"
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "nativePipeEOF": true,
+        "forcedTestSignal": true
+      }
+    },
+    {
+      "scenario": "bridge-signal",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "bridgePID": 78583,
+        "clean": true,
+        "controller": "0175F136-7A21-4D4D-8C49-99129582E723",
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "signal",
+        "runtimePID": 78588,
+        "sessionId": "wisp-b5e94696-f918-4570-abeb-693b3e17c317",
+        "state": "listening"
+      }
+    },
+    {
+      "scenario": "bridge-kill",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "nativePipeEOF": true,
+        "forcedTestSignal": true
+      }
+    },
+    {
+      "scenario": "engine-kill",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "bridgePID": 78608,
+        "clean": false,
+        "controller": "D2787D86-D0E8-4963-937F-7BD74ED24AE1",
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "failure",
+        "runtimePID": 78613,
+        "sessionId": "wisp-4fdc75e2-41dc-499c-a155-6e9f95e1e0b2",
+        "state": "unavailable"
+      }
+    },
+    {
+      "scenario": "startup-failure",
+      "unavailable": true,
+      "noRuntime": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "gui": {
+    "method": "test-only global CGEvent HID posting; never app-targeted delivery",
+    "display": {
+      "pixels": [
+        3440,
+        1440
+      ],
+      "scale": 1,
+      "count": 1
+    },
+    "host": {
+      "os": "macOS26.5.2 build25F84",
+      "swift": "6.3.3",
+      "machine": "Mac16,11",
+      "memoryGiB": 24
+    },
+    "finalTarget": [
+      {
+        "event": "ready",
+        "pid": 78639,
+        "scale": 1,
+        "screenHeight": 1440,
+        "window": 8293
+      },
+      {
+        "clicks": 0,
+        "event": "target",
+        "key": true,
+        "scroll": 0,
+        "text": "wisp-test"
+      },
+      {
+        "clicks": 1,
+        "event": "target",
+        "key": true,
+        "screenX": 580,
+        "screenY": 462,
+        "scroll": 0,
+        "text": "wisp-test"
+      },
+      {
+        "clicks": 2,
+        "event": "target",
+        "key": true,
+        "screenX": 505,
+        "screenY": 405,
+        "scroll": 0,
+        "text": "wisp-test"
+      },
+      {
+        "clicks": 2,
+        "event": "target",
+        "key": true,
+        "scroll": 240,
+        "text": "wisp-test"
+      }
+    ],
+    "afterFortyViewReplacements": {
+      "activeTimers": 1,
+      "animation": true,
+      "bodyGeneration": 41,
+      "bodyWindows": 1,
+      "bridgePID": 78644,
+      "controller": "52FAB14D-9C14-4DE2-A532-49F61B3AA8A0",
+      "event": "status",
+      "frame": [
+        500,
+        400,
+        160,
+        160
+      ],
+      "key": false,
+      "level": 3,
+      "liveViews": 1,
+      "opaque": false,
+      "reduceMotion": false,
+      "runtimePID": 78649,
+      "screens": [
+        {
+          "frame": [
+            0,
+            0,
+            3440,
+            1440
+          ],
+          "scale": 1
+        }
+      ],
+      "sessionId": "wisp-537834a9-cbdb-4d9b-b409-842fd4a390d4",
+      "shadow": false,
+      "state": "idle",
+      "visible": true
+    },
+    "renderedAlpha": {
+      "bodyGeneration": 41,
+      "bridgePID": 78644,
+      "controller": "52FAB14D-9C14-4DE2-A532-49F61B3AA8A0",
+      "cornerAlpha": 0,
+      "event": "raster",
+      "gapAlpha": 0,
+      "runtimePID": 78649,
+      "sessionId": "wisp-537834a9-cbdb-4d9b-b409-842fd4a390d4",
+      "state": "idle"
+    },
+    "finalDrag": {
+      "activeTimers": 1,
+      "animation": true,
+      "bodyGeneration": 41,
+      "bodyWindows": 1,
+      "bridgePID": 78644,
+      "controller": "52FAB14D-9C14-4DE2-A532-49F61B3AA8A0",
+      "event": "drag",
+      "frame": [
+        600,
+        400,
+        160,
+        160
+      ],
+      "key": false,
+      "level": 3,
+      "liveViews": 1,
+      "opaque": false,
+      "reduceMotion": false,
+      "runtimePID": 78649,
+      "screens": [
+        {
+          "frame": [
+            0,
+            0,
+            3440,
+            1440
+          ],
+          "scale": 1
+        }
+      ],
+      "sessionId": "wisp-537834a9-cbdb-4d9b-b409-842fd4a390d4",
+      "shadow": false,
+      "state": "idle",
+      "visible": true
+    },
+    "hidden": {
+      "activeTimers": 0,
+      "animation": false,
+      "bodyGeneration": 41,
+      "bodyWindows": 1,
+      "bridgePID": 78644,
+      "controller": "52FAB14D-9C14-4DE2-A532-49F61B3AA8A0",
+      "event": "hidden",
+      "frame": [
+        600,
+        400,
+        160,
+        160
+      ],
+      "key": false,
+      "level": 3,
+      "liveViews": 1,
+      "opaque": false,
+      "reduceMotion": false,
+      "runtimePID": 78649,
+      "screens": [
+        {
+          "frame": [
+            0,
+            0,
+            3440,
+            1440
+          ],
+          "scale": 1
+        }
+      ],
+      "sessionId": "wisp-537834a9-cbdb-4d9b-b409-842fd4a390d4",
+      "shadow": false,
+      "state": "idle",
+      "visible": false
+    },
+    "reduceMotion": {
+      "initial": false,
+      "enabledNativeAnimation": false,
+      "restored": false,
+      "restoredNativeAnimation": true
+    },
+    "fullscreen": "owned target full-screen Space entered/exited; Wisp onscreen level3; global gap click delivered"
+  },
+  "resources": {
+    "method": "ps PID %cpu RSS once per second; actual final native process after40 replacements",
+    "samples": [
+      {
+        "time": 1788902283.265236,
+        "pid": 78641,
+        "cpuPercent": 1.9,
+        "rssKiB": 48288
+      },
+      {
+        "time": 1788902284.276065,
+        "pid": 78641,
+        "cpuPercent": 2.3,
+        "rssKiB": 48288
+      },
+      {
+        "time": 1788902285.288616,
+        "pid": 78641,
+        "cpuPercent": 2.3,
+        "rssKiB": 48288
+      },
+      {
+        "time": 1788902286.3005319,
+        "pid": 78641,
+        "cpuPercent": 2.4,
+        "rssKiB": 48288
+      },
+      {
+        "time": 1788902287.3119922,
+        "pid": 78641,
+        "cpuPercent": 2.4,
+        "rssKiB": 48288
+      },
+      {
+        "time": 1788902288.3221781,
+        "pid": 78641,
+        "cpuPercent": 2.5,
+        "rssKiB": 48288
+      }
+    ],
+    "earlierIntervals": {
+      "idleSeconds": 12,
+      "hiddenSeconds": 8,
+      "simulatedSpeakingSeconds": 8
+    },
+    "sla": null
+  },
+  "limitations": [
+    "Only one physical display at1x; negative/vertical/removal geometry tested deterministically",
+    "CUA PNGs flatten alpha; separate actual rendered-raster alpha and global routing facts establish transparency",
+    "CLI installation lacks XCTest and Swift Testing; dependency-free same-source native assertion runner used",
+    "No signing/notarization/distribution, real voice, menu bar or Settings features in this slice"
+  ]
+}

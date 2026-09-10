@@ -1,0 +1,19 @@
+{
+  "_exampleOnly": "INVALID until replaced by authorized metadata; never put a real key here. run.mjs accepts only the approved route file digest.",
+  "provider": "wisp-spike",
+  "api": "openai-completions",
+  "baseURL": "http://127.0.0.1:11434/v1",
+  "model": "REPLACE_WITH_AUTHORIZED_MODEL",
+  "contextWindow": 8192,
+  "maxTokens": 1024,
+  "input": ["text"],
+  "reasoning": "off",
+  "reasoningEfforts": {"off": "none", "high": "high"},
+  "apiKeyEnv": "WISP_SPIKE_MODEL_KEY",
+  "credential": {"kind": "public-local-placeholder", "value": "ollama"},
+  "compat": {"maxTokensField": "max_tokens", "supportsStore": false, "supportsDeveloperRole": false, "supportsStrictMode": false, "supportsReasoningEffort": true, "supportsUsageInStreaming": true, "thinkingFormat": "openai"},
+  "modelDigest": "REPLACE_WITH_VERIFIED_DIGEST",
+  "runtimeVersion": "REPLACE_WITH_VERIFIED_VERSION",
+  "authorization": "REPLACE_WITH_EXPLICIT_AUTHORIZATION_REFERENCE",
+  "proof": "REPLACE_WITH_LOCAL_RESOURCE_PROOF_PATH"
+}

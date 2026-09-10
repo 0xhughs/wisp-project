@@ -1,0 +1,260 @@
+{
+  "slice": "04",
+  "build": "04-build-024",
+  "nativeAssertions": true,
+  "javascriptTests": {
+    "passed": 15,
+    "failed": 0
+  },
+  "actualSystemPrompt": {
+    "actualPinnedSystemPrompt": true,
+    "literalVariableValuePreserved": true,
+    "contextsSuppressed": true,
+    "noTools": true
+  },
+  "memoryRuntime": {
+    "fixedUserRequestsContainNoAnswer": true,
+    "samePersistentIdentity": true,
+    "newInternalSession": true,
+    "newRuntimeProcess": true,
+    "recoveredWithoutNewIdentity": true,
+    "deletedFactAbsentFromActualModelHeader": true,
+    "restoredFactPresentInActualModelHeader": true,
+    "literalTemplateInActualModelHeader": true,
+    "deletedFactRecallUnknown": true,
+    "restoredFactRecallExact": true,
+    "zeroRecallEffects": true,
+    "allMenuQuitCleanup": true
+  },
+  "security": {
+    "sameSupportRefused": true,
+    "sameHomeRefused": true,
+    "stagingRemoved": true,
+    "environmentCanaryAbsent": true,
+    "ownerDeathCleanedRuntime": true,
+    "crashRecoveryIdentityAndMemory": true,
+    "actualModelInputCanaryAbsent": true,
+    "corruptRefusedUnchanged": true,
+    "inaccessibleRefused": true,
+    "adversarialInstructionNoEffect": true,
+    "noAutomaticRawFailureFile": true,
+    "nativeDiagnosticsCanaryAbsent": true
+  },
+  "shell": {
+    "normal": {
+      "exitZero": true,
+      "cleanup": true,
+      "noForcedStop": true,
+      "bodyNeverKey": true,
+      "oneStatus": true,
+      "oneSettings": true,
+      "voiceNeverReady": true,
+      "settingsOpened": true,
+      "twoDistinctTurns": true,
+      "sameIdentity": true,
+      "recreated": true,
+      "allSections": true,
+      "sameWindow": true,
+      "closed": true
+    },
+    "bridge-loss": {
+      "exitZero": true,
+      "cleanup": true,
+      "noForcedStop": true,
+      "bodyNeverKey": true,
+      "oneStatus": true,
+      "oneSettings": true,
+      "voiceNeverReady": true,
+      "settingsOpened": true,
+      "faultInjected": true,
+      "unavailable": true,
+      "noRestart": true
+    },
+    "engine-failure": {
+      "exitZero": true,
+      "cleanup": true,
+      "noForcedStop": true,
+      "bodyNeverKey": true,
+      "oneStatus": true,
+      "oneSettings": true,
+      "voiceNeverReady": true,
+      "settingsOpened": true,
+      "faultInjected": true,
+      "unavailable": true,
+      "noRestart": true
+    },
+    "missing-config": {
+      "exitZero": true,
+      "cleanup": true,
+      "noForcedStop": true,
+      "bodyNeverKey": true,
+      "oneStatus": true,
+      "oneSettings": true,
+      "voiceNeverReady": true,
+      "settingsOpened": true,
+      "noEngine": true
+    },
+    "repeat": {
+      "exitZero": true,
+      "cleanup": true,
+      "noForcedStop": true,
+      "bodyNeverKey": true,
+      "oneStatus": true,
+      "oneSettings": true,
+      "voiceNeverReady": true,
+      "settingsOpened": true
+    }
+  },
+  "body": [
+    {
+      "scenario": "normal",
+      "sameController": true,
+      "sameSession": true,
+      "sameRuntime": true,
+      "distinctTurns": true,
+      "turns": [
+        {
+          "bodyGeneration": 1,
+          "effects": 0,
+          "event": "smoke",
+          "eventCount": 14,
+          "nonemptyText": true,
+          "observation": {
+            "browserProcesses": 0,
+            "ownedProcesses": 2,
+            "tcpListeners": 0
+          },
+          "state": "idle",
+          "turn": 1
+        },
+        {
+          "bodyGeneration": 2,
+          "effects": 0,
+          "event": "smoke",
+          "eventCount": 8,
+          "nonemptyText": true,
+          "observation": {
+            "browserProcesses": 0,
+            "ownedProcesses": 2,
+            "tcpListeners": 0
+          },
+          "state": "idle",
+          "turn": 2
+        }
+      ],
+      "stalePresentationCleared": true,
+      "hiddenAnimationPaused": true,
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 2,
+        "clean": true,
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "eof",
+        "state": "stopped"
+      }
+    },
+    {
+      "scenario": "native-signal",
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "clean": true,
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "eof",
+        "state": "stopped"
+      }
+    },
+    {
+      "scenario": "native-kill",
+      "exit": {
+        "code": null,
+        "signal": "SIGKILL"
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "nativePipeEOF": true,
+        "forcedTestSignal": true
+      }
+    },
+    {
+      "scenario": "bridge-signal",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "clean": true,
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "signal",
+        "state": "listening"
+      }
+    },
+    {
+      "scenario": "bridge-kill",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "nativePipeEOF": true,
+        "forcedTestSignal": true
+      }
+    },
+    {
+      "scenario": "engine-kill",
+      "unavailable": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "noOrphans": true,
+      "cleanup": {
+        "bodyGeneration": 1,
+        "clean": false,
+        "event": "stopped",
+        "noOrphan": true,
+        "reason": "failure",
+        "state": "unavailable"
+      }
+    },
+    {
+      "scenario": "startup-failure",
+      "unavailable": true,
+      "noRuntime": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      }
+    }
+  ],
+  "gui": {
+    "chooserCancelNoPointer": true,
+    "allFourCategoriesCRUD": true,
+    "deleteCancelKeptEntry": true,
+    "confirmedDeleteRemovedEntry": true,
+    "draftRetainedAcrossNavigationAndClose": true,
+    "externalConflictDraftKept": true,
+    "invalidFilePreserved": true,
+    "unicodeClipboardRoundTrip": true,
+    "tabShiftTabAndSpaceSave": true,
+    "scrollObserved": true,
+    "sameHomeMovedRecovery": true,
+    "unavailableHomeHonestLifecycle": true,
+    "pendingNextLaunchVisible": true,
+    "crossAppClickScrollTypingAndBodyDrag": true
+  },
+  "finalExecutableSHA256": "5f49a7070216ec33d00350df5b7ab06c750971572ff5a5aaeaad34609114f80b",
+  "applicability": "Body and shell regressions preceded only the final no-bridge memory-error transition to Unavailable. Final binary directly proved unavailable/recovery, negative/positive real recall, and full memory-security suite. Focus editor, body, bridge/plugin, and shell source were unchanged by that transition."
+}

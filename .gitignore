@@ -1,0 +1,20 @@
+# Local credentials; keep documented, nonsecret examples eligible for review.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+*.keychain
+*.keychain-db
+
+# Dependency caches and generated native products, not source or proof records.
+node_modules/
+.build/
+DerivedData/
+*.app/
+*.dSYM/

@@ -9,10 +9,10 @@ Current release boundary: full macOS first release, selected by the user. Includ
 People who want a spoken desktop companion without a chat application. Normal users manage friendly Connections and local/cloud model choices; advanced users can configure custom MCP servers and compatible engine capabilities.
 
 ## Loop target
-Selected target: Full macOS first release — slices 01–14. Stop only after each included slice is independently accepted and all macOS release gates pass. Slice 01 is the first milestone, not the loop stopping point. This turn prepares the pack; execution has not been requested or started. After a run is authorized, inside-target Later entries become successive Now slices; outside-target work never starts automatically.
+Selected target: Full macOS first release — slices 01–14. Stop only after each included slice is independently accepted and all macOS release gates pass. Slice 01 is the first milestone, not the loop stopping point. Execution authorized by the user on 2026-09-06. During this run, inside-target Later entries become successive Now slices; outside-target work never starts automatically.
 
 ## Run status
-Prepared
+Running
 
 ## Open decisions
 - Runtime source is confirmed below. Its Wisp integration, dependency/distribution constraints and approval bridge still require execution evidence; source inspection is not a passed feasibility test.
@@ -42,28 +42,26 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Pending finalization; no implementation or review has occurred.
+Finalization pending.01–06 independentlyaccepted/archived.07 amendedplan051approved; build10 implements local/DeepSeekvoice, actualhuman local/cloudreplies andOptionSpacestop evidenced, checks passed. Full07implementationapproval pending actualsafety/permission/lifecycle gates; participant unavailable. Alltestapps/workersstopped. SavedDeepSeekrestored; mostrecentattachKeychainfailure needsnormaluserapproval. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene, with all152stagedfileschecked. WIPpublication doesnotmean07accepted or releasecomplete. Covered07evidence retains failures and exactresume. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
 
 ## Shipped
-- (none)
-
-## Now
 ### 01 Hidden engine feasibility proof
 Goal: establish an evidenced, Wisp-owned boundary to the exact DeepSeek Harness source without exposing its interface.
 Provides: a repeatable headless integration spike, capability map, approval round trip and separation contract for later clients.
 Depends on: execution authorization; selected target and upstream source are identified above.
 Target membership: inside the selected macOS release target.
-Out: product UI, voice, model downloads, production credentials and computer control.
+Out: product UI, voice, product model-download flows (explicitly authorized external local test-resource provisioning is permitted for 01), production credentials and computer control.
 
-## Later
+
 ### 02 macOS desktop body
 Goal: a transparent always-on-top movable mascot that coexists with ordinary desktop use.
 Provides: idle transparent-area click-through, animation states, listening/speaking reactions and a Wisp-owned lifecycle.
 Depends on: 01; select framework after native-window feasibility evidence.
 Target membership: inside the selected macOS release target. Out: full skin catalog and Windows implementation.
+
 
 ### 03 Wisp management and menu-bar shell
 Goal: manage the same companion through Wisp-owned windows and quick controls.
@@ -89,12 +87,14 @@ Provides: clear scoped pre-execution confirmations for sending, deletion, purcha
 Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated sub-agents as those routes become available.
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
+## Now
 ### 07 Shortcut-to-voice agent loop
 Goal: wake, speak, reason and hear a response from the same companion.
 Provides: global shortcut → microphone → replaceable recognition → Harness agent/model → replaceable synthesis → speaker; synchronized mascot listening/speaking states, mute and recoverable voice failures.
 Depends on: 02–06. Prove permission requests use Wisp surfaces and no text-chat fallback is introduced.
 Target membership: inside the selected macOS release target. Out: optional wake word and proactive listening.
 
+## Later
 ### 08 Hardware-aware local-model onboarding
 Goal: guide users to local reasoning models that run comfortably alongside speech, or a cloud API key.
 Provides: RAM, CPU, GPU/VRAM, unified-memory and disk inspection as applicable; Faster, Recommended and Stronger choices; Ollama download/setup feedback; explain unavailable hardware readings and model-fit uncertainty.

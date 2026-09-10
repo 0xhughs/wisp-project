@@ -1,0 +1,228 @@
+{
+  "checkpoint": [
+    {
+      "event": "ready",
+      "pid": 76864,
+      "scale": 1,
+      "screenHeight": 1440,
+      "window": 8020
+    },
+    {
+      "clicks": 0,
+      "event": "target",
+      "key": true,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 1,
+      "event": "target",
+      "key": true,
+      "screenX": 505,
+      "screenY": 405,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 2,
+      "event": "target",
+      "key": true,
+      "screenX": 580,
+      "screenY": 462,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 2,
+      "event": "target",
+      "key": true,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 3,
+      "event": "target",
+      "key": true,
+      "screenX": 580,
+      "screenY": 462,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 4,
+      "event": "target",
+      "key": true,
+      "screenX": 505,
+      "screenY": 405,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 5,
+      "event": "target",
+      "key": true,
+      "screenX": 655,
+      "screenY": 555,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 6,
+      "event": "target",
+      "key": true,
+      "screenX": 505,
+      "screenY": 555,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 7,
+      "event": "target",
+      "key": true,
+      "screenX": 655,
+      "screenY": 405,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 8,
+      "event": "target",
+      "key": true,
+      "screenX": 535,
+      "screenY": 405,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 8,
+      "event": "target",
+      "key": true,
+      "scroll": 208,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 8,
+      "event": "target",
+      "key": true,
+      "scroll": 240,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 8,
+      "event": "target",
+      "key": true,
+      "scroll": 480,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 8,
+      "event": "target",
+      "key": true,
+      "scroll": 480,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 9,
+      "event": "target",
+      "key": true,
+      "screenX": 580,
+      "screenY": 462,
+      "scroll": 480,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 10,
+      "event": "target",
+      "key": true,
+      "screenX": 505,
+      "screenY": 405,
+      "scroll": 480,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 10,
+      "event": "target",
+      "key": true,
+      "scroll": 720,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 10,
+      "event": "target",
+      "key": true,
+      "scroll": 960,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 10,
+      "event": "target",
+      "key": true,
+      "scroll": 680,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 11,
+      "event": "target",
+      "key": true,
+      "screenX": 580,
+      "screenY": 462,
+      "scroll": 680,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 11,
+      "event": "target",
+      "key": true,
+      "scroll": 648,
+      "text": "wisp-testwisp-test"
+    },
+    {
+      "clicks": 11,
+      "event": "target",
+      "key": true,
+      "scroll": 680,
+      "text": "wisp-testwisp-test"
+    }
+  ],
+  "final": [
+    {
+      "event": "ready",
+      "pid": 78639,
+      "scale": 1,
+      "screenHeight": 1440,
+      "window": 8293
+    },
+    {
+      "clicks": 0,
+      "event": "target",
+      "key": true,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 1,
+      "event": "target",
+      "key": true,
+      "screenX": 580,
+      "screenY": 462,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 2,
+      "event": "target",
+      "key": true,
+      "screenX": 505,
+      "screenY": 405,
+      "scroll": 0,
+      "text": "wisp-test"
+    },
+    {
+      "clicks": 2,
+      "event": "target",
+      "key": true,
+      "scroll": 240,
+      "text": "wisp-test"
+    }
+  ]
+}

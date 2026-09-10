@@ -1,0 +1,117 @@
+{
+  "dispatch": "05-cloud-034",
+  "builderCloudAttempts": 3,
+  "builderCloudCompleted": 3,
+  "reviewerRemainingAttempts": 3,
+  "maxOutputTokensPerRequest": 1024,
+  "automaticRetries": 0,
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "productionKeychainRetrievalAfterRestart": true,
+  "keyReadOrExportedByAgent": false,
+  "sameCompanion": true,
+  "turns": [
+    {
+      "event": "recall",
+      "sessionId": "wisp-076b8e39-08d6-469e-84e5-4edfe2643981",
+      "turn": 1,
+      "nonemptyText": true,
+      "effects": 0,
+      "provider": "wisp-ollama",
+      "model": "qwen3:8b",
+      "controller": "9EF7DD5D-BAD7-4C3F-B2CE-9E7DB5209F75",
+      "companionId": "899e2b5d-dae8-44f8-b47f-4c50657e44c9",
+      "runtimePID": 97999,
+      "run": "run-1788976020199",
+      "generatedFactMatched": true
+    },
+    {
+      "event": "connection-test",
+      "sessionId": "wisp-a7def5d8-44da-4183-849d-3cfffcd90b29",
+      "turn": 1,
+      "nonemptyText": true,
+      "effects": 0,
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "controller": "9EF7DD5D-BAD7-4C3F-B2CE-9E7DB5209F75",
+      "companionId": "899e2b5d-dae8-44f8-b47f-4c50657e44c9",
+      "runtimePID": 98034,
+      "run": "run-1788976020199"
+    },
+    {
+      "event": "recall",
+      "sessionId": "wisp-a7def5d8-44da-4183-849d-3cfffcd90b29",
+      "turn": 2,
+      "nonemptyText": true,
+      "effects": 0,
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "controller": "9EF7DD5D-BAD7-4C3F-B2CE-9E7DB5209F75",
+      "companionId": "899e2b5d-dae8-44f8-b47f-4c50657e44c9",
+      "runtimePID": 98034,
+      "run": "run-1788976020199",
+      "generatedFactMatched": true
+    },
+    {
+      "event": "recall",
+      "sessionId": "wisp-de8bb415-a0c1-4eef-9ab3-8527e112b652",
+      "turn": 1,
+      "nonemptyText": true,
+      "effects": 0,
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro",
+      "controller": "4AB8BAAA-9345-4423-856A-E5B080FF3DF3",
+      "companionId": "899e2b5d-dae8-44f8-b47f-4c50657e44c9",
+      "runtimePID": 98112,
+      "run": "run-1788976446707",
+      "generatedFactMatched": true
+    },
+    {
+      "event": "recall",
+      "sessionId": "wisp-ec5523cb-8211-4155-8960-23c17a11325e",
+      "turn": 1,
+      "nonemptyText": true,
+      "effects": 0,
+      "provider": "wisp-ollama",
+      "model": "qwen3:8b",
+      "controller": "4AB8BAAA-9345-4423-856A-E5B080FF3DF3",
+      "companionId": "899e2b5d-dae8-44f8-b47f-4c50657e44c9",
+      "runtimePID": 98168,
+      "run": "run-1788976446707",
+      "generatedFactMatched": true
+    }
+  ],
+  "runs": [
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 5,
+      "completedTests": 1,
+      "recalls": 2,
+      "run": "../../work/wisp-05/cloud-live-033/run-1788976020199"
+    },
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 0,
+      "recalls": 2,
+      "run": "../../work/wisp-05/cloud-live-033/run-1788976446707"
+    }
+  ],
+  "returnedToLocal": true,
+  "allOwnedProcessesAbsent": true,
+  "binarySHA256": "5e698f316481c9539d69c072adca7b1f50e0ba67ecb5102a0534db51432363f7",
+  "sourceOrTestChanges": false,
+  "independentReview": "pending"
+}

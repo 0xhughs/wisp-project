@@ -1,0 +1,141 @@
+{
+  "dispatch": "04-repair-028",
+  "reviewStatus": "pending independent review",
+  "originalMoveProbeRecoveryRefused": true,
+  "repairedMoveProbeSameIdentity": true,
+  "nativeAssertionsPassed": true,
+  "ownershipScenarios": [
+    {
+      "location": "home",
+      "mutation": "unlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "replace",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "symlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "hardlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "mode",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "unlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "replace",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "symlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "hardlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "mode",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "liveMoveReselect": true,
+      "wrongIdentityAndCopiedInodeRefused": true,
+      "readsLoadsStagesSavesRestored": true,
+      "competingLockAttempts": 32,
+      "competingLockAcquired": 0,
+      "rivalRefusedBeforeAndAfter": true,
+      "ownerExitRecovery": true
+    }
+  ],
+  "actualEngineSecurity": {
+    "sameSupportRefused": true,
+    "sameHomeRefused": true,
+    "stagingRemoved": true,
+    "environmentCanaryAbsent": true,
+    "ownerDeathCleanedRuntime": true,
+    "crashRecoveryIdentityAndMemory": true,
+    "actualModelInputCanaryAbsent": true,
+    "lockReplacementNoSecondEngine": true,
+    "lockReplacementOwnerExitRecovery": true,
+    "corruptRefusedUnchanged": true,
+    "inaccessibleRefused": true,
+    "adversarialInstructionNoEffect": true,
+    "noAutomaticRawFailureFile": true,
+    "nativeDiagnosticsCanaryAbsent": true
+  },
+  "actualMovedHomeRival": {
+    "rivalBusyAfterLiveMove": true,
+    "rivalNeverStartedEngine": true,
+    "rivalCleanExit": true
+  },
+  "actualGUIAndModel": {
+    "staleReloadRefused": true,
+    "memoryUsableRestored": true,
+    "oneEngineAcrossLiveRecovery": true,
+    "sameRuntimeAndControllerAcrossRecovery": true,
+    "attachedRevisionUnchangedAcrossRecovery": true,
+    "postRecoveryDiskRevisionPending": true,
+    "sameUUIDAfterRestart": true,
+    "newInternalSessionAfterRestart": true,
+    "latestSavedRevisionAppliedAfterRestart": true,
+    "actualOldModelInputUnchanged": true,
+    "actualRestartInputContainsSavedFact": true,
+    "actualFixedRequestsContainNoAnswer": true,
+    "oldSnapshotRecallUnknown": true,
+    "newSnapshotRecallExact": true,
+    "recallsNoEffects": true,
+    "bothMenuQuitCleanup": true
+  },
+  "javascriptTestsPassed": 15,
+  "executableSHA256": "89a5d560344ea022f9e49b06cf21e52e643a7ebbda1b5554b6ad75fe8d6e1311",
+  "homeStoreSourceSHA256": "2f87052b564ab3c17b3676334aa89952f2fd5595874dbbddf91500fb311c6adb",
+  "applicability": "Only HomeStore product source changed. Final rebuilt executable directly proved actual live move/reselection, same-engine immutable snapshot, subsequent save, automatic restart/latest snapshot recall, rival engine exclusion and full14-gate security suite. Native complete and11 process scenarios include all026 safety regressions. Prior full shell/menu/long-scroll/body tests remain explicitly historical unchanged-source observations."
+}
