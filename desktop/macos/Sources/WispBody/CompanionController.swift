@@ -64,6 +64,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private var moveObserver:NSObjectProtocol?
     private var inputBuffer=Data()
     private var ending=false, bridgeExited=false
+    private(set) var lastStop: LastStopCategory = .none
     private var runtimePID:Int=0, sessionId=""
     private var generationCount=0
     private var developer:Bool { options["--developer"] == "true" }
@@ -127,7 +128,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if management.section == .skills { return skillDescription }
         if management.section == .pets { return petDescription }
         if management.section == .permissions { return permissionDescription }
-        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+skillDiagnostic+"\n"+petDiagnostic+"\n"+"Accessibility TCC: "+AccessibilityDriver.trustedStatus()+". Granting Accessibility is not Allow Once.\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
+        if management.section == .diagnostics { return diagnosticsText }
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -269,7 +270,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         current.onExit = { [weak self] code in
             guard let self,self.bridgeGeneration == generation else { return }
             self.voiceSession.engineStopped(); self.invalidatePermissions(); self.bridgeExited=true; self.modelTesting=false; self.activeModel=nil
-            if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
+            if self.ending {
+                if self.lastStop == .none { self.lastStop = .clean }
+                self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil)
+            }
             else if let next=self.restartAction {
                 self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
             } else { self.modelBusy=false; self.pluginApplying=false; self.pluginActive=false; self.connectionApplying=false; self.connectionActive=false; self.skillApplying=false; self.skillActive=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
@@ -436,10 +440,6 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let demo=rows.first{$0.kind == .demonstration}
         return "Mounted plugins: \(pluginActive ? 1 : 0). Demonstration: \(demo?.status.rawValue ?? "not installed"). Marketplace catalogs were not queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)."}.joined(separator:" ")
     }
-    private var pluginDiagnostic: String {
-        let demo=pluginCatalog.first{$0.kind == .demonstration}
-        return "Plugins: \(pluginActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed"). No plugin paths, raw errors or credentials."
-    }
     var connectionCatalog: [ConnectionCatalogRow] {
         ConnectionCatalog.rows(snapshot:connectionSnapshot ?? ConnectionSnapshot(configuration:ConnectionConfiguration(),revision:""),applying:connectionApplying,active:connectionActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable)
     }
@@ -447,10 +447,6 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let rows=connectionCatalog
         let demo=rows.first{$0.kind == .demonstration}
         return "Mounted connections: \(connectionActive ? 1 : 0). Demonstration: \(demo?.status.rawValue ?? "not installed"). Named services were not queried. Plugin-delivered Connections remain unavailable; use this Connections page. Connection save is not a grant.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)."}.joined(separator:" ")
-    }
-    private var connectionDiagnostic: String {
-        let demo=connectionCatalog.first{$0.kind == .demonstration}
-        return "Connections: \(connectionActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed"). No secrets, overlay YAML or credential values."
     }
     var skillCatalog: [SkillCatalogRow] {
         SkillCatalog.rows(snapshot:skillSnapshot ?? SkillSnapshot(configuration:SkillConfiguration(),revision:""),applying:skillApplying,active:skillActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable)
@@ -460,10 +456,6 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let demo=rows.first{$0.kind == .demonstration}
         return "This is the same Wisp. Skills are reusable instructions of that companion, not a second assistant. Demonstration: \(demo?.status.rawValue ?? "not installed") — Local time briefing. Marketplace catalogs were not queried. Enable is not Allow Once.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
     }
-    private var skillDiagnostic: String {
-        let demo=skillCatalog.first{$0.kind == .demonstration}
-        return "Skills: \(skillActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed") (wisp-local-time-briefing). No secrets, overlay YAML or credential values."
-    }
     var petCatalog: [PetCatalogRow] {
         PetCatalog.rows(savedId:petSnapshot?.configuration.catalogId ?? "wisp-orb",currentId:currentCatalogId,applying:petApplying,applyingId:petApplyingId)
     }
@@ -471,9 +463,6 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let rows=petCatalog
         let current=rows.first{$0.status == .current} ?? rows.first{$0.id == currentCatalogId}
         return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Further official skins remain later; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
-    }
-    private var petDiagnostic: String {
-        "Body: \(currentCatalogId) (\(PetCatalog.title(currentCatalogId))). No secrets, overlay YAML or credential values."
     }
     var permissionDescription: String {
         let mcp = connectionActive
@@ -689,13 +678,51 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if settings?.allowQuit() == false { return .terminateCancel }
         ending=true; voiceSession.apply(); voiceShortcut.dispose(); permissionWindow?.invalidate(); operations.invalidate(); clearStage(); state.stop(); render(); menuBar?.dispose(); settings?.window?.orderOut(nil); settings?.close(); settings=nil; (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil)
         FileHandle.standardInput.readabilityHandler=nil
-        if !bridge.started || bridgeExited { return .terminateNow }
+        if !bridge.started || bridgeExited {
+            if lastStop == .none { lastStop = .clean }
+            return .terminateNow
+        }
         bridge.stop()
         DispatchQueue.main.asyncAfter(deadline:.now()+32) { [weak self] in
-            guard let self,!self.bridgeExited else { return }; self.bridge.terminateBridge(); self.emit(["event":"forced-bridge-stop"])
+            guard let self,!self.bridgeExited else { return }
+            self.lastStop = .forced
+            self.bridge.terminateBridge(); self.emit(["event":"forced-bridge-stop"])
         }
         return .terminateCancel
     }
+    var diagnosticsFacts: DiagnosticsFacts {
+        let selected = reasoningSnapshot?.configuration.selected
+        let modelsSelected = selected == "local" || selected == "deepseek" ? selected! : "none"
+        let homeConfigured = memorySnapshot != nil
+        return DiagnosticsFacts(
+            engineLifecycle: management.lifecycle.rawValue,
+            voicePhase: voice.state.phase.rawValue,
+            voiceMuted: voice.state.muted,
+            voiceLocale: voice.configuration.locale,
+            shortcutRegistered: voiceShortcut.available,
+            shortcutCopy: VoiceActivation.shortcutStatus(registered: voiceShortcut.available),
+            speechPermission: SystemRecognition.permissionStatus,
+            modelsSelected: modelsSelected,
+            modelsDisclosure: VoiceReasoningRoute(selected: selected).disclosure,
+            hardwareText: OnboardingDiagnostics.diagnosticText(snapshot: hardwareSnapshot, inspect: ollamaInspect, record: onboarding),
+            pluginsMounted: pluginActive ? 1 : 0,
+            pluginsDemonstration: pluginCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            connectionsMounted: connectionActive ? 1 : 0,
+            connectionsDemonstration: connectionCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            skillsMounted: skillActive ? 1 : 0,
+            skillsDemonstration: skillCatalog.first { $0.kind == .demonstration }?.status.rawValue ?? "not installed",
+            bodyCatalogId: currentCatalogId,
+            bodyTitle: PetCatalog.title(currentCatalogId),
+            accessibilityTcc: AccessibilityDriver.trustedStatus(),
+            telemetryDisabled: true,
+            telemetryCopy: DiagnosticsSnapshot.telemetryCopy,
+            homeConfigured: homeConfigured,
+            lastStop: lastStop,
+            accountRequired: false,
+            recoveryCopy: DiagnosticsSnapshot.recovery(homeConfigured: homeConfigured)
+        )
+    }
+    var diagnosticsText: String { DiagnosticsSnapshot.render(diagnosticsFacts) }
     var voiceRouteDescription:String {
         guard activeModel != nil else{return "Reasoning is not attached. Apply a model in Models before speaking."}
         return VoiceReasoningRoute(selected:reasoningSnapshot?.configuration.selected).disclosure

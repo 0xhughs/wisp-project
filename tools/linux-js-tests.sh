@@ -37,5 +37,6 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/pet-config.test.mjs \
   desktop/tests/skill-config.test.mjs \
   desktop/tests/windows-home.test.mjs \
-  desktop/tests/windows-body-state.test.mjs
+  desktop/tests/windows-body-state.test.mjs \
+  desktop/tests/diagnostics-snapshot.test.mjs
 python3 tools/identity.py --self-test --repo "$root"

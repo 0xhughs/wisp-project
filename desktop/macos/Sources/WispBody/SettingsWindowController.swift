@@ -11,6 +11,7 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     private var skillsEditor: SkillsView!
     private var petsEditor: PetsView!
     private var permissionsEditor: PermissionsView!
+    private var diagnosticsEditor: DiagnosticsView!
     private let navigation = NSTableView()
     private let heading = NSTextField(labelWithString: "General")
     private let detail = NSTextField(wrappingLabelWithString: "")
@@ -41,11 +42,13 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
         skillsEditor = SkillsView(owner: owner)
         petsEditor = PetsView(owner: owner)
         permissionsEditor = PermissionsView(owner: owner)
-        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,petsEditor,pluginsEditor,connectionsEditor,skillsEditor,permissionsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
+        diagnosticsEditor = DiagnosticsView()
+        diagnosticsEditor.refreshHandler = { [weak self] in self?.companion?.refreshOnboarding() }
+        let content = NSStackView(views: [heading,detail,showButton,chooseButton,memoryEditor,modelsEditor,voiceEditor,petsEditor,pluginsEditor,connectionsEditor,skillsEditor,permissionsEditor,diagnosticsEditor]); content.orientation = .vertical; content.alignment = .leading; content.spacing = 14
         for view in [scroll,content] { view.translatesAutoresizingMaskIntoConstraints = false; root.addSubview(view) }
         NSLayoutConstraint.activate([
             scroll.leadingAnchor.constraint(equalTo: root.leadingAnchor,constant: 12), scroll.topAnchor.constraint(equalTo: root.topAnchor,constant: 14), scroll.bottomAnchor.constraint(equalTo: root.bottomAnchor,constant: -14), scroll.widthAnchor.constraint(equalToConstant: 180),
-            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),petsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),connectionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),skillsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),permissionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
+            content.leadingAnchor.constraint(equalTo: scroll.trailingAnchor,constant: 30),content.trailingAnchor.constraint(equalTo: root.trailingAnchor,constant: -30),content.topAnchor.constraint(equalTo: root.topAnchor,constant: 35), content.bottomAnchor.constraint(lessThanOrEqualTo: root.bottomAnchor,constant: -30),detail.widthAnchor.constraint(equalTo: content.widthAnchor),memoryEditor.widthAnchor.constraint(equalTo: content.widthAnchor),modelsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),petsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),pluginsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),connectionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),skillsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),permissionsEditor.widthAnchor.constraint(equalTo:content.widthAnchor),diagnosticsEditor.widthAnchor.constraint(equalTo:content.widthAnchor)
         ])
         refresh(owner.management)
     }
@@ -61,7 +64,15 @@ final class SettingsWindowController: NSWindowController, NSTableViewDataSource,
     func refresh(_ state: ManagementState) {
         let index = ManagementSection.allCases.firstIndex(of: state.section)!
         if navigation.selectedRow != index { navigation.selectRowIndexes(IndexSet(integer: index),byExtendingSelection: false) }
-        heading.stringValue = state.section.rawValue; detail.stringValue = companion?.managementDescription ?? state.description
+        heading.stringValue = state.section.rawValue
+        if state.section == .diagnostics {
+            detail.isHidden = true
+            diagnosticsEditor.show(companion?.diagnosticsText ?? DiagnosticsSnapshot.redact(state.description))
+        } else {
+            detail.isHidden = false
+            detail.stringValue = companion?.managementDescription ?? state.description
+        }
+        diagnosticsEditor.isHidden = state.section != .diagnostics
         chooseButton.isHidden = state.section != .general && state.section != .memory
         chooseButton.isEnabled = companion?.homeBusy == false
         voiceEditor.isHidden = state.section != .voice;voiceEditor.refresh()

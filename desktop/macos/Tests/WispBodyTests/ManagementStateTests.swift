@@ -24,4 +24,5 @@ func managementStateTests() throws {
     try check(skills.description.contains("Local time briefing") && skills.description.contains("same Wisp") && !skills.description.contains("has not queried") && skills.description.contains("not a second assistant") && skills.description.contains("Enable is not Allow Once") && skills.description.contains("not queried"), "skills inventory-backed")
     var diag = ManagementState(); diag.select(.diagnostics)
     try check(diag.description.contains("hardware snapshot") && diag.description.contains("skill catalog") && !diag.description.contains("BEGIN") && !diag.description.contains("sk-") && diag.description.contains("never include credentials"), "diagnostics omit secrets and mention nonsecret skill id")
+    try check(!diag.description.contains("remain disconnected") && !diag.description.contains("Voice: unavailable") && !diag.description.lowercased().contains("unimplemented") && diag.description.contains("telemetry is disabled") && !diag.description.contains("feedback-only"), "diagnostics does not claim voice unimplemented; telemetry disabled")
 }

@@ -20,7 +20,7 @@ The runtime must already be the accepted prepared pin, with its `.wisp-spike.jso
 
 Run the executable directly as above so PID ownership and stop are explicit. `kill -TERM <native-pid>` requests ordinary cleanup; closing the controller-owned bridge input converges on accepted shutdown. The native app defers final exit until its bridge exits. Body replacement recreates and disposes the drawing view inside the controller's one persistent native panel, with an explicit autorelease scope. It creates no additional window. Missing or failed startup presents gray unavailable Wisp and never silently claims ready or restarts itself. Closing a body for replacement is separate from terminating the app.
 
-This is local development assembly only: no signing, notarization, installer, bundled model, dependency distribution or publication is claimed.
+This is local development assembly only. It is **not** a notarize, Developer ID, App Store, Sparkle, installer, bundled-model, or publication instruction. Ad-hoc `codesign --sign -` is local TCC identity for `local.wisp.body`, not a shipping identity. See `macos-readiness.md` for the first-release local assemble/run/quit path, Settings → Diagnostics, telemetry isolation, and recovery facts.
 
 ## Tests
 
@@ -48,7 +48,7 @@ Observed one3440×1440 display at1× scaling. Actual target full-screen Space en
 
 ## Current management shell (03)
 
-The current app now provides its own menu bar and retained native Settings window. Open Settings from the Wisp status item, and use Quit Wisp for normal cleanup; closing Settings leaves the body alive. General provides Show Companion. Wake and Mute are explicitly unavailable until speech is integrated. See `management-shell.md` for launch/test procedure and `../evidence/03-management-shell.md` for the current regression results. The02 evidence and archive describe the earlier accepted body-only build and have not been rewritten.
+The current app now provides its own menu bar and retained native Settings window. Open Settings from the Wisp status item, and use Quit Wisp for normal cleanup; closing Settings leaves the body alive. General provides Show Companion. Settings → Diagnostics is a structured pane (Refresh/Copy; no concatenated `voice.status`). See `macos-readiness.md` and `management-shell.md` for launch/test procedure and `../evidence/03-management-shell.md` for the current regression results. The02 evidence and archive describe the earlier accepted body-only build and have not been rewritten.
 
 ## Current durable home (04)
 
