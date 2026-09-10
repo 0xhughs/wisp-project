@@ -1,5 +1,5 @@
 import Foundation
-private final class RecognitionDouble:VoiceRecognition {
+final class RecognitionDouble:VoiceRecognition {
     var availability:String?
     var events=[String:(String,RecognitionEvent)->Void]()
     var current:String?,captures=0
@@ -8,7 +8,7 @@ private final class RecognitionDouble:VoiceRecognition {
     func cancel(){}
     func deliver(_ id:String,_ event:RecognitionEvent){events[id]?(id,event)}
 }
-private final class SynthesisDouble:VoiceSynthesis {
+final class SynthesisDouble:VoiceSynthesis {
     var events=[String:(String,SpeechEvent)->Void](),spoken=[String](),stops=0
     func speak(_ text:String,id:String,configuration:VoiceConfiguration,event:@escaping(String,SpeechEvent)->Void)throws{spoken.append(text);events[id]=event}
     func cancel(){stops+=1}
@@ -75,4 +75,94 @@ func voiceProviderAdmissionTests()throws {
         v.cancel();v.receive(["event":"voice-settled","generation":"owned","companionId":"companion","utteranceId":id,"cancelled":true])
         try check(speaker.spoken.isEmpty && v.state.phase == .idle,"both providers preserve cancellation and stale reply rejection")
     }
+}
+
+// Mac-native-only Foundation VoiceController. Linux-supplemental: desktop/tests/voice-seams.test.mjs
+func voiceProcessingCancelSettleTests()throws {
+    let mic=RecognitionDouble(),speaker=SynthesisDouble(),v=VoiceController(recognition:mic,synthesis:speaker)
+    var frames=[[String:Any]]();v.send={frames.append($0);return true};v.ready={true};v.localAvailable={_ in true}
+    v.attach(generation:"generation",companion:"companion")
+    v.activate();let id=v.state.operationID!
+    mic.deliver(id,.released);mic.deliver(id,.final("Think about this"))
+    try check(v.state.phase == .processing,"recognized turn is processing")
+    v.activate()
+    try check(v.state.phase == .releasing && v.state.operationID==id,"cancel during processing waits for settle")
+    try check(frames.contains(where:{$0["op"] as? String=="voice-cancel" && $0["utteranceId"] as? String==id}),"owned voice-cancel sent")
+    try check(mic.captures==1,"releasing refuses a new capture")
+    let lowered=v.status.lowercased()
+    try check(!lowered.contains("rollback") && !lowered.contains("rolled back"),"cancel does not claim rollback")
+    v.receive(["event":"voice-result","generation":"generation","companionId":"companion","utteranceId":id,"text":"Committed answer"])
+    try check(speaker.spoken.isEmpty && v.state.phase == .releasing,"committed text cannot speak while releasing")
+    v.receive(["event":"voice-settled","generation":"generation","companionId":"companion","utteranceId":id,"cancelled":false])
+    try check(v.state.phase == .idle && speaker.spoken.isEmpty,"settle returns idle without speaking or claiming rollback")
+    mic.deliver(id,.final("stale after cancel"));speaker.deliver(id,.started)
+    try check(v.state.phase == .idle && speaker.spoken.isEmpty,"stale callbacks cannot revive the cancelled turn")
+}
+
+func voiceRegistrationUnavailableWakeTests()throws {
+    let mic=RecognitionDouble(),speaker=SynthesisDouble(),voice=VoiceController(recognition:mic,synthesis:speaker)
+    voice.send={_ in true};voice.ready={true};voice.localAvailable={_ in true}
+    voice.attach(generation:"generation",companion:"companion")
+    let session=VoiceLifecycle(voice:voice)
+    session.shortcutRegistered=false
+    try check(VoiceActivation.wakeAllowed(shortcutRegistered:false),"Wake does not require Carbon registration")
+    try check(VoiceActivation.shortcutStatus(registered:false).contains("unavailable (conflict); use Wake"),"conflict leaves Wake as the usable control")
+    session.wake()
+    try check(mic.captures==1 && voice.state.phase == .listening,"Wake activates the same state machine when the shortcut is unavailable")
+}
+
+func voiceLifecycleAnalogueTests()throws {
+    let generation=UUID().uuidString, companion=UUID().uuidString, requestID=UUID().uuidString
+    func request()->[String:Any] { ["event":"approval-request","version":1,"generation":generation,"requestId":requestID,"companionId":companion,"sessionId":"wisp-test","callId":"call1","rootCallId":"call1","actionDigest":String(repeating:"a",count:64),"turn":1,"toolName":"wisp_permission_check","source":"wisp-direct","revision":"1","arguments":["label":"verification"],"operation":"append-test-record","destination":"/isolated/ledger","fields":[["label":"Label","value":"verification"]]] }
+    let mic=RecognitionDouble(),speaker=SynthesisDouble(),voice=VoiceController(recognition:mic,synthesis:speaker)
+    let session=VoiceLifecycle(voice:voice)
+    voice.send={_ in true};voice.ready={true};voice.localAvailable={_ in true}
+    voice.attach(generation:generation,companion:companion)
+    session.permissions.attach(generation:generation,companionID:companion)
+    voice.activate();let id=voice.state.operationID!
+    mic.deliver(id,.released);mic.deliver(id,.final("Append one verification record"))
+    try session.permissions.receive(try PermissionRequest(request()))
+    voice.approval(pending:true)
+    try check(voice.state.phase == .approval,"pending native approval")
+    voice.receive(["event":"voice-result","generation":generation,"companionId":companion,"utteranceId":id,"text":"Not an approved answer"])
+    try check(speaker.spoken.isEmpty && voice.state.phase == .approval,"pending approval suppresses speech")
+    session.wake()
+    try check(voice.state.phase == .releasing,"activation during approval cancels")
+    try check(session.permissions.decide(requestID,action:"allow-once")==nil,"user cancel closes the owned grant")
+    session.apply()
+    try check(session.permissions.decide(requestID,action:"allow-once")==nil,"Apply cannot revive a grant")
+    voice.receive(["event":"voice-result","generation":generation,"companionId":companion,"utteranceId":id,"text":"Reply after Apply"])
+    voice.receive(["event":"voice-settled","generation":generation,"companionId":companion,"utteranceId":id,"cancelled":false])
+    try check(speaker.spoken.isEmpty,"Apply cannot revive a reply")
+    session.engineStopped()
+    voice.receive(["event":"voice-result","generation":generation,"companionId":companion,"utteranceId":id,"text":"Reply after engine stop"])
+    try check(speaker.spoken.isEmpty && session.permissions.decide(requestID,action:"allow-once")==nil,"engineStopped cannot revive grant or reply")
+
+    let quitMic=RecognitionDouble(),quitSpeaker=SynthesisDouble(),quitVoice=VoiceController(recognition:quitMic,synthesis:quitSpeaker)
+    let quitSession=VoiceLifecycle(voice:quitVoice)
+    quitVoice.send={_ in true};quitVoice.ready={true};quitVoice.localAvailable={_ in true}
+    quitVoice.attach(generation:generation,companion:companion)
+    quitSession.permissions.attach(generation:generation,companionID:companion)
+    quitVoice.activate();let quitId=quitVoice.state.operationID!
+    quitMic.deliver(quitId,.released);quitMic.deliver(quitId,.final("Quit while waiting"))
+    try quitSession.permissions.receive(try PermissionRequest(request()))
+    quitVoice.approval(pending:true)
+    quitSession.quit()
+    try check(quitSession.permissions.decide(requestID,action:"allow-once")==nil,"Quit cannot revive a grant")
+    quitVoice.receive(["event":"voice-result","generation":generation,"companionId":companion,"utteranceId":quitId,"text":"Reply after Quit"])
+    try check(quitSpeaker.spoken.isEmpty && quitVoice.generation.isEmpty,"Quit cannot revive a reply")
+
+    let homeMic=RecognitionDouble(),homeSpeaker=SynthesisDouble(),homeVoice=VoiceController(recognition:homeMic,synthesis:homeSpeaker)
+    let homeSession=VoiceLifecycle(voice:homeVoice)
+    homeVoice.send={_ in true};homeVoice.ready={true};homeVoice.localAvailable={_ in true}
+    homeVoice.attach(generation:generation,companion:companion)
+    homeSession.permissions.attach(generation:generation,companionID:companion)
+    homeVoice.activate();let homeId=homeVoice.state.operationID!
+    homeMic.deliver(homeId,.released);homeMic.deliver(homeId,.final("Home invalidated"))
+    try homeSession.permissions.receive(try PermissionRequest(request()))
+    homeVoice.approval(pending:true)
+    homeSession.homeInvalidation()
+    try check(homeSession.permissions.decide(requestID,action:"deny")==nil,"home invalidation cannot revive a grant")
+    homeVoice.receive(["event":"voice-result","generation":generation,"companionId":companion,"utteranceId":homeId,"text":"Reply after home invalidation"])
+    try check(homeSpeaker.spoken.isEmpty,"home invalidation cannot revive a reply")
 }

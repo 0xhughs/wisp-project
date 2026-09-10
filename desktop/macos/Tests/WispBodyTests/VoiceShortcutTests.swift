@@ -1,4 +1,6 @@
 import Carbon
+// Mac-native-only: Carbon VoiceShortcut registration. Linux-supplemental press-edge
+// and registration-unavailable Wake coverage lives in desktop/tests/voice-seams.test.mjs.
 func voiceShortcutTests()throws {
     let shortcut=VoiceShortcut()
     var activations=0,edges=[String](),admissions=[Bool]()

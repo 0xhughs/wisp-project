@@ -12,7 +12,7 @@ People who want a spoken desktop companion without a chat application. Normal us
 Selected target: Full macOS first release — slices 01–14. Stop only after each included slice is independently accepted and all macOS release gates pass. Slice 01 is the first milestone, not the loop stopping point. Execution authorized by the user on 2026-09-06. During this run, inside-target Later entries become successive Now slices; outside-target work never starts automatically.
 
 ## Run status
-Running
+Human required
 
 ## Open decisions
 - Runtime source is confirmed below. Its Wisp integration, dependency/distribution constraints and approval bridge still require execution evidence; source inspection is not a passed feasibility test.
@@ -42,7 +42,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived.07 amendedplan051approved; build10 implements local/DeepSeekvoice, actualhuman local/cloudreplies andOptionSpacestop evidenced, checks passed. Full07implementationapproval pending actualsafety/permission/lifecycle gates; participant unavailable. Alltestapps/workersstopped. SavedDeepSeekrestored; mostrecentattachKeychainfailure needsnormaluserapproval. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene, with all152stagedfileschecked. WIPpublication doesnotmean07accepted or releasecomplete. Covered07evidence retains failures and exactresume. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived.07 plan058 approved Linux snapshot replacement and execution-order track; build059 Linux seams independently reviewed 07-review-060 HUMAN_REQUIRED (not REJECT; counters 0/0). Linux 37/37 supplemental; NativeChecks/Mac gates still pending. Full07implementationapproval pending actualsafety/permission/lifecycle gates; participant unavailable. Linux recovery 2026-09-10: original identity.py/baseline/harness/raw logs/build10 binary absent. Alltestapps/workersstopped. SavedDeepSeekrestored; mostrecentattachKeychainfailure needsnormaluserapproval. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop; remote hash verified. Independent advisory055/057 publicationaudit passed after minorhygiene, with all152stagedfileschecked. WIPpublication doesnotmean07accepted or releasecomplete. Covered07evidence retains failures and exactresume. Existing05cloud6/6historical; lateruseroperated4connection+3voicetests separate, extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none

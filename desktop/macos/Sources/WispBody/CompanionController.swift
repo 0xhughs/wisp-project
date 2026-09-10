@@ -3,14 +3,18 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     let identity=UUID().uuidString
     private(set) var state=BodyState()
     private(set) var management=ManagementState()
-    let voice=VoiceController()
+    let voice:VoiceController
+    private let voiceSession:VoiceLifecycle
     private let voiceShortcut=VoiceShortcut()
     private var voiceStore:VoiceStore?
     private var menuBar:MenuBarController?
     private var settings:SettingsWindowController?
     private(set) var body:MascotPanel?
     private var bridge=EngineBridge()
-    private(set) var permissions=PermissionState()
+    private(set) var permissions:PermissionState {
+        get { voiceSession.permissions }
+        set { voiceSession.permissions = newValue }
+    }
     private var permissionWindow:PermissionWindow?
     private var operations=BridgeOperationState()
     private var bridgeGeneration=0
@@ -36,7 +40,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private var runtimePID:Int=0, sessionId=""
     private var generationCount=0
     private var developer:Bool { options["--developer"] == "true" }
-    init(options:[String:String]) { self.options=options; super.init() }
+    init(options:[String:String]) {
+        let voice=VoiceController()
+        self.voice=voice
+        self.voiceSession=VoiceLifecycle(voice:voice)
+        self.options=options
+        super.init()
+    }
     func emit(_ extra:[String:Any]) {
         guard developer else { return }
         let facts:[String:Any]=["controller":identity,"bodyGeneration":generationCount,"state":state.phase.rawValue,"sessionId":sessionId,"runtimePID":runtimePID,"bridgePID":bridge.started ? Int(bridge.pid):0]
@@ -48,6 +58,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         voice.send={ [weak self] frame in self?.bridge.voice(frame) ?? false }
         voice.diagnostic={ [weak self] id,value in self?.emit(value.object.merging(["event":"voice-recognition-diagnostic","utteranceId":id]){_,b in b}) }
         voice.changed={ [weak self] in guard let self else{return};self.render();self.emit(["event":"voice-state","voicePhase":self.voice.state.phase.rawValue,"utteranceId":self.voice.state.operationID ?? "","muted":self.voice.state.muted]) }
+        voiceSession.onApprovalCancel={ [weak self] frame in
+            guard let self,!self.ending else {return}
+            self.bridge.decidePermission(frame);self.permissionWindow?.refresh()
+        }
         voiceShortcut.diagnostic={ [weak self] edge,activates in self?.emit(["event":"voice-shortcut","edge":edge,"activates":activates]) }
         voiceShortcut.activate={ [weak self] in self?.wakeVoice(source:"shortcut") };voiceShortcut.register()
         emit(["event":"voice-shortcut-registration","available":voiceShortcut.available,"shortcut":VoiceShortcut.label])
@@ -103,7 +117,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
                 case .failure(let error):
                     self.memoryStatus = (error as? StoreError ?? .unavailable).message
                     // A conflict preserves the valid editor/base. Other failures disable save until reload.
-                    if (error as? StoreError) != .conflict { self.memoryUsable = false;self.voice.cancel();self.invalidatePermissions();self.bridge.stop() }
+                    if (error as? StoreError) != .conflict { self.memoryUsable = false;self.voiceSession.apply();self.permissionWindow?.invalidate();self.operations.invalidate();self.bridge.stop() }
                     if !self.bridge.started { self.unavailable() }
                     self.emit(["event":"memory-error","category":String(describing:error as? StoreError ?? .unavailable)])
                     completed?(false)
@@ -174,7 +188,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         }
         current.onExit = { [weak self] code in
             guard let self,self.bridgeGeneration == generation else { return }
-            self.voice.engineStopped(); self.invalidatePermissions(); self.bridgeExited=true; self.modelTesting=false; self.activeModel=nil
+            self.voiceSession.engineStopped(); self.invalidatePermissions(); self.bridgeExited=true; self.modelTesting=false; self.activeModel=nil
             if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
             else if let next=self.restartAction {
                 self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
@@ -188,7 +202,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         DispatchQueue.main.asyncAfter(deadline:.now()+0.1) { [weak self] in self?.waitForOldRuntime(generation:generation,remaining:remaining-1,then:action) }
     }
     private func stopReasoning(then action: @escaping () -> Void) {
-        voice.cancel(); invalidatePermissions(); activeModel=nil; modelTesting=false
+        voiceSession.apply(); permissionWindow?.invalidate(); operations.invalidate(); activeModel=nil; modelTesting=false
         if !bridge.started || bridgeExited { waitForOldRuntime(generation:bridgeGeneration,remaining:100,then:action); return }
         restartAction=action; bridge.stop()
         let generation=bridgeGeneration
@@ -298,7 +312,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if state.phase == .stopped || state.phase == .starting{phase=state.phase}else{switch voice.state.phase{case .listening:phase = .listening;case .speaking:phase = .speaking;case .finalizing,.processing,.releasing:phase = .processing;case .approval:phase = .approval;case .muted:phase = .muted;case .unavailable:phase = .unavailable;case .idle:phase=state.phase}}
         management.voiceEnabled=voice.available
         (body?.contentView as? MascotView)?.phase=phase; body?.title="Wisp \(phase.rawValue)"; management.refresh(state.phase); menuBar?.refresh(management); settings?.refresh(management) }
-    private func unavailable() { voice.cancel(); invalidatePermissions(); state.unavailable(); render(); emit(["event":"unavailable"]) }
+    private func unavailable() { voiceSession.apply(); permissionWindow?.invalidate(); operations.invalidate(); state.unavailable(); render(); emit(["event":"unavailable"]) }
     private func clamp() { if let body { body.setFrame(ScreenGeometry.clamp(body.frame,to:NSScreen.screens.map(\.visibleFrame)),display:true) } }
     func replaceBody() {
         autoreleasepool {
@@ -356,7 +370,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     func applicationShouldTerminate(_ sender:NSApplication) -> NSApplication.TerminateReply {
         if ending { return bridgeExited ? .terminateNow : .terminateCancel }
         if settings?.allowQuit() == false { return .terminateCancel }
-        ending=true; voice.cancel(); voiceShortcut.dispose(); invalidatePermissions(); clearStage(); state.stop(); render(); menuBar?.dispose(); settings?.window?.orderOut(nil); settings?.close(); settings=nil; (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil)
+        ending=true; voiceSession.apply(); voiceShortcut.dispose(); permissionWindow?.invalidate(); operations.invalidate(); clearStage(); state.stop(); render(); menuBar?.dispose(); settings?.window?.orderOut(nil); settings?.close(); settings=nil; (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil)
         FileHandle.standardInput.readabilityHandler=nil
         if !bridge.started || bridgeExited { return .terminateNow }
         bridge.stop()
@@ -377,9 +391,14 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     var voiceDescription:String {
         let support=SystemRecognition.supported(voice.configuration.locale) ? "Device reports on-device support; live service readiness is checked on activation":"On-device recognition unavailable; recording disabled"
-        return "\(voiceRouteDescription)\n\(voice.status)\nLanguage: \(voice.configuration.locale) · \(support).\nShortcut: \(VoiceShortcut.label) · \(voiceShortcut.available ? "registered":"unavailable (conflict); use Wake").\n\(SystemRecognition.permissionStatus)\nRaw audio stays on this Mac and is not saved; recognized text may remain in the private agent session."
+        return "\(voiceRouteDescription)\n\(voice.status)\nLanguage: \(voice.configuration.locale) · \(support).\nShortcut: \(VoiceActivation.shortcutStatus(registered:voiceShortcut.available)).\n\(SystemRecognition.permissionStatus)\nRaw audio stays on this Mac and is not saved; recognized text may remain in the private agent session."
     }
-    func wakeVoice(source:String="native"){guard !ending else{return};emit(["event":"voice-activation","source":source,"voicePhase":voice.state.phase.rawValue,"utteranceId":voice.state.operationID ?? ""]);voice.activate()}
+    func wakeVoice(source:String="native"){
+        guard !ending else{return}
+        voiceSession.shortcutRegistered=voiceShortcut.available
+        emit(["event":"voice-activation","source":source,"voicePhase":voice.state.phase.rawValue,"utteranceId":voice.state.operationID ?? ""])
+        voiceSession.wake()
+    }
     func toggleVoiceMute(){var config=voice.configuration;config.muted.toggle();voice.configure(config);saveVoice(config)}
     func saveVoice(_ value:VoiceConfiguration){
         guard !homeBusy,!ending else{return};homeBusy=true;render()

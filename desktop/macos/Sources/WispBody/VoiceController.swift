@@ -8,6 +8,7 @@ final class VoiceController {
     var localAvailable:(String)->Bool=SystemRecognition.supported
     var ready:(()->Bool)?
     var readinessIssue:(()->String)?
+    var closeOwnedApprovals:(()->Void)?
     private(set) var status="Activate Wake or the shortcut to speak. Audio stays on this Mac."
     private(set) var generation="",companion=""
     private let recognition:VoiceRecognition,synthesis:VoiceSynthesis
@@ -18,7 +19,7 @@ final class VoiceController {
     var available:Bool {!blocked && recognition.availability==nil && localAvailable(configuration.locale) && ready?()==true && !generation.isEmpty}
     func note(_ message:String){status=message;changed?()}
     func attach(generation:String,companion:String){self.generation=generation;self.companion=companion;changed?()}
-    func configure(_ value:VoiceConfiguration){configuration=value;state.setMuted(value.muted);if state.phase == .releasing{releaseResources()};changed?()}
+    func configure(_ value:VoiceConfiguration){configuration=value;state.setMuted(value.muted);if state.phase == .releasing{closeOwnedApprovals?();releaseResources()};changed?()}
     func activate(){
         let previous=state.phase
         guard let id=state.activate(ready:available)else{if !state.muted && !available{status=recognition.availability ?? (!localAvailable(configuration.locale) ? "On-device recognition is unavailable for \(configuration.locale). Select an available recognition language; no cloud recognition fallback is used.":readinessIssue?() ?? "Attach a supported reasoning provider in Models before speaking.")};changed?();return}
@@ -28,12 +29,12 @@ final class VoiceController {
             recognition.start(locale:configuration.locale,id:id){[weak self] id,event in self?.recognitionEvent(id,event)}
         case .finalizing:
             if previous == .listening{status="Finishing this utterance…";recognition.finish()}
-        case .releasing:releaseResources()
+        case .releasing:closeOwnedApprovals?();releaseResources()
         default:break
         }
         changed?()
     }
-    func cancel(){state.cancel();releaseResources();changed?()}
+    func cancel(){state.cancel();closeOwnedApprovals?();releaseResources();changed?()}
     private func frame(_ op:String,_ id:String)->[String:Any]{["op":op,"generation":generation,"companionId":companion,"utteranceId":id]}
     private func recognitionEvent(_ id:String,_ event:RecognitionEvent){
         guard state.operationID==id else{return}

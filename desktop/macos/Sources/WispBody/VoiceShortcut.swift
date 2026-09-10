@@ -1,17 +1,16 @@
 import Carbon
 final class VoiceShortcut {
     private var hotKey:EventHotKeyRef?,handler:EventHandlerRef?
-    private var pressed=false
+    private var edge=VoiceHotKeyEdge()
     var activate:(()->Void)?
     var diagnostic:((String,Bool)->Void)?
     private(set) var available=false
-    static let label="Option–Space"
+    static let label=VoiceActivation.shortcutLabel
     static let modifiers=UInt32(optionKey)
     func handle(pressed isPressed:Bool) {
-        let activates=isPressed && !pressed
-        diagnostic?(isPressed ? "pressed":"released",activates)
-        pressed=isPressed
-        if activates{activate?()}
+        let result=edge.handle(pressed:isPressed)
+        diagnostic?(result.edge, result.activates)
+        if result.activates{activate?()}
     }
     func register() {
         var types=[EventTypeSpec(eventClass:OSType(kEventClassKeyboard),eventKind:UInt32(kEventHotKeyPressed)),EventTypeSpec(eventClass:OSType(kEventClassKeyboard),eventKind:UInt32(kEventHotKeyReleased))]
@@ -25,6 +24,6 @@ final class VoiceShortcut {
         let id=EventHotKeyID(signature:0x57697370,id:1)
         available=RegisterEventHotKey(UInt32(kVK_Space),Self.modifiers,id,GetApplicationEventTarget(),OptionBits(kEventHotKeyExclusive),&hotKey)==noErr
     }
-    func dispose(){if let hotKey{UnregisterEventHotKey(hotKey)};hotKey=nil;if let handler{RemoveEventHandler(handler)};handler=nil;available=false;pressed=false}
+    func dispose(){if let hotKey{UnregisterEventHotKey(hotKey)};hotKey=nil;if let handler{RemoveEventHandler(handler)};handler=nil;available=false;edge.reset()}
     deinit{dispose()}
 }
