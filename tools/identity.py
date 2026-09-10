@@ -14,7 +14,7 @@ Coverage (candidate file manifest):
   of regular-file bytes, and symlink target.
   BUILD.md and SLICES.md contribute canonicalized bytes (bookkeeping stripped)
   so Status/Proof/Review/Loop-state/Next/run-status/release-evidence/placement
-  writes do not change the candidate.
+  /ledger/backlog writes do not change the candidate.
 Exclude from the manifest:
   .git/
   this identity.py file (hashed only into contract identity)
@@ -25,7 +25,8 @@ Contract identity covers:
   BUILD from Slice through Tests, plus the Loop-state snapshot capture line
   SLICES product/users/target/open-decisions/engine-reference/release-gates
     and every mapped slice body with target membership, ordered by slice ID
-    (Shipped/Now/Later placement headings omitted)
+    (Shipped/Now/Later/Implemented-verification-pending placement headings,
+    Implementation ledger and Verification backlog omitted)
   full AGENTS.md, LOOP.md, BUILDER.md, REVIEWER.md
   this identity.py file bytes
 
@@ -43,7 +44,16 @@ import sys
 from pathlib import Path
 
 PROTOCOL_FILES = ("AGENTS.md", "LOOP.md", "BUILDER.md", "REVIEWER.md")
-SLICE_HEADING_SKIP = {"run status", "release evidence", "shipped", "now", "later"}
+SLICE_HEADING_SKIP = {
+    "run status",
+    "release evidence",
+    "shipped",
+    "now",
+    "later",
+    "implemented, verification pending",
+    "implementation ledger",
+    "verification backlog",
+}
 BUILD_STOP = "## Proof"
 
 
@@ -302,6 +312,18 @@ def self_test(root: Path, identity_path: Path) -> None:
         raise SystemExit("self-test: identity.py leaked into candidate coverage")
     if "BUILD.md" not in paths or "SLICES.md" not in paths:
         raise SystemExit("self-test: protocol files missing from candidate")
+    expected_skip = {
+        "run status",
+        "release evidence",
+        "shipped",
+        "now",
+        "later",
+        "implemented, verification pending",
+        "implementation ledger",
+        "verification backlog",
+    }
+    if SLICE_HEADING_SKIP != expected_skip:
+        raise SystemExit(f"self-test: SLICE_HEADING_SKIP mismatch {SLICE_HEADING_SKIP!r}")
     print("self-test ok")
     print(f"candidate {cand}")
     print(f"contract {con}")

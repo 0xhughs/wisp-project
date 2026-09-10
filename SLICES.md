@@ -3,13 +3,17 @@
 ## Product
 Wisp is a local-first desktop AI agent embodied by a small animated mascot. Users speak to it, hear its answers and ask it to perform useful computer actions. DeepSeek Harness supplies the invisible agent capability system; Wisp owns the voice, desktop body, management UI, permissions and durable memory. One identity persists across interchangeable bodies, model changes, installed skills and any future remote entry point.
 
-Current release boundary: full macOS first release, selected by the user. Include slices 01–14: invisible engine integration, desktop body, Wisp Settings/menu bar, local memory, local/cloud reasoning, approvals, shortcut-driven voice, hardware-aware Ollama onboarding, initial safe actions, compatible plugins/Connections/MCP/skills, interchangeable starter pets and integrated macOS readiness. Later capabilities explicitly described as subsequent work remain outside this release.
+Current release boundary: full macOS first release, selected by the user. Include slices 01–14: invisible engine integration, desktop body, Wisp Settings/menu bar, local memory, local/cloud reasoning, approvals, shortcut-driven voice, hardware-aware Ollama onboarding, initial safe actions, compatible plugins/Connections/MCP/skills, interchangeable starter pets and integrated macOS readiness. Later capabilities 15–21 remain outside those 01–14 acceptance gates even when the user authorizes their implementation.
 
 ## Users
 People who want a spoken desktop companion without a chat application. Normal users manage friendly Connections and local/cloud model choices; advanced users can configure custom MCP servers and compatible engine capabilities.
 
 ## Loop target
-Selected target: Full macOS first release — slices 01–14. Stop only after each included slice is independently accepted and all macOS release gates pass. Slice 01 is the first milestone, not the loop stopping point. Execution authorized by the user on 2026-09-06. During this run, inside-target Later entries become successive Now slices; outside-target work never starts automatically.
+Acceptance target: Full macOS first release — slices 01–14. Run status Complete and release-gate success require every included slice independently accepted and all macOS release gates passed. Slice 01 is the first milestone, not the loop stopping point. Execution authorized by the user on 2026-09-06.
+
+Implementation target: slices 01–21, expanded by the user on 2026-09-10. This authorizes implementation, testing, documentation and draft PR updates of the existing slice definitions. It does not authorize publishing or deploying the application, merging pull requests, spending additional money, or treating unimplemented product decisions as resolved.
+
+During this run, inside-implementation-target Later entries may become successive Now slices when eligible. A pending human or Mac check is not automatically a dependency blocker and does not stop the entire project. Outside-implementation-target work never starts automatically. Implemented with verification pending is not Shipped.
 
 ## Run status
 Human required
@@ -18,6 +22,7 @@ Human required
 - Runtime source is confirmed below. Its Wisp integration, dependency/distribution constraints and approval bridge still require execution evidence; source inspection is not a passed feasibility test.
 - Implementation stack, supported OS/hardware floor, speech engines, model catalog and storage formats are deferred to source inspection and their slices. Do not invent numerical performance targets or universal model support.
 - Proactivity is a requested Settings area, but triggers and autonomous behavior are unspecified. Define material behavior with the user before implementing proactive actions. Meeting preparation is an illustrative skill, not a mandatory service bundle.
+- The 2026-09-10 implementation-target expansion does not resolve slice 18 listening design, slice 20 proactivity triggers, or slice 21 remote-channel choice. Those slices stay decision-blocked until the user specifies them. Settings may keep Proactivity as “no configured behavior.” Do not invent always-listening, autonomous actions, or a paid/external messaging integration.
 
 ## Inspected engine reference
 User-confirmed repository: [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness). Observed HEAD on 2026-09-05: `d347e703908d0406b7a7ef80e3a0e594d86b2215`. This is the proposed spike pin; updating it requires fresh source/contract review. Only source was inspected; nothing was installed or executed.
@@ -141,41 +146,89 @@ Target membership: inside the selected macOS release target. Out: implied public
 Goal: act on applications primarily through structured macOS Accessibility APIs.
 Provides: focus/move windows, read focused interfaces, click named controls, type and search the desktop, with visible permission guidance and action-specific approval enforcement.
 Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
-Target membership: outside the selected macOS release target. Out: silent privilege escalation and visual fallback implementation.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
 
 ### 16 Visual computer-control fallback
 Goal: complete an authorized action when structured accessibility cannot reach a control.
 Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
 Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
-Target membership: outside the selected macOS release target. Out: replacing structured APIs with visual clicking by default.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
 
 ### 17 Windows companion
 Goal: bring the same Wisp identity and product model to Windows.
 Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
 Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
-Target membership: outside the selected macOS release target; subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
 
 ### 18 Optional voice wake
 Goal: optionally wake the existing voice companion by voice.
 Provides: explicit opt-in, mute behavior and resource/privacy evidence, once the listening design is agreed.
 Depends on: 07 and platform-specific evidence.
-Target membership: outside the selected macOS release target; future. Out: making always-listening mandatory.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future until listening design is agreed. Out: making always-listening mandatory.
 
 ### 19 Official skin collection
 Goal: expand interchangeable bodies to around twenty official skins.
 Provides: a coherent catalog with the same required animation states and unchanged agent identity/capabilities.
 Depends on: 13. Around twenty is the user's eventual scale, not an exact first-release requirement.
-Target membership: outside the selected macOS release target; future. Out: pet-specific assistants or memories.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future catalog scale. Out: pet-specific assistants or memories.
 
 ### 20 Proactivity behavior, scope to be decided
 Goal: define and then implement any explicitly chosen proactive behaviors through Wisp Settings.
 Provides: a future contract only after triggers, permission scope and interruption behavior are specified by the user.
 Depends on: 03, 06, 07 and the required capability slices.
-Target membership: outside the selected macOS release target; behavior unspecified. Out: inferring autonomous actions from the Settings section name.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); behavior unspecified. Out: inferring autonomous actions from the Settings section name.
 
 ### 21 Optional remote doorway
 Goal: later allow a service such as Telegram or WhatsApp to reach the same Wisp.
 Provides: a separately authorized access path with the same identity, memory and permission policy; communication-channel details remain undecided.
 Depends on: mature local companion and an explicitly scoped remote-access contract.
-Target membership: outside the selected macOS release target; much later possibility, not a committed integration.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); much later possibility, not a committed integration.
 Out: making remote chat the main product, creating another agent or requiring a chat-history desktop UI.
+
+## Implemented, verification pending
+None yet. After independent plan approval of the 2026-09-10 execution-policy amendment, park slice 07 here without writing `slices/07-shortcut-to-voice-agent-loop.md`. Historical review event 07-review-060 remains HUMAN_REQUIRED and is not rewritten into APPROVE_IMPLEMENTATION or Shipped.
+
+## Implementation ledger
+Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
+
+- 01 Hidden engine feasibility proof — accepted (archive `slices/01-hidden-engine-feasibility.md`).
+- 02 macOS desktop body — accepted (archive `slices/02-macos-desktop-body.md`).
+- 03 Wisp management and menu-bar shell — accepted (archive `slices/03-wisp-management-and-menu-bar-shell.md`).
+- 04 Local home and durable memory — accepted (archive `slices/04-local-home-and-durable-memory.md`).
+- 05 Reasoning model and provider management — accepted (archive `slices/05-reasoning-model-and-provider-management.md`).
+- 06 Permission and approval enforcement — accepted (archive `slices/06-permission-and-approval-enforcement.md`).
+- 07 Shortcut-to-voice agent loop — in progress. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED (not REJECT; counters 0/0). Proposed post-approval status: implemented with verification pending. Not Shipped. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
+- 08 Hardware-aware local-model onboarding — unstarted. Depends on accepted 05 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. No model download without a resource plan.
+- 09 Initial safe computer actions — unstarted. Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Eligible after 07 is parked. Must not become a command-execution bypass.
+- 10 Compatible plugin management — unstarted. Depends only on accepted 01, 03, 06. First eligible Now after 07 is parked.
+- 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
+- 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
+- 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
+- 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
+- 15 macOS accessibility computer control — unstarted. Depends on accepted 06 and 09. Linux native work is uncompiled/unverified here.
+- 16 Visual computer-control fallback — unstarted. Depends on 15. Not eligible before 15.
+- 17 Windows companion — unstarted. Depends on accepted macOS architecture. Linux may author sources marked uncompiled/unverified. macOS tests do not prove Windows.
+- 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
+- 19 Official skin collection — unstarted. Depends on 13.
+- 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
+- 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
+
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14.
+
+## Verification backlog
+Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
+
+1. Slice 07 / Done when 1 — global shortcut while another owned app is focused; Voice settings locale/voice UI and restart persistence; live local/cloud route disclosure. Requires declared Mac, participant, registered hotkey. Automated: Linux-supplemental Wake/mute/conflict copy (`sh tools/linux-js-tests.sh`, 37/37). Procedure: from another focused owned app, press the registered shortcut; confirm listening; check Voice settings labels. Expected: capture starts without focus theft; Wake still works. Invalidated by VoiceShortcut/VoiceActivation/VoiceState/settings persistence edits.
+
+2. Slice 07 / Done when 2 — Wisp TCC microphone, physical on-device recognition, denied/restricted presentation. Requires declared Mac, microphone, OS permission dialog. Automated: RecognitionDouble only; SpeechProviders on-device flags unchanged. Procedure: first-use permission UI then speak a nonempty phrase. Expected: one on-device final submitted; no Apple server fallback. Invalidated by SpeechProviders or capture-lifecycle edits.
+
+3. Slice 07 / Done when 3 — real local Ollama/Harness turn and audible installed-voice start/finish callbacks. Requires declared Mac, local model, speakers/listener. Automated: voice-protocol JS committed-text-only tests. Procedure: bounded spoken request → qwen3:8b/Harness → installed voice heard. Expected: speaking state tracks actual audio, not a WAV write. Invalidated by voice-protocol, TTS, or session-correlation edits. Historical spoken turns remain historical.
+
+4. Slice 07 / Done when 4 — cancel during an actual live provider turn; pending-approval Apply/Quit on the real app; mute/conflict while the real shortcut is registered. Requires declared Mac and live model. Automated: Linux-supplemental processing-cancel/Apply/Quit analogues. Procedure: start a real turn, cancel; with a pending native approval, Apply and Quit; register conflict then use Wake. Expected: settle/idle, no grant revival, Wake usable. Invalidated by VoiceLifecycle/VoiceController/CompanionController cancel paths.
+
+5. Slice 07 / Done when 5 — recognized harmless-tool withhold/deny/cancel/allow-once is 0/0/0/1 on the real registry/native path. Requires declared Mac, developer verification tool, participant. Automated: analogue only (pending approval suppresses speech). Procedure: speak the harmless tool request; use native buttons. Expected: 0/0/0/1; voice is not a grant. Invalidated by permission/bridge/voice-approval edits.
+
+6. Slice 07 / Done when 6 — declared-Mac full roundtrip, second local request, continuity/no-orphan, NativeChecks compile, Keychain attach of saved DeepSeek (access denial, not invalid key). Requires declared Mac, participant Keychain prompt, NativeChecks. Reserved DeepSeek agent greeting 0/1 unspent — do not spend it on Linux. Procedure: `desktop/scripts/test-native.sh`; attach DeepSeek via normal Keychain; two local requests; quit and confirm no orphan processes. Expected: NativeChecks pass; attach succeeds after user approval; no leftover engine. Invalidated by native test sources, bootstrap/keychain, or lifecycle teardown edits.
+
+7. Slice 07 / Tests 1, 3, 8 native — compile and run NativeChecks / registered-shortcut tests on macOS. Requires macOS SDK / Xcode. Automated on Linux: none (uncompiled). Procedure: `desktop/scripts/test-native.sh /absolute/external/native-tests` and `desktop/scripts/build-macos.sh`. Expected: native assertions pass. Invalidated by any `desktop/macos` source change.
+
