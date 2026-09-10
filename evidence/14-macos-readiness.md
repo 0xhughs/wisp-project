@@ -2,7 +2,7 @@
 
 This file is **not** an accepted-slice archive. Slice 14 is **not Shipped**. Slices 07–13 and 15–19 remain implemented with verification pending, **not Shipped**. Builder cannot approve. Native Swift / Settings GUI / live Quit / live OTLP observation remain **uncompiled/unverified on this Linux host** (`missing-platform`).
 
-Dispatch **14-build-104**. Contract `ff534143eee6468b1d56cd535ff80514ca926762892c3109b4a01cd1d40817c4` must remain unchanged. Approved baseline `a15bda46480473b3bb37123f76ceeab9e37480f41e9bd6ca97958ec080f53590` (294 files). Head at dispatch `7b12c4ba784d009e4412c176c9be2163bb139cae`.
+Dispatch **14-build-104**. Contract `ff534143eee6468b1d56cd535ff80514ca926762892c3109b4a01cd1d40817c4` must remain unchanged. Approved baseline `a15bda46480473b3bb37123f76ceeab9e37480f41e9bd6ca97958ec080f53590` (294 files). Head at dispatch `7b12c4ba784d009e4412c176c9be2163bb139cae`. Linux-supplemental after implementation: **248/248**, files 301.
 
 Harness pin `$HOME/wisp-work/deepseek-harness`: `d347e703908d0406b7a7ef80e3a0e594d86b2215` (porcelain clean at implementation). No DeepSeek call, model download, key inspection, merge, publish, or spend. No secrets, home paths, companion UUIDs, keys, recognized text, overlay YAML, or plugin paths in this file.
 
@@ -16,7 +16,20 @@ export PATH="$HOME/.local/node-v22.20.0-linux-x64/bin:$PATH"
 sh tools/linux-js-tests.sh
 ```
 
-Results are recorded after the Builder run of `tools/linux-js-tests.sh` (Node unit TAP footer plus `identity.py --self-test`). They cannot satisfy Mac Settings GUI, live Quit, NativeChecks, or live network.
+**248/248 pass, fail 0** (Linux-supplemental Node unit checks). TAP footer:
+
+```
+1..248
+# tests 248
+# suites 0
+# pass 248
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+```
+
+`identity.py --self-test` then printed `self-test ok` with contract `ff534143eee6468b1d56cd535ff80514ca926762892c3109b4a01cd1d40817c4`. They cannot satisfy Mac Settings GUI, live Quit, NativeChecks, or live network.
 
 Coverage intended:
 
