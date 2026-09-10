@@ -470,7 +470,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     var petDescription: String {
         let rows=petCatalog
         let current=rows.first{$0.status == .current} ?? rows.first{$0.id == currentCatalogId}
-        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Additional official skins remain unavailable; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Further official skins remain later; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
     }
     private var petDiagnostic: String {
         "Body: \(currentCatalogId) (\(PetCatalog.title(currentCatalogId))). No secrets, overlay YAML or credential values."

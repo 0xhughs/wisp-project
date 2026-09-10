@@ -2,7 +2,7 @@ import {mkdirSync,openSync,readFileSync,writeFileSync,fstatSync,closeSync,consta
 import {join} from 'node:path';
 import {keys} from './plugin-config.mjs';
 
-export const SELECTABLE_IDS=Object.freeze(['wisp-orb','wisp-fox','wisp-robot']);
+export const SELECTABLE_IDS=Object.freeze(['wisp-orb','wisp-fox','wisp-robot','wisp-bird','wisp-cat','wisp-owl','wisp-sprout','wisp-capsule']);
 export const DEFAULT_CATALOG_ID='wisp-orb';
 export const UNSUPPORTED_SKINS_ID='official-skins';
 export const PET_MAX_BYTES=4096;
@@ -11,6 +11,11 @@ export const RASTER_SAMPLES=Object.freeze({
  'wisp-orb':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,98]),uniqueOpaque:Object.freeze([40,80])}),
  'wisp-fox':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,78]),uniqueOpaque:Object.freeze([52,20])}),
  'wisp-robot':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,34]),uniqueOpaque:Object.freeze([80,8])}),
+ 'wisp-bird':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([92,64]),uniqueOpaque:Object.freeze([138,76])}),
+ 'wisp-cat':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,101]),uniqueOpaque:Object.freeze([50,24])}),
+ 'wisp-owl':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,67]),uniqueOpaque:Object.freeze([56,16])}),
+ 'wisp-sprout':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,53]),uniqueOpaque:Object.freeze([32,40])}),
+ 'wisp-capsule':Object.freeze({corner:Object.freeze([0,0]),gap:Object.freeze([80,60]),uniqueOpaque:Object.freeze([80,24])}),
 });
 
 export function defaultPetConfiguration(){return {version:1,catalogId:DEFAULT_CATALOG_ID};}
@@ -41,8 +46,13 @@ const BODY_ROWS=[
  {id:'wisp-orb',kind:'body',title:'Wisp orb',detail:'Default even-odd oval with an interior gap. Teal idle, amber listening, cyan speaking. Original Wisp-authored programmatic artwork.'},
  {id:'wisp-fox',kind:'body',title:'Fox',detail:'Original in-repo fox silhouette with an interior gap. Same Wisp; listening and speaking reactions are fox-specific.'},
  {id:'wisp-robot',kind:'body',title:'Robot',detail:'Original in-repo robot silhouette with an interior gap. Same Wisp; listening and speaking reactions are robot-specific.'},
+ {id:'wisp-bird',kind:'body',title:'Bird',detail:'Original in-repo bird silhouette with a pointed beak and tail and an even-odd eye gap. Same Wisp; listening and speaking reactions are bird-specific.'},
+ {id:'wisp-cat',kind:'body',title:'Cat',detail:'Original in-repo sitting-cat silhouette with two pointed ears and an even-odd belly gap. Same Wisp; listening and speaking reactions are cat-specific.'},
+ {id:'wisp-owl',kind:'body',title:'Owl',detail:'Original in-repo round owl with ear tufts and an even-odd eye-ring gap. Same Wisp; listening and speaking reactions are owl-specific.'},
+ {id:'wisp-sprout',kind:'body',title:'Sprout',detail:'Original in-repo two-leaf plant companion with an even-odd between-leaf gap. Same Wisp; listening and speaking reactions are sprout-specific.'},
+ {id:'wisp-capsule',kind:'body',title:'Capsule',detail:'Original in-repo vertical rounded capsule with an even-odd porthole gap. Same Wisp; listening and speaking reactions are capsule-specific.'},
 ];
-const SKINS_ROW={id:UNSUPPORTED_SKINS_ID,kind:'unsupported',title:'Additional official skins',detail:'Around twenty official skins remain later (slice 19). No marketplace, third-party pack, or extra skins were queried.'};
+const SKINS_ROW={id:UNSUPPORTED_SKINS_ID,kind:'unsupported',title:'Additional official skins',detail:'Further official skins toward the eventual collection remain later. No marketplace, third-party pack, or extra skins were queried.'};
 
 export function catalogRows(state={}){
  const savedId=state.savedId||DEFAULT_CATALOG_ID;

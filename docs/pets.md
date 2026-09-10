@@ -1,10 +1,10 @@
 # Pets — interchangeable mascot bodies
 
-Wisp Settings → Pets and the menu-bar **Change Pet…** action select a **closed, Wisp-authored starter catalog**. Changing the pet never changes the companion. There is no marketplace, no `dsh` skin install, no PNG/JPEG/Live2D/Spine pack, no download, and no spend.
+Wisp Settings → Pets and the menu-bar **Change Pet…** action select a **closed, Wisp-authored official catalog (wave 1)**. Changing the pet never changes the companion. There is no marketplace, no `dsh` skin install, no PNG/JPEG/Live2D/Spine pack, no download, and no spend.
 
 ## Rights
 
-All three selectable bodies are original Wisp-authored programmatic vector artwork drawn in-repo with AppKit `NSBezierPath` / even-odd fills. They are not third-party files, not recorded commercial licenses, and not imported rasters.
+All eight selectable bodies are original Wisp-authored programmatic vector artwork drawn in-repo with AppKit `NSBezierPath` / even-odd fills. They are not third-party files, not recorded commercial licenses, and not imported rasters.
 
 ## Closed catalog
 
@@ -13,10 +13,13 @@ All three selectable bodies are original Wisp-authored programmatic vector artwo
 | `wisp-orb` | Wisp orb | Yes. This **is** the accepted-02 even-odd oval (teal idle, amber listening, cyan speaking, interior gap). |
 | `wisp-fox` | Fox | Original fox silhouette with an interior gap and fox-specific listening/speaking reactions. |
 | `wisp-robot` | Robot | Original robot silhouette with an interior gap and robot-specific listening/speaking reactions. |
+| `wisp-bird` | Bird | Original winged silhouette with a pointed beak/tail, even-odd eye gap, and bird-specific listening/speaking reactions. |
+| `wisp-cat` | Cat | Original sitting-cat silhouette with two pointed ears, even-odd belly gap, and cat-specific listening/speaking reactions. |
+| `wisp-owl` | Owl | Original round owl with ear tufts, even-odd eye-ring gap, and owl-specific listening/speaking reactions. |
+| `wisp-sprout` | Sprout | Original two-leaf plant companion with an even-odd between-leaf/stem-window gap and sprout-specific listening/speaking reactions. |
+| `wisp-capsule` | Capsule | Original vertical rounded capsule with an even-odd porthole gap and capsule-specific listening/speaking reactions. |
 
-One explicit unsupported row, not enableable: `official-skins` — Additional official skins. Around twenty official skins remain slice 19. The catalog does not imply that a marketplace or extra skins were queried.
-
-Bird is out of this slice.
+One explicit unsupported row, not enableable: `official-skins` — Additional official skins. Further official skins toward the eventual collection remain later. The catalog does not imply that a marketplace, third-party pack, or extra skins were queried.
 
 ## Persistence
 
@@ -26,7 +29,7 @@ Saved state is a sibling application-support snapshot `pets/config.json`:
 {"version":1,"catalogId":"wisp-orb"}
 ```
 
-`catalogId` must be exactly `wisp-orb`, `wisp-fox`, or `wisp-robot`. Unknown version, unknown keys, oversize (>4096), empty id, `wisp-bird`, `official-skins`, marketplace ids, and `tool-bash` fail closed. A missing file defaults to `wisp-orb` (create-on-load, same pattern as Voice). An invalid file is not migrated to fox/robot and does not create a new companion UUID; Wisp reports restore-the-file, keeps the in-memory last-good or orb drawing, and does not write `memory.json`.
+`catalogId` must be exactly `wisp-orb`, `wisp-fox`, `wisp-robot`, `wisp-bird`, `wisp-cat`, `wisp-owl`, `wisp-sprout`, or `wisp-capsule`. Unknown version, unknown keys, oversize (>4096), empty id, `wisp-dragon`, `official-skins`, marketplace ids, and `tool-bash` fail closed. A missing file defaults to `wisp-orb` (create-on-load, same pattern as Voice). An invalid file is not migrated to a wave-1 id and does not create a new companion UUID; Wisp reports restore-the-file, keeps the in-memory last-good or orb drawing, and does not write `memory.json`. Unknown ids may be normalized to `wisp-orb` for drawing only; they are never persisted.
 
 Restart restores the last saved catalog id. In-flight drafts are process memory only.
 
@@ -58,6 +61,6 @@ No composer, transcript, Harness web/chat UI, `dsh` CLI, user-imported skins, or
 
 ## Linux vs Mac
 
-Linux-supplemental JS tests cover the closed enum, fail-closed snapshot schema, catalog rows, raster sample table, and sibling-file isolation. Native Swift `PetStore` / `PetsView` / `MascotView` catalog drawings / NativeChecks are **uncompiled/unverified on Linux**. macOS Settings pointer/keyboard, per-body raster/click-through, restart persistence, live companion UUID / home / engine PID proof, and 07 shortcut/mic/TTS retest are verification-backlog items.
+Linux-supplemental JS tests cover the closed enum, fail-closed snapshot schema, catalog rows, raster sample table, and sibling-file isolation. Native Swift `PetStore` / `PetsView` / `MascotView` catalog drawings / NativeChecks are **uncompiled/unverified on Linux**. macOS Settings pointer/keyboard, per-body raster/click-through, restart persistence, live companion UUID / home / engine PID proof, 13 retest, and 07 shortcut/mic/TTS retest are verification-backlog items.
 
 No reserved DeepSeek call, model download, or key inspection is part of this surface.

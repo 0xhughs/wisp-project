@@ -5,7 +5,9 @@ func petStoreTests() throws {
     let store = try PetStore(support:root)
     let initial = try store.load()
     try check(initial.configuration == PetConfiguration() && initial.configuration.catalogId == "wisp-orb", "default body is wisp-orb")
-    var bad = initial.configuration; bad.catalogId = "wisp-bird"
+    var bird = initial.configuration; bird.catalogId = "wisp-bird"
+    _ = try bird.encoded()
+    var bad = initial.configuration; bad.catalogId = "wisp-dragon"
     do { _ = try bad.encoded(); throw NSError(domain:"accepted unknown pet id",code:1) } catch is PetError {}
     bad = initial.configuration; bad.catalogId = "official-skins"
     do { _ = try bad.encoded(); throw NSError(domain:"accepted official-skins as body",code:1) } catch is PetError {}
@@ -31,10 +33,11 @@ func petStoreTests() throws {
     try check(PetApply.allowed(homeBusy:false,ending:false,modelBusy:true), "Apply allowed when modelBusy analogue is true")
     try check(PetApply.allowed(homeBusy:false,ending:false,modelBusy:false), "Apply allowed when idle")
     let rows = PetCatalog.rows(savedId:"wisp-orb",currentId:"wisp-orb")
-    try check(rows.map(\.id) == ["wisp-orb","wisp-fox","wisp-robot","official-skins"], "closed catalog order")
+    try check(rows.map(\.id) == ["wisp-orb","wisp-fox","wisp-robot","wisp-bird","wisp-cat","wisp-owl","wisp-sprout","wisp-capsule","official-skins"], "closed catalog order")
     try check(rows[0].status == .current && rows[0].canManage, "orb current")
     try check(rows.contains(where:{$0.id=="official-skins" && !$0.canManage && $0.status==.unavailable}), "unsupported skins row not enableable")
     try check(rows.filter{$0.kind==.unsupported}.allSatisfy{!$0.canManage}, "unsupported cannot manage")
+    try check(!rows.contains(where:{$0.id=="official-skins" && $0.detail.contains("slice 19")}), "remainder does not claim skins remain slice 19")
     let applying = PetCatalog.rows(savedId:"wisp-orb",currentId:"wisp-orb",applying:true,applyingId:"wisp-fox")
     try check(applying.first{$0.id=="wisp-fox"}?.status == .applying && applying.filter{$0.kind==.body}.allSatisfy{!$0.canManage}, "applying disables manage")
     try check(PetCatalog.rows(savedId:"wisp-fox",currentId:"wisp-orb").first{$0.id=="wisp-fox"}?.status == .saved, "saved differs from current")
@@ -50,7 +53,31 @@ func petStoreTests() throws {
     try FileManager.default.createSymbolicLink(at:configURL,withDestinationURL:canary)
     do { _ = try store.load(); throw NSError(domain:"pet followed symlink",code:1) } catch StoreError.unsafe {} catch StoreError.unavailable {}
     try check(try Data(contentsOf:canary) == pristine, "outside pet canary unchanged")
+    try FileManager.default.removeItem(at:configURL)
+    let waveRoot = URL(fileURLWithPath:CommandLine.arguments[1]).appendingPathComponent("pets-wave-"+UUID().uuidString)
+    try FileManager.default.createDirectory(at:waveRoot,withIntermediateDirectories:false,attributes:[.posixPermissions:0o700])
+    let waveStore = try PetStore(support:waveRoot)
+    let waveInitial = try waveStore.load()
+    try check(waveInitial.configuration.catalogId == "wisp-orb", "wave store defaults to orb")
+    var capsule = waveInitial.configuration; capsule.catalogId = "wisp-capsule"
+    let waveSaved = try waveStore.save(capsule,expected:waveInitial.revision)
+    try check(try waveStore.load().configuration.catalogId == "wisp-capsule", "wave-1 persist/reload")
+    try check(waveSaved.configuration.catalogId == "wisp-capsule", "wave-1 snapshot id")
+    try check(PetConfiguration.normalized("wisp-dragon") == "wisp-orb", "unknown ids normalize for drawing only")
+    try check(PetConfiguration.normalized("wisp-cat") == "wisp-cat", "wave-1 id is not normalized away")
     let foxSample = PetRaster.samples("wisp-fox"), robotSample = PetRaster.samples("wisp-robot"), orbSample = PetRaster.samples("wisp-orb")
     try check(orbSample.gap == (80,98) && foxSample.uniqueOpaque != robotSample.uniqueOpaque && foxSample.gap != orbSample.gap, "raster samples distinct")
-    print("Pet assertions: persist/reload, default orb, unknown id rejected, confirm-cancel, draft vs saved, Apply busy, skins unavailable, uncompiled on Linux")
+    try check(orbSample.uniqueOpaque == (40,80) && foxSample.gap == (80,78) && robotSample.uniqueOpaque == (80,8), "starter raster samples unchanged")
+    var gaps = Set<String>(), uniques = Set<String>()
+    for id in PetConfiguration.selectable {
+        let sample = PetRaster.samples(id)
+        try check(sample.corner == (0,0), "corner origin \(id)")
+        let g = "\(sample.gap.0),\(sample.gap.1)", u = "\(sample.uniqueOpaque.0),\(sample.uniqueOpaque.1)"
+        try check(g != u && g != "0,0" && u != "0,0", "gap and uniqueOpaque distinct \(id)")
+        try check(!gaps.contains(g), "gap collision \(g)")
+        try check(!uniques.contains(u), "uniqueOpaque collision \(u)")
+        gaps.insert(g); uniques.insert(u)
+    }
+    try check(PetConfiguration.selectable.count == 8, "eight selectable ids")
+    print("Pet assertions: persist/reload including wave-1, default orb, unknown id rejected, bird accepted, confirm-cancel, draft vs saved, Apply busy, skins unavailable, uncompiled on Linux")
 }

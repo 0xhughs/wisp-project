@@ -8,7 +8,7 @@ enum PetError: Error {
 struct PetConfiguration: Equatable {
     var version = 1
     var catalogId = "wisp-orb"
-    static let selectable = ["wisp-orb","wisp-fox","wisp-robot"]
+    static let selectable = ["wisp-orb","wisp-fox","wisp-robot","wisp-bird","wisp-cat","wisp-owl","wisp-sprout","wisp-capsule"]
     func validate() throws {
         guard version == 1, Self.selectable.contains(catalogId) else { throw PetError.invalid }
     }
@@ -40,8 +40,26 @@ enum PetCatalog {
         case "wisp-orb": return "Wisp orb"
         case "wisp-fox": return "Fox"
         case "wisp-robot": return "Robot"
+        case "wisp-bird": return "Bird"
+        case "wisp-cat": return "Cat"
+        case "wisp-owl": return "Owl"
+        case "wisp-sprout": return "Sprout"
+        case "wisp-capsule": return "Capsule"
         case "official-skins": return "Additional official skins"
         default: return id
+        }
+    }
+    static func detail(_ id: String) -> String {
+        switch id {
+        case "wisp-orb": return "Default even-odd oval with an interior gap. Teal idle, amber listening, cyan speaking. Original Wisp-authored programmatic artwork."
+        case "wisp-fox": return "Original in-repo fox silhouette with an interior gap. Same Wisp; listening and speaking reactions are fox-specific."
+        case "wisp-robot": return "Original in-repo robot silhouette with an interior gap. Same Wisp; listening and speaking reactions are robot-specific."
+        case "wisp-bird": return "Original in-repo bird silhouette with a pointed beak and tail and an even-odd eye gap. Same Wisp; listening and speaking reactions are bird-specific."
+        case "wisp-cat": return "Original in-repo sitting-cat silhouette with two pointed ears and an even-odd belly gap. Same Wisp; listening and speaking reactions are cat-specific."
+        case "wisp-owl": return "Original in-repo round owl with ear tufts and an even-odd eye-ring gap. Same Wisp; listening and speaking reactions are owl-specific."
+        case "wisp-sprout": return "Original in-repo two-leaf plant companion with an even-odd between-leaf gap. Same Wisp; listening and speaking reactions are sprout-specific."
+        case "wisp-capsule": return "Original in-repo vertical rounded capsule with an even-odd porthole gap. Same Wisp; listening and speaking reactions are capsule-specific."
+        default: return ""
         }
     }
     static func status(id: String, savedId: String, currentId: String, applying: Bool, applyingId: String?) -> PetRowStatus {
@@ -53,14 +71,9 @@ enum PetCatalog {
         return .unavailable
     }
     static func rows(savedId: String, currentId: String, applying: Bool = false, applyingId: String? = nil) -> [PetCatalogRow] {
-        let bodies: [(id:String,detail:String)] = [
-            ("wisp-orb","Default even-odd oval with an interior gap. Teal idle, amber listening, cyan speaking. Original Wisp-authored programmatic artwork."),
-            ("wisp-fox","Original in-repo fox silhouette with an interior gap. Same Wisp; listening and speaking reactions are fox-specific."),
-            ("wisp-robot","Original in-repo robot silhouette with an interior gap. Same Wisp; listening and speaking reactions are robot-specific."),
-        ]
-        return bodies.map { body in
-            PetCatalogRow(id:body.id,title:title(body.id),detail:body.detail,kind:.body,status:status(id:body.id,savedId:savedId,currentId:currentId,applying:applying,applyingId:applyingId),canManage:!applying)
-        } + [PetCatalogRow(id:"official-skins",title:title("official-skins"),detail:"Around twenty official skins remain later (slice 19). No marketplace, third-party pack, or extra skins were queried.",kind:.unsupported,status:.unavailable,canManage:false)]
+        selectable.map { id in
+            PetCatalogRow(id:id,title:title(id),detail:detail(id),kind:.body,status:status(id:id,savedId:savedId,currentId:currentId,applying:applying,applyingId:applyingId),canManage:!applying)
+        } + [PetCatalogRow(id:"official-skins",title:title("official-skins"),detail:"Further official skins toward the eventual collection remain later. No marketplace, third-party pack, or extra skins were queried.",kind:.unsupported,status:.unavailable,canManage:false)]
     }
 }
 struct PetDraft: Equatable {
@@ -80,6 +93,11 @@ enum PetRaster {
         switch PetConfiguration.normalized(catalogId) {
         case "wisp-fox": return (corner:(0,0),gap:(80,78),uniqueOpaque:(52,20))
         case "wisp-robot": return (corner:(0,0),gap:(80,34),uniqueOpaque:(80,8))
+        case "wisp-bird": return (corner:(0,0),gap:(92,64),uniqueOpaque:(138,76))
+        case "wisp-cat": return (corner:(0,0),gap:(80,101),uniqueOpaque:(50,24))
+        case "wisp-owl": return (corner:(0,0),gap:(80,67),uniqueOpaque:(56,16))
+        case "wisp-sprout": return (corner:(0,0),gap:(80,53),uniqueOpaque:(32,40))
+        case "wisp-capsule": return (corner:(0,0),gap:(80,60),uniqueOpaque:(80,24))
         default: return (corner:(0,0),gap:(80,98),uniqueOpaque:(40,80))
         }
     }

@@ -4,9 +4,7 @@ final class PetsView: NSView {
     weak var companion: CompanionController?
     private let status = NSTextField(wrappingLabelWithString:"")
     private let catalog = NSTextField(wrappingLabelWithString:"")
-    private let orb = ModelsButton(title:"Wisp orb",target:nil,action:nil)
-    private let fox = ModelsButton(title:"Fox",target:nil,action:nil)
-    private let robot = ModelsButton(title:"Robot",target:nil,action:nil)
+    private var bodyButtons: [ModelsButton] = []
     private let apply = ModelsButton(title:"Apply Body",target:nil,action:nil)
     private let revert = ModelsButton(title:"Revert Draft",target:nil,action:nil)
     private var base: PetSnapshot?
@@ -16,18 +14,25 @@ final class PetsView: NSView {
         companion = owner; super.init(frame:.zero)
         catalog.font = .systemFont(ofSize:13); catalog.textColor = .secondaryLabelColor
         status.font = .systemFont(ofSize:13)
-        orb.setAccessibilityLabel("Wisp orb"); fox.setAccessibilityLabel("Fox"); robot.setAccessibilityLabel("Robot")
-        for button in [orb,fox,robot] { button.setButtonType(.radio) }
-        let bodies = NSStackView(views:[orb,fox,robot]); bodies.spacing = 10
+        bodyButtons = PetCatalog.selectable.enumerated().map { index, id in
+            let button = ModelsButton(title:PetCatalog.title(id),target:nil,action:nil)
+            button.setAccessibilityLabel(PetCatalog.title(id))
+            button.setButtonType(.radio)
+            button.tag = index
+            button.target = self
+            button.action = #selector(pickTagged(_:))
+            return button
+        }
+        let bodies = NSStackView(views:bodyButtons); bodies.orientation = .vertical; bodies.spacing = 8
         let actions = NSStackView(views:[apply,revert]); actions.spacing = 10
-        for (button,action) in [(orb,#selector(pickOrb)),(fox,#selector(pickFox)),(robot,#selector(pickRobot)),(apply,#selector(requestApply)),(revert,#selector(cancel))] { button.target = self; button.action = action }
-        let hint = NSTextField(wrappingLabelWithString:"This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Apply Body saves the selected silhouette and does not restart reasoning. Cancel, Escape or Revert Draft leaves the saved body and on-screen drawing unchanged. Additional official skins remain unavailable; no marketplace was queried. Changing the body is not a permission grant.")
-        let stack = NSStackView(views:[NSTextField(labelWithString:"Starter bodies"),bodies,actions,status,NSTextField(labelWithString:"Catalog"),catalog,hint]); stack.orientation = .vertical; stack.alignment = .leading; stack.spacing = 12
+        apply.target = self; apply.action = #selector(requestApply)
+        revert.target = self; revert.action = #selector(cancel)
+        let hint = NSTextField(wrappingLabelWithString:"This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Apply Body saves the selected silhouette and does not restart reasoning. Cancel, Escape or Revert Draft leaves the saved body and on-screen drawing unchanged. Further official skins toward the eventual collection remain later; no marketplace, third-party pack, or extra skins were queried. Changing the body is not a permission grant.")
+        let stack = NSStackView(views:[NSTextField(labelWithString:"Official bodies"),bodies,actions,status,NSTextField(labelWithString:"Catalog"),catalog,hint]); stack.orientation = .vertical; stack.alignment = .leading; stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false; addSubview(stack)
         NSLayoutConstraint.activate([stack.topAnchor.constraint(equalTo:topAnchor),stack.leadingAnchor.constraint(equalTo:leadingAnchor),stack.trailingAnchor.constraint(equalTo:trailingAnchor),stack.bottomAnchor.constraint(equalTo:bottomAnchor)])
         for view in [catalog,status,hint] { view.widthAnchor.constraint(equalTo:stack.widthAnchor).isActive = true }
-        let focus: [NSControl] = [orb,fox,robot,apply,revert]
-        for control in focus {
+        for control in focusControls {
             let action: (Bool) -> Void = { [weak self, weak control] backward in
                 guard let control else { return }; self?.moveFocus(from:control,backward:backward)
             }
@@ -36,7 +41,7 @@ final class PetsView: NSView {
         refresh()
     }
     required init?(coder: NSCoder) { fatalError("Programmatic view") }
-    private var focusControls: [NSControl] { [orb,fox,robot,apply,revert] }
+    private var focusControls: [NSControl] { bodyButtons + [apply,revert] }
     private func moveFocus(from control: NSView, backward: Bool) {
         if let next = ModelsFocus.next(after:control,in:focusControls,backward:backward) { window?.makeFirstResponder(next) }
     }
@@ -44,10 +49,13 @@ final class PetsView: NSView {
         guard let owner = companion else { return }
         if !dirty, let saved = owner.petSnapshot, base?.revision != saved.revision { load(saved) }
         let allowed = PetApply.allowed(homeBusy:owner.homeBusy,ending:false)
-        for button in [orb,fox,robot] { button.isEnabled = allowed && !owner.petApplying }
+        for button in bodyButtons { button.isEnabled = allowed && !owner.petApplying }
         apply.isEnabled = allowed && !owner.petApplying && (dirty || owner.petSnapshot == nil)
         revert.isEnabled = allowed && dirty
-        mark(orb,selected:draftId=="wisp-orb"); mark(fox,selected:draftId=="wisp-fox"); mark(robot,selected:draftId=="wisp-robot")
+        for (index, button) in bodyButtons.enumerated() {
+            let id = PetCatalog.selectable[index]
+            mark(button,selected:draftId==id)
+        }
         let rows = owner.petCatalog
         catalog.stringValue = rows.map { row in
             "\(row.title) — \(row.status.rawValue)\(row.canManage ? "" : " (cannot enable)")\n\(row.detail)"
@@ -59,9 +67,11 @@ final class PetsView: NSView {
     private func load(_ saved: PetSnapshot) {
         base = saved; draftId = saved.configuration.catalogId; dirty = false
     }
-    @objc private func pickOrb() { pick("wisp-orb") }
-    @objc private func pickFox() { pick("wisp-fox") }
-    @objc private func pickRobot() { pick("wisp-robot") }
+    @objc private func pickTagged(_ sender: NSButton) {
+        let ids = PetCatalog.selectable
+        guard sender.tag >= 0, sender.tag < ids.count else { return }
+        pick(ids[sender.tag])
+    }
     private func pick(_ id: String) {
         guard PetCatalog.selectable.contains(id) else { return }
         draftId = id; dirty = id != (base?.configuration.catalogId ?? "wisp-orb"); refresh()
