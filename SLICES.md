@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13 and 15 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/15-*.md. 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 15-review-089 IMPLEMENTATION_READY parked 15 verification-pending; NOT Shipped; no slices/15-*.md. Next Now 17 (17-plan-091 APPROVE_PLAN; 17-build-092 complete; 17-review-093 pending). 15 candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files); Linux 185/185 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13, 15 and 17 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/17-*.md. 17-review-093 IMPLEMENTATION_READY (Linux 199/199; Win32/MSVC/GUI backlog). 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 17-review-093 IMPLEMENTATION_READY parked 17 verification-pending; NOT Shipped; no slices/17-*.md. Next Now 16 (16-draft-094). 17 candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 (282 files); Linux 199/199 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15or17accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 17 Windows companion
-Goal: bring the same Wisp identity and product model to Windows.
-Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
-Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
+### 16 Visual computer-control fallback
+Goal: complete an authorized action when structured accessibility cannot reach a control.
+Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
+Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
 
 ## Later
 ### 14 macOS integrated readiness
@@ -105,12 +105,6 @@ Goal: verify a coherent local-first macOS product across slices 01–13.
 Provides: end-to-end evidence, Wisp Diagnostics, launch/quit/recovery behavior, no required account or unnecessary telemetry, voice resource headroom and continued ordinary desktop usability.
 Depends on: 01–13. Apply the release gates above and document supported macOS hardware/versions and reproducible local installation. External distribution/signing remains a separate decision.
 Target membership: inside the selected macOS release target. Out: implied publication, signing credentials, invented performance thresholds or automatic inclusion of every future slice.
-
-### 16 Visual computer-control fallback
-Goal: complete an authorized action when structured accessibility cannot reach a control.
-Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
-Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
 
 ### 18 Optional voice wake
 Goal: optionally wake the existing voice companion by voice.
@@ -185,6 +179,12 @@ Provides: focus/move windows, read focused interfaces, click named controls, typ
 Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
 Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
 
+### 17 Windows companion
+Goal: bring the same Wisp identity and product model to Windows.
+Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
+Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
+
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
 
@@ -203,14 +203,14 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 13 Interchangeable mascot bodies — implemented with verification pending. 13-review-081 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 136/136 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/07 retest open. Unaccepted copy `evidence/13-contract-wip.md`. Depends on accepted 02–05 and unaccepted 07. Not Shipped.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
 - 15 macOS accessibility computer control — implemented with verification pending. 15-review-089 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 185/185 supplemental; NativeChecks/Mac AX/TCC/GUI/live Ollama/pin-runtime initialize/06/07/09/10/11/12 retest open. Unaccepted copy `evidence/15-contract-wip.md`. Closed fixture-only Direct AX catalog. Depends on accepted 06 and parked 09. Not Shipped.
-- 16 Visual computer-control fallback — unstarted. Depends on 15. Not eligible before 15.
-- 17 Windows companion — in progress (Ready for review 17-review-093 after 17-build-092). Closed body/tray/shortcut/same-home identity increment; UIA/voice/engine deferred 17.x. Linux 199/199 supplemental claimed; Win32 uncompiled/unverified. macOS tests do not prove Windows. Not Shipped.
+- 16 Visual computer-control fallback — unstarted (next Now; 16-draft-094). Depends on parked 15 (record retest; do not assume AX/TCC work). Use only when structured access is insufficient. Linux native visual-click sources uncompiled/unverified. Not Shipped.
+- 17 Windows companion — implemented with verification pending. 17-review-093 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 199/199 supplemental; NativeChecks/MSVC/Win32 GUI/tray/hotkey/DACL open. Unaccepted copy `evidence/17-contract-wip.md`. Closed body/tray/shortcut/same-home identity increment; UIA/voice/engine deferred 17.x. macOS tests do not prove Windows. Not Shipped.
 - 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
 - 19 Official skin collection — unstarted. Depends on 13.
 - 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
 - 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
 
-Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 15 parked; 17 Building after 17-plan-091 APPROVE_PLAN.
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 17 parked; next Now 16.
 
 ## Verification backlog
 Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
@@ -328,3 +328,21 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 56. Slice 16/17 obligation — visual click and Windows UI Automation remain unavailable after 15; 15 must not add screenshot targeting or UIA. Invalidated if 15 later admits those tools (that would be a contract change).
 
 57. Slice 15.x remainder — other apps, Spotlight, menu bar/Dock, drag/scroll beyond ±64 remain unavailable. Invalidated if 15 later expands the closed title/name enum or target beyond the fixture (that would be a contract change).
+
+58. Slice 17 / Done when 1 — declared Windows desktop: MSVC/CMake `Wisp.exe`; layered per-pixel click-through of even-odd `wisp-orb` corners and interior gap onto an independent titled target; opaque drag; always-on-top without activation theft; no rectangular backing. Requires Windows MSVC runner and participant. Automated: Linux-supplemental orb/BodyPhase/clamp tests (`sh tools/linux-js-tests.sh`, 199/199 at candidate `28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47`; product `da52341b72e6d3c5b6d88f1c6337949aa1c2b74e`). Procedure: `desktop/tests/gui/windows/README.md` over Notepad (or equivalent) including edge cross. Expected: transparent pixels pass clicks; opaque pixels drag; no `WS_EX_TRANSPARENT` whole-window punch. Invalidated by `desktop/windows` body/orb/geometry sources or manifest uiAccess.
+
+59. Slice 17 / Done when 2 — tray Show Companion / Choose Folder / Settings/General / Quit; Wake Voice and Mute present and disabled; no last-window exit; startup failure still has tray. Requires Windows desktop. Automated: Linux tray string tests only. Procedure: isolated `--test-support`; Show Companion without foreground theft; Quit removes icon. Expected: one notify icon “Wisp”; voice items do not capture audio. Invalidated by WinShell/WinApp tray sources.
+
+60. Slice 17 / Done when 3 — Ctrl+Alt+W while another owned app is focused shows the body without capture; conflict copy if registration fails; Alt+Space is not registered; no WH_KEYBOARD_LL fallback. Requires Windows desktop. Automated: Linux chord-constant tests. Procedure: focus Notepad, press Ctrl+Alt+W. Expected: body revealed/clamped; no system window menu chord. Invalidated by WinShell hotkey sources.
+
+61. Slice 17 / Done when 4 — Choose Folder cancel changes nothing; empty folder mints one UUID once; existing `wisp-home.json` UUID reused; relaunch via AppData/`--test-support` pointer restores the same companion; owner-only DACL; exclusive lock refuse. Requires Windows desktop. Automated: Linux marker/pointer schema tests. Procedure: isolated test-support child of marked scratch. Expected: same UUID; no second companion. Invalidated by windows-home.mjs / HomeIdentity / WinHome sources.
+
+62. Slice 17 / Tests 4 native — MSVC compile of `Wisp.exe` and `WispNativeChecks` (pointer decode, marker reuse, hotkey constants, `uiAccess="false"`). Requires Windows SDK/MSVC. Automated on Linux: skip/`missing-platform` (`desktop/scripts/build-windows.sh`). Optional g++ portable NativeChecks is not Win32 proof. Procedure: `desktop/scripts/build-windows.ps1`. Expected: compile succeeds; assertions pass. Invalidated by `desktop/windows` sources or CMakeLists.
+
+63. Slice 17 / Tests 5 GUI — full isolated GUI/tray/shortcut/identity checklist in `desktop/tests/gui/windows/README.md`. Requires Windows desktop and participant. Do not spend DeepSeek 0/1. Do not enable UI Access. Invalidated by Win32 body/shell/home sources.
+
+64. Slice 17 protocol non-touch — `desktop/macos/**`, `permission-protocol.mjs`, `body-bridge.mjs`, overlay `DISABLED_STOCK_IDS`, and `product.patch.yml` remain unchanged vs 17 Building dispatch `ee2491abb2b10cb9a8e4622311f9c42c3602626d`. 06/07/09/10/11/12/15 protocol retest is not required unless those seams later change. Invalidated by edits to those paths.
+
+65. Slice 17.x remainder — engine attach, voice, models, eleven-section Settings, 09 openers, UIA, installer remain Out. Invalidated if 17 later starts Node, admits `wisp_uia_*`, or enables `tool-pwsh` (that would be a contract change).
+
+66. Slice 16 obligation after 17 — visual click stays 16; this Windows body must not add screenshot targeting or `SendInput`. Invalidated if 17 later uses those effect paths.
