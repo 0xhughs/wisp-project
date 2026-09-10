@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13, 15, 16 and 17 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/17-*.md. 16-review-097 IMPLEMENTATION_READY (Linux 241/241; Mac raster/NSEvent/GUI backlog). 17-review-093 IMPLEMENTATION_READY (Linux 199/199; Win32/MSVC/GUI backlog). 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 16-review-097 IMPLEMENTATION_READY parked 16 verification-pending; NOT Shipped; no slices/16-*.md. Next Now 19 (19-build-100 complete; pending 19-review-101). 16 candidate 7315ae33627073403688c685d34677d8216243ccf388a6ab812cbb45c6dbb96c (290 files); Linux 241/241 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15or16or17accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13, 15, 16, 17 and 19 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/19-*.md. 16-review-097 IMPLEMENTATION_READY (Linux 241/241; Mac raster/NSEvent/GUI backlog). 17-review-093 IMPLEMENTATION_READY (Linux 199/199; Win32/MSVC/GUI backlog). 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 16-review-097 IMPLEMENTATION_READY parked 16 verification-pending; NOT Shipped; no slices/16-*.md. 19-review-101 IMPLEMENTATION_READY parked 19 verification-pending; NOT Shipped; no slices/19-*.md. Next Now 14 (14-draft-102 pending). 19 candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 (293 files); Linux 241/241 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15or16or17or19accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,19 +93,13 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 19 Official skin collection
-Goal: expand interchangeable bodies to around twenty official skins.
-Provides: a coherent catalog with the same required animation states and unchanged agent identity/capabilities.
-Depends on: 13. Around twenty is the user's eventual scale, not an exact first-release requirement.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future catalog scale. Out: pet-specific assistants or memories.
-
-## Later
 ### 14 macOS integrated readiness
 Goal: verify a coherent local-first macOS product across slices 01–13.
 Provides: end-to-end evidence, Wisp Diagnostics, launch/quit/recovery behavior, no required account or unnecessary telemetry, voice resource headroom and continued ordinary desktop usability.
 Depends on: 01–13. Apply the release gates above and document supported macOS hardware/versions and reproducible local installation. External distribution/signing remains a separate decision.
 Target membership: inside the selected macOS release target. Out: implied publication, signing credentials, invented performance thresholds or automatic inclusion of every future slice.
 
+## Later
 ### 18 Optional voice wake
 Goal: optionally wake the existing voice companion by voice.
 Provides: explicit opt-in, mute behavior and resource/privacy evidence, once the listening design is agreed.
@@ -185,6 +179,12 @@ Provides: transparent always-on-top body, click-through, global shortcut, tray c
 Depends on: accepted macOS architecture and an authorized Windows scope. Keep platform differences behind evidenced boundaries.
 Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); subsequent substantial contracts must be split before execution. Out: assuming macOS tests prove Windows behavior.
 
+### 19 Official skin collection
+Goal: expand interchangeable bodies to around twenty official skins.
+Provides: a coherent catalog with the same required animation states and unchanged agent identity/capabilities.
+Depends on: 13. Around twenty is the user's eventual scale, not an exact first-release requirement.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future catalog scale. Out: pet-specific assistants or memories.
+
 ## Implementation ledger
 Bookkeeping only (excluded from contract identity). Status is one of: unstarted; in progress; implemented with verification pending; accepted; blocked. Gap class is one of: none; human-test; missing-platform; external-resource; product-decision; implementation-defect; missing-prerequisite.
 
@@ -201,16 +201,16 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 11 Connections and custom MCP — implemented with verification pending. 11-review-077 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 130/130 supplemental; NativeChecks/Mac GUI/Keychain/live Ollama/07 retest/10 overlay retest/pin-runtime initialize open. Unaccepted copy `evidence/11-contract-wip.md`. Depends on accepted 01, 03, 06; parked 10 obligation for plugin-delivered Connections. Not Shipped.
 - 12 Reusable skills for the same Wisp — implemented with verification pending. 12-review-085 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 151/151 supplemental; NativeChecks/Mac GUI/live Ollama skill-then-time/pin-runtime initialize/07/09/10/11 retest open. Unaccepted copy `evidence/12-contract-wip.md`. Chosen demo `wisp-local-time-briefing` then 09 `wisp_tell_time`. Depends on accepted 04, 06; unaccepted 07; parked 09/10/11/13. Not Shipped.
 - 13 Interchangeable mascot bodies — implemented with verification pending. 13-review-081 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 136/136 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/07 retest open. Unaccepted copy `evidence/13-contract-wip.md`. Depends on accepted 02–05 and unaccepted 07. Not Shipped.
-- 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
+- 14 macOS integrated readiness — unstarted (Now selected; 14-draft-102 pending). Depends on 01–13 (07–13 implemented with verification pending, not assumed working). Last among the 01–14 acceptance target. Mostly Mac evidence. Record 07–13 retest. Not Shipped.
 - 15 macOS accessibility computer control — implemented with verification pending. 15-review-089 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 185/185 supplemental; NativeChecks/Mac AX/TCC/GUI/live Ollama/pin-runtime initialize/06/07/09/10/11/12 retest open. Unaccepted copy `evidence/15-contract-wip.md`. Closed fixture-only Direct AX catalog. Depends on accepted 06 and parked 09. Not Shipped.
 - 16 Visual computer-control fallback — implemented with verification pending. 16-review-097 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 241/241 supplemental; NativeChecks/Mac owned-window raster/NSEvent/fixture GUI/TCC-non-prompt/live Ollama/pin-runtime initialize/06/07/09/10/11/12/15 retest open. Unaccepted copy `evidence/16-contract-wip.md`. Closed Drawn Canary visual click inside the 15 fixture; AX remains Fixture Button path. Depends on accepted 06 and parked 09/15. Not Shipped.
 - 17 Windows companion — implemented with verification pending. 17-review-093 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 199/199 supplemental; NativeChecks/MSVC/Win32 GUI/tray/hotkey/DACL open. Unaccepted copy `evidence/17-contract-wip.md`. Closed body/tray/shortcut/same-home identity increment; UIA/voice/engine deferred 17.x. macOS tests do not prove Windows. Not Shipped.
 - 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
-- 19 Official skin collection — in progress (Ready for review 19-review-101 after 19-build-100). Closed wave 1: keep orb/fox/robot; add bird/cat/owl/sprout/capsule. official-skins remainder. Record 13/07 retest. Linux 241/241 claimed; native uncompiled/unverified. Not Shipped.
+- 19 Official skin collection — implemented with verification pending. 19-review-101 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 241/241 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/13 retest/07 retest open. Unaccepted copy `evidence/19-contract-wip.md`. Closed wave 1: keep orb/fox/robot; add bird/cat/owl/sprout/capsule. official-skins remainder. Depends on accepted 02–05 and parked 13/07. Not Shipped.
 - 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
 - 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
 
-Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 16 parked; next Now 19 (19-build-100 complete; pending 19-review-101).
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 19 parked; next Now 14 (14-draft-102 pending).
 
 ## Verification backlog
 Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
@@ -370,3 +370,23 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 77. Slice 16.x remainder — other apps, drag, multi-monitor HID, OCR, Windows SendInput remain unavailable. Invalidated if 16 later expands `target` beyond Drawn Canary or adds `CGEventPost` / `SendInput`.
 
 78. Slice 17 obligation after 16 — parked Windows body must remain without `SendInput` / screenshot targeting. Invalidated if 16 or a later 17 edit adds those effect paths.
+
+79. Slice 19 / Done when 1 — declared-Mac Settings → Pets and menu Change Pet…; keyboard traversal across all eight selectable bodies; confirm vs cancel (cancel: zero snapshot write, zero silhouette change); Apply each wave-1 id then fox then robot then orb. Requires declared Mac and participant. Automated: Linux-supplemental catalog/schema (`sh tools/linux-js-tests.sh`, 241/241 at candidate `bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79`; product `3b45452cefe07dd5e43c46c4ae0f8455f9483682`). Procedure: isolated app; Pets; Cancel then Apply wave-1. Expected: catalog-driven radios for eight ids; cancel unchanged; Apply persists catalog id. Invalidated by PetsView/PetStore/ManagementState.
+
+80. Slice 19 / Done when 2 — each of eight bodies: distinct idle/listening/speaking; Reduce Motion; developer `raster` per id (corner alpha 0, gap alpha 0, unique opaque > 0); click-through corners and interior gap; drag visible pixels; panel non-key/non-main always-on-top. Requires declared Mac. Automated: Linux raster uniqueness only. Invalidated by MascotView/PetRaster/replaceBody.
+
+81. Slice 19 / Done when 3 — restart restores last saved id (including a wave-1 id) with the same companion UUID, home, memory revision, Models route, Voice mute/locale, plugin snapshot, connection snapshot, and skill snapshot; `runtimePID` / `sessionId` unchanged across pet Apply if an engine is attached. Requires declared Mac. Automated: Linux sibling isolation only. Invalidated by PetStore/applyPets/prepareModels/home identity.
+
+82. Slice 19 / Tests 4 native — compile NativeChecks including wave-1 PetStore / ManagementState assertions. Requires macOS SDK. Linux: missing-platform. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by PetStore.swift / PetsView / MascotView / ManagementState / test-native.sh list.
+
+83. Slice 19 / Tests 2 — prepared pin-runtime initialize is not a new 19 resource while overlay/admission stay untouched. Existing missing-external-resource initialize backlog remains. Requires pnpm 11.7.0 and prepared `.wisp-spike.json`. Invalidated by overlay composer, `classifyInsert`, `wisp.inventory`, or product-sdk admission.
+
+84. Shared 13 retest after 19 — Settings → Pets still selects orb, fox, and robot; Cancel still zero snapshot / zero silhouette change; developer `raster` for those three ids still reports corner alpha 0, existing gap samples alpha 0, and unique opaque > 0; click-through; pet Apply must not restart the engine. Requires declared Mac. Do not treat 13 as accepted. Invalidated by PetStore, PetsView, MascotView, `replaceBody` / `applyPets` / `prepareModels`.
+
+85. Shared 07 retest after 19 — shortcut/Wake, no auto-listen after pet Apply (including wave-1), mute preserved, new body tracks listening/speaking, pending-approval speech suppression, no grant/reply revival, no orphan. Requires declared Mac. Do not spend DeepSeek 0/1. Do not treat 07 as accepted. Invalidated by CompanionController body-swap / `replaceBody` / `render` / `applyPets`, MascotView, EngineBridge, VoiceLifecycle.
+
+86. Slice 19.x-catalog remainder — further official Wisp-authored programmatic bodies toward the eventual around-twenty collection remain unavailable. Invalidated if 19 later adds selectable ids beyond the eight (that would be a contract change).
+
+87. Slice 17.x-skins obligation after 19 — Windows drawings of non-orb catalog ids remain Out; `desktop/windows/**` tree `271c0570446ffaf3a2e7dffcd96fc6cf9595a131`. Invalidated if 19 or a later 17 edit draws non-orb ids on Windows.
+
+88. Slice 19 protocol non-touch — overlay, `product-sdk.ts`, `permission-protocol.mjs`, `ax-actions.mjs`, `visual-actions.mjs`, and `desktop/windows/**` remain unchanged vs 19 Building dispatch `06f0079419db7d50879e931499f69171baf2c14b`. 10/11/12/15/16 retest is not required unless those seams later change. Invalidated by edits to those paths.

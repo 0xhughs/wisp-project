@@ -1,3 +1,18 @@
+# NOT ACCEPTED — unaccepted slice 19 working contract
+
+This file is **not** an accepted-slice archive. Slice 19 is **not Shipped**.
+Do not treat this path as `slices/19-official-skin-collection.md`.
+
+Parked 2026-09-10 after independent **19-review-101 IMPLEMENTATION_READY** (reviewer `bc-8a5fce5a-bda7-5b08-bfab-37ef731892b9`). Remaining Mac/human gaps are backlog only. Historical **07-review-060** remains **HUMAN_REQUIRED**. Linux 19-build-100 seams are implemented with verification pending.
+
+Approved slice-19 contract: `a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d`.
+Implementation candidate: `bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79` (293 files).
+Verbatim reviews: `$HOME/wisp-work/loop-state/19-review-101.md`, `$HOME/wisp-work/loop-state/19-plan-099.md`.
+
+The body below is BUILD Slice through Tests at park time.
+
+---
+
 # BUILD — active contract
 
 Slice: 19 Official skin collection
@@ -192,52 +207,3 @@ Required deliverables after plan approval; none claimed run in this no-code phas
 5. **Mac GUI / live / 13+07 retest (verification backlog, not Linux proof).** On the declared Mac, isolated home: Settings → Pets and menu Change Pet…; keyboard traversal across all eight selectable bodies; confirm vs cancel (cancel: zero snapshot write, zero silhouette change); Apply each wave-1 id then Apply fox then robot then orb; each of the eight bodies shows distinct idle/listening/speaking (developer `listen`/`speak`/`sequence` and, if 07 hardware is present, live voice reactions — do not claim 07 acceptance); Reduce Motion pauses animation; developer `raster` per id: corner alpha 0, gap alpha 0, unique opaque > 0; click-through corners and interior gap on **each** body; drag visible pixels; panel stays non-key/non-main, always-on-top; Show Companion / Settings close-reopen do not reset catalog id. Restart restores the last saved id (including a wave-1 id) with the **same** companion UUID, home path, memory revision, Models route, Voice mute/locale, plugin snapshot, connection snapshot, and skill snapshot. If an engine is attached, `runtimePID` / `sessionId` are unchanged across pet Apply. Then **13 retest** on orb/fox/robot as in Done when 4, and **07 retest**: shortcut/Wake, no auto-listen after pet Apply, mute preserved, pending-approval speech suppression, no orphan; new body tracks listening/speaking. NativeChecks pass. Do not spend DeepSeek 0/1. Do not assume parked-13 Mac raster already passed.
 
 6. **Regressions and identities.** Existing `body-bridge`, `permission-protocol`, `reasoning-config`, `memory-context`, `plugin-config`, `connection-config`, `skill-config`, `pet-config`, hardware/ollama inspect, voice-protocol/seams, safe-actions, ax-actions, visual-actions, windows-home/body-state, and spike client tests remain applicable. Pristine pin `d347e703908d0406b7a7ef80e3a0e594d86b2215`, byte-identical spike and archives 01–06. `desktop/windows/**` unchanged. No 07, 08, 09, 10, 11, 12, 13, 15, 16, or 17 Shipped claim. Final proof maps each Done when item to Linux-supplemental vs Mac/human evidence.
-## Proof
-19-review-101 IMPLEMENTATION_READY consumed. Slice 19 parked implemented with verification pending. Contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d. Implementation candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 (293 files) at product HEAD 3b45452cefe07dd5e43c46c4ae0f8455f9483682. Linux 241/241 independently reproduced. Native Swift uncompiled. Not 19 acceptance. Unaccepted copy `evidence/19-contract-wip.md`. Slices 07, 08, 09, 10, 11, 12, 13, 15, 16, 17 and 19 remain implemented with verification pending; historical 07-review-060 HUMAN_REQUIRED unchanged; parked IMPLEMENTATION_READY reviews unchanged; no `slices/07-*.md` through `slices/19-*.md`.
-
-Builder 19-build-100 (worker bc-ca5a1e45-6032-5572-8075-b4f4b1967cb7) implemented official wave-1 pet catalog. Handback $HOME/wisp-work/loop-state/19-build-100.md.
-
-19-plan-099 APPROVE_PLAN consumed. Baseline 3b93f7084b96d0c91b8a6fc85cfb03fc47a56149c8c3b3ded2321a5fb0ff8991 (291 files). Not 19 acceptance.
-
-Coordinator persisted Builder 19-draft-098 Proposed contract (worker bc-deb5021d-a57f-5be3-9412-195522570e6a). No application code in the proposal commit.
-
-## Review
-19-review-101 IMPLEMENTATION_READY — independent reviewer bc-8a5fce5a-bda7-5b08-bfab-37ef731892b9. Contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d and candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 match before/after (293 files). Linux 241/241 supplemental independently reproduced. Not APPROVE_IMPLEMENTATION. Not REJECT. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/19-review-101.md. Consumed.
-
-19-plan-099 APPROVE_PLAN — independent reviewer bc-67d3c56b-7bea-5638-a0f0-64cecbcacc72. Contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d and candidate 3b93f7084b96d0c91b8a6fc85cfb03fc47a56149c8c3b3ded2321a5fb0ff8991 match before/after (291 files). Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/19-plan-099.md. Consumed.
-
-19-draft-098 Builder draft-proposal complete (bc-deb5021d-a57f-5be3-9412-195522570e6a). Handback $HOME/wisp-work/loop-state/19-draft-098.md. Not plan approval. Consumed.
-
-16-review-097 IMPLEMENTATION_READY — independent reviewer bc-464b7da6-8861-5a0d-b387-2192a37c6bda. Contract a393b6a83c128955c199329d224f8a3b56d9b5fa9358727b9dc32077e8f5fa98. Linux 241/241 supplemental. Not APPROVE_IMPLEMENTATION. Consumed.
-
-17-review-093 IMPLEMENTATION_READY — independent reviewer bc-efc175aa-9c93-5e5b-9fb5-dda53741fd30. Contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195. Linux 199/199 supplemental. Not APPROVE_IMPLEMENTATION. Consumed.
-
-15-review-089 IMPLEMENTATION_READY — independent reviewer bc-dac81f09-21ff-5116-8729-1a43f2c26b35. Contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539. Linux 185/185 supplemental. Not APPROVE_IMPLEMENTATION. Consumed.
-
-loop-plan-061 APPROVE_PLAN — independent reviewer bc-d950b4e9-45b7-5209-ba88-2af0e6247466. Amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. Consumed.
-
-## Loop state
-Tool adapter: Cursor Task generalPurpose subagent; coordinator persists dispatch ID then launches; waits for confirmed completion; Reviewer context is independent of Builder reasoning. One active worker per checkout. This Linux host cannot actuate macOS CUA; Mac physical tests remain participant-gated.
-Coordinator: cursor-cloud bc-81f7c99b-f70d-4a0a-83e5-180597760926
-Worker / role / phase: none (pending launch) / Builder / Implemented, verification pending
-Dispatch ID / launch state / input identity: 14-draft-102 / pending launch / next eligible Now 14; parked 19 contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d; parked 19 implementation candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 (293 files)
-Pending result / last consumed dispatch: none / 19-review-101
-Snapshot capture and recheck commands / coverage / exclusions: Run `python3 tools/identity.py --repo .` from repository root (replacement of unavailable ../../work/loop-state/identity.py). SHA-256 sorted relative file manifest includes git tracked and non-ignored untracked files, bytes, types, executable bits, symlink targets. Excludes .git, tools/identity.py (hashed only into contract identity), and the WISP_LOOP_STATE store if it lies inside the checkout. BUILD.md and SLICES.md contribute canonicalized bytes: BUILD stops before ## Proof; SLICES omits Run status, Release evidence, Shipped/Now/Later/Implemented-verification-pending placement headings, Implementation ledger and Verification backlog while keeping mapped slice bodies and target membership ordered by slice ID. Contract hashes BUILD through Tests, the Loop-state snapshot capture line, that SLICES canonicalization, full AGENTS/LOOP/BUILDER/REVIEWER, and tools/identity.py bytes. Manifest JSON stored outside coverage at $WISP_LOOP_STATE (default $HOME/wisp-work/loop-state). No other dependency or generated paths currently excluded: place dependencies/test outputs outside checkout. Pinned upstream source remains an external reference; when present verify `git -C "$WISP_HARNESS" rev-parse HEAD` and porcelain status, default $HOME/wisp-work/deepseek-harness; only pristine pin d347e703908d0406b7a7ef80e3a0e594d86b2215 may support source claims. Historical identities below are records only and cannot be recomputed on this host. Changing identity.py rules requires plan re-review.
-Baseline snapshot: 3b93f7084b96d0c91b8a6fc85cfb03fc47a56149c8c3b3ded2321a5fb0ff8991 (291 files; approved 19-plan-099 baseline). Parked 19 implementation candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 (293 files) retained as record; parked tree after evidence/19-contract-wip.md was 386388d8f6c608fe5bb2325ee5f126327a0edc0d8c06f7f35240bb48f1056f29 (294 files, 19 page).
-Contract identity: a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d (approved 19-plan-099).
-Candidate snapshot: 386388d8f6c608fe5bb2325ee5f126327a0edc0d8c06f7f35240bb48f1056f29 (294 files after park; added evidence/19-contract-wip.md). 19-build-100 candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79 (293 files) retained as implementation record.
-Rejection count: 0
-Consecutive no-progress repairs: 0
-Open acceptance gaps / prior failing evidence: 19 parked verification-pending. Remaining 19: NativeChecks/Mac Settings/raster/click-through/restart/PID/13 retest/07 retest. 07–17 Mac/Windows/runtime gates remain backlog. Not 19 Shipped.
-Repair awaiting review: false
-Review events: 19-review-101 IMPLEMENTATION_READY contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d candidate bfd2fb9dd8b770baf5babaa204024354158b4a71e0649c7ca06a0894d189dd79; reviewer bc-8a5fce5a-bda7-5b08-bfab-37ef731892b9; not APPROVE_IMPLEMENTATION; not REJECT; counters 0/0; verbatim $HOME/wisp-work/loop-state/19-review-101.md. 19-plan-099 APPROVE_PLAN contract a26250063c5be1242d3789990fef1b32ce5d841734df018b872048bc40bb4f2d candidate 3b93f7084b96d0c91b8a6fc85cfb03fc47a56149c8c3b3ded2321a5fb0ff8991; reviewer bc-67d3c56b-7bea-5638-a0f0-64cecbcacc72; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/19-plan-099.md. 19-build-100 Building complete builder bc-ca5a1e45-6032-5572-8075-b4f4b1967cb7; not a review verdict. 19-draft-098 draft-proposal complete builder bc-deb5021d-a57f-5be3-9412-195522570e6a; not a review verdict. 16-review-097 IMPLEMENTATION_READY contract a393b6a83c128955c199329d224f8a3b56d9b5fa9358727b9dc32077e8f5fa98 candidate 7315ae33627073403688c685d34677d8216243ccf388a6ab812cbb45c6dbb96c; reviewer bc-464b7da6-8861-5a0d-b387-2192a37c6bda. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
-Budget limit / consumed / measurement: no global execution budget. Cloud05 allowance6/6 exhausted and immutable. Separate one-small-agent-cloud-greeting allowance0/1spent, max1024tokens/retry0, requires explicit physicalactivation and ledger reservation beforedispatch. Four user-operated successful connectiontests050 recorded separately, not agent calls. No extra connectiontest/keyinspection/download; local per-scenario modelnoncompliancecap2. Linux host must not consume the reserved cloud greeting.
-Blocker / resume status / resume action / recheck condition / deadline: none for eligible continuation. 07–19 Mac/Windows/runtime gates remain backlog, not a run stop. Recheck for 19 acceptance: Mac/runtime evidence then independent APPROVE_IMPLEMENTATION. Next action: Builder draft-proposal 14-draft-102. No automatic paid calls/downloads. Counters0/0.
-Advance phase: next selected
-Next slice ID / draft: 14 / 14-draft-102
-
-## Status
-Implemented, verification pending
-
-## Next
-Dispatch independent Builder 14-draft-102 for a Proposed slice-14 contract (no code; macOS integrated readiness; record parked 07–13 retest; do not assume those slices work; do not publish/sign/merge). Do not mark 07, 08, 09, 10, 11, 12, 13, 15, 16, 17, or 19 Shipped. Counters 0/0.
