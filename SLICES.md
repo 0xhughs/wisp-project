@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13, 15 and 17 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/17-*.md. 17-review-093 IMPLEMENTATION_READY (Linux 199/199; Win32/MSVC/GUI backlog). 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 17-review-093 IMPLEMENTATION_READY parked 17 verification-pending; NOT Shipped; no slices/17-*.md. Next Now 16 (16-build-096 complete; pending 16-review-097). 17 candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 (282 files); Linux 199/199 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15or17accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12, 13, 15, 16 and 17 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/17-*.md. 16-review-097 IMPLEMENTATION_READY (Linux 241/241; Mac raster/NSEvent/GUI backlog). 17-review-093 IMPLEMENTATION_READY (Linux 199/199; Win32/MSVC/GUI backlog). 15-review-089 IMPLEMENTATION_READY (Linux 185/185; Mac/runtime backlog). 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 16-review-097 IMPLEMENTATION_READY parked 16 verification-pending; NOT Shipped; no slices/16-*.md. Next Now 19 (pending 19-draft-098). 16 candidate 7315ae33627073403688c685d34677d8216243ccf388a6ab812cbb45c6dbb96c (290 files); Linux 241/241 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13or15or16or17accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 16 Visual computer-control fallback
-Goal: complete an authorized action when structured accessibility cannot reach a control.
-Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
-Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
+### 19 Official skin collection
+Goal: expand interchangeable bodies to around twenty official skins.
+Provides: a coherent catalog with the same required animation states and unchanged agent identity/capabilities.
+Depends on: 13. Around twenty is the user's eventual scale, not an exact first-release requirement.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future catalog scale. Out: pet-specific assistants or memories.
 
 ## Later
 ### 14 macOS integrated readiness
@@ -111,12 +111,6 @@ Goal: optionally wake the existing voice companion by voice.
 Provides: explicit opt-in, mute behavior and resource/privacy evidence, once the listening design is agreed.
 Depends on: 07 and platform-specific evidence.
 Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future until listening design is agreed. Out: making always-listening mandatory.
-
-### 19 Official skin collection
-Goal: expand interchangeable bodies to around twenty official skins.
-Provides: a coherent catalog with the same required animation states and unchanged agent identity/capabilities.
-Depends on: 13. Around twenty is the user's eventual scale, not an exact first-release requirement.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14); future catalog scale. Out: pet-specific assistants or memories.
 
 ### 20 Proactivity behavior, scope to be decided
 Goal: define and then implement any explicitly chosen proactive behaviors through Wisp Settings.
@@ -179,6 +173,12 @@ Provides: focus/move windows, read focused interfaces, click named controls, typ
 Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
 Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
 
+### 16 Visual computer-control fallback
+Goal: complete an authorized action when structured accessibility cannot reach a control.
+Provides: bounded visual targeting and failure handling tied to the same task, with the same confirmation rules.
+Depends on: 15. Use only when structured access is insufficient; verify the actual target before a consequential action.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: replacing structured APIs with visual clicking by default.
+
 ### 17 Windows companion
 Goal: bring the same Wisp identity and product model to Windows.
 Provides: transparent always-on-top body, click-through, global shortcut, tray controls, voice/local-model management and parity for the chosen release; prefer UI Automation for structured control.
@@ -203,14 +203,14 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 13 Interchangeable mascot bodies — implemented with verification pending. 13-review-081 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 136/136 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/07 retest open. Unaccepted copy `evidence/13-contract-wip.md`. Depends on accepted 02–05 and unaccepted 07. Not Shipped.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
 - 15 macOS accessibility computer control — implemented with verification pending. 15-review-089 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 185/185 supplemental; NativeChecks/Mac AX/TCC/GUI/live Ollama/pin-runtime initialize/06/07/09/10/11/12 retest open. Unaccepted copy `evidence/15-contract-wip.md`. Closed fixture-only Direct AX catalog. Depends on accepted 06 and parked 09. Not Shipped.
-- 16 Visual computer-control fallback — in progress (Ready for review 16-review-097 after 16-build-096). Closed Drawn Canary visual click inside the 15 fixture; AX remains Fixture Button path. Record 15/06/07 retest. Linux 241/241 claimed; native uncompiled/unverified. Not Shipped.
+- 16 Visual computer-control fallback — implemented with verification pending. 16-review-097 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 241/241 supplemental; NativeChecks/Mac owned-window raster/NSEvent/fixture GUI/TCC-non-prompt/live Ollama/pin-runtime initialize/06/07/09/10/11/12/15 retest open. Unaccepted copy `evidence/16-contract-wip.md`. Closed Drawn Canary visual click inside the 15 fixture; AX remains Fixture Button path. Depends on accepted 06 and parked 09/15. Not Shipped.
 - 17 Windows companion — implemented with verification pending. 17-review-093 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 199/199 supplemental; NativeChecks/MSVC/Win32 GUI/tray/hotkey/DACL open. Unaccepted copy `evidence/17-contract-wip.md`. Closed body/tray/shortcut/same-home identity increment; UIA/voice/engine deferred 17.x. macOS tests do not prove Windows. Not Shipped.
 - 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
-- 19 Official skin collection — unstarted. Depends on 13.
+- 19 Official skin collection — in progress (19-draft-098 pending after 16 park). Depends on parked 13. Around twenty is eventual scale, not an exact quota. Not Shipped.
 - 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
 - 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
 
-Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 17 parked; next Now 16 (16-build-096 complete; pending 16-review-097).
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 16 parked; next Now 19 (19-draft-098 pending).
 
 ## Verification backlog
 Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
@@ -346,3 +346,27 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 65. Slice 17.x remainder — engine attach, voice, models, eleven-section Settings, 09 openers, UIA, installer remain Out. Invalidated if 17 later starts Node, admits `wisp_uia_*`, or enables `tool-pwsh` (that would be a contract change).
 
 66. Slice 16 obligation after 17 — visual click stays 16; this Windows body must not add screenshot targeting or `SendInput`. Invalidated if 17 later uses those effect paths.
+
+67. Slice 16 / Done when 1–3 — declared-Mac native Allow Once / Deny / Cancel for `wisp_visual_click_drawn` against Drawn Canary; exact destination visible; deny/cancel zero `Drawn Count`; Allow Once unique match then one owned-window click; `Fixture Count` unchanged. Requires declared Mac and participant. Automated: Linux-supplemental recording driver (`sh tools/linux-js-tests.sh`, 241/241 at candidate `7315ae33627073403688c685d34677d8216243ccf388a6ab812cbb45c6dbb96c`; product `597d9b45cc36ba4ec6a145e5b373ec0b0874c3d1`). Procedure: isolated app; open fixture; visual Deny/Cancel then Allow Once; observe counts. Expected: 0/0/0/1; Fixture Count unchanged on visual; Drawn Count +1 only after Allow Once. Invalidated by visual-actions / VisualClickDriver / AccessibilityFixtureWindow / permission-protocol edits.
+
+68. Slice 16 / Done when 2 — no Screen Recording / Input Monitoring prompt at launch/initialize/describe/execute; in-process owned-window raster only; missing/ambiguous/hidden canary completes `failed` with zero click. Requires declared Mac. Automated: none on Linux. Invalidated by capture APIs or TCC prompt sites.
+
+69. Slice 16 / prefer-AX — `wisp_ax_click_named` still increments only `Fixture Count`; visual refuses `Fixture Button` before prompt; Drawn Canary is not an accessibility element. Requires declared Mac. Automated: Linux FIND_NAMES / Fixture Button refusal tests. Invalidated by ax-actions FIND_NAMES, ax click destination, or fixture accessibility flags.
+
+70. Slice 16 / Tests 4 native — compile NativeChecks including visual PermissionRequest tuples, confirm-cancel zero driver calls, accessibility-ignored canary. Requires macOS SDK. Linux: missing-platform. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by VisualClickDriver / AccessibilityFixtureWindow / PermissionState / test-native.sh list.
+
+71. Slice 16 / Tests 2 — prepared pin runtime initialize includes visual + six AX + three 09 names; excludes gated 10/11/12 names; hostile extra tool fails initialize. Requires pnpm 11.7.0 and prepared `.wisp-spike.json` (missing-external-resource here). Invalidated by product-sdk inventory/seal or overlay composer.
+
+72. Shared 06 retest after 16 — permission-protocol / PermissionState / consume() still fail-closed; queue 8; Cancel-first; no Allow Always; Deny/Cancel zero visual-driver calls. Invalidated by those sources.
+
+73. Shared 07 retest after 16 — CompanionController/EngineBridge/VoiceLifecycle: shortcut/Wake, no auto-listen, mute preserved, pending-approval speech suppression, visual-request not TTS, no orphan. Requires declared Mac. Do not spend DeepSeek 0/1. Automated: Linux voice-seams analogue. Invalidated by CompanionController/EngineBridge/VoiceLifecycle/permission-protocol edits.
+
+74. Shared 09 retest after 16 — Direct names still present; recording-opener 0/0/0/1; `file:` / `/etc` fail; open-request independent of visual-request. Invalidated by permission-protocol, PermissionState, SafeActionOpener, Direct admission, or body-bridge open path.
+
+75. Shared 15 retest after 16 — six AX tools still 0/0/0/1; unknown AX names fail before prompt; ax-request independent of visual-request; fixture canaries do not cross-increment. Invalidated by ax-actions, AccessibilityFixtureWindow, AccessibilityDriver, or body-bridge ax path.
+
+76. Shared 10/11/12 overlay/inventory retest after 16 — demonstration plugin / `mcp__` / `skill` still absent until enabled; extra unadmitted tools still fail initialize; visual name present in default inventory. Invalidated by overlay composer, `classifyInsert`, `wisp.inventory`, or startAttachment snapshot attach.
+
+77. Slice 16.x remainder — other apps, drag, multi-monitor HID, OCR, Windows SendInput remain unavailable. Invalidated if 16 later expands `target` beyond Drawn Canary or adds `CGEventPost` / `SendInput`.
+
+78. Slice 17 obligation after 16 — parked Windows body must remain without `SendInput` / screenshot targeting. Invalidated if 16 or a later 17 edit adds those effect paths.
