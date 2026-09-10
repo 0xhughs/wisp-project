@@ -12,7 +12,7 @@ HEAD at dispatch: `ff502109b380d10389fc18f4c1121c9dc5e94a99`. Contract identity 
 sh tools/linux-js-tests.sh
 ```
 
-Results are Linux-supplemental Node unit checks plus `identity.py --self-test`. Coverage includes:
+**241/241 pass, fail 0** (Linux-supplemental Node unit checks plus `identity.py --self-test`). Coverage includes:
 
 - Closed tool/operation/arg tuple for `wisp_visual_click_drawn`; source `wisp-visual`; destination `visual-fixture-canary:Drawn Canary`
 - Exact `{title,target}` accept; `Fixture Button` and other titles/targets/extra keys/non-strings rejected before any recording-driver call
