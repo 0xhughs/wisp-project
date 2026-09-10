@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/08-*.md or slices/10-*.md. 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Slice 09 09-plan-071 APPROVE_PLAN; 09-build-072 complete; pending 09-review-073; not Shipped. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09 and 10 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md or slices/08-*.md or slices/09-*.md or slices/10-*.md. 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. Next Now 11 (11-draft-074). User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,19 +93,13 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 09 Initial safe computer actions
-Goal: spoken requests produce useful, bounded desktop actions.
-Provides: open a URL, open a file and tell time through the same agent, with scoped inputs and appropriate permission handling. File/URL opening must not become an arbitrary command-execution bypass.
-Depends on: 06, 07. Actions and failures are communicated through voice/Wisp surfaces.
-Target membership: inside the selected macOS release target. Out: broad application manipulation, sending or deletion automation.
-
-## Later
 ### 11 Connections and custom MCP
 Goal: configure external capabilities through friendly Wisp Connections or advanced MCP configuration.
 Provides: connection setup/status/removal, protected credentials, permissions and compatible custom MCP servers; enforce approvals through external tool routes.
 Depends on: 01, 03, 06; 10 when a connection is plugin-delivered. GitHub, Google Drive, Notion, Calendar and Slack are examples, not a promise to ship all connectors together.
 Target membership: inside the selected macOS release target. Out: a required online account or unconfirmed external writes.
 
+## Later
 ### 12 Reusable skills for the same Wisp
 Goal: install or learn reusable behaviors on the existing identity.
 Provides: Wisp skill management backed by Harness; a skill can orchestrate tools/connections and use internal sub-agents with inherited permission constraints.
@@ -180,6 +174,12 @@ Provides: RAM, CPU, GPU/VRAM, unified-memory and disk inspection as applicable; 
 Depends on: 05, 07. Avoid double-counting unified memory; recommendation evidence must include speech headroom and available disk. No fixed numeric thresholds have been specified.
 Target membership: inside the selected macOS release target. Out: guaranteeing every tier on every machine.
 
+### 09 Initial safe computer actions
+Goal: spoken requests produce useful, bounded desktop actions.
+Provides: open a URL, open a file and tell time through the same agent, with scoped inputs and appropriate permission handling. File/URL opening must not become an arbitrary command-execution bypass.
+Depends on: 06, 07. Actions and failures are communicated through voice/Wisp surfaces.
+Target membership: inside the selected macOS release target. Out: broad application manipulation, sending or deletion automation.
+
 ### 10 Compatible plugin management
 Goal: expose Harness plugins through Wisp while preserving compatibility and permissions.
 Provides: plugin discovery/configuration and installation/lifecycle operations supported by the verified engine; compatibility status and honest handling of unsupported plugins.
@@ -197,9 +197,9 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 06 Permission and approval enforcement — accepted (archive `slices/06-permission-and-approval-enforcement.md`).
 - 07 Shortcut-to-voice agent loop — implemented with verification pending. Linux 07-build-059 seams independently reviewed; 07-review-060 verdict HUMAN_REQUIRED unchanged (not REJECT; counters 0/0). Parked 2026-09-10 after loop-plan-061 APPROVE_PLAN. Not Shipped. Unaccepted copy `evidence/07-contract-wip.md`. Unaccepted prerequisite for 08, 09, 12, 13. Builds on accepted 02–06.
 - 08 Hardware-aware local-model onboarding — implemented with verification pending. 08-review-069 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 68/68 supplemental; NativeChecks/Mac GUI/IOKit/live Ollama/07 Apply retest open. Unaccepted copy `evidence/08-contract-wip.md`. Depends on accepted 05 and unaccepted 07. Parked 10 is not an 08 dependency. Not Shipped.
-- 09 Initial safe computer actions — in progress (Ready for review 09-review-073 after 09-build-072). Depends on accepted 06 and unaccepted 07 (record 07 retest obligation). Parked 08 and 10 are not 09 dependencies. Must not become a command-execution bypass.
+- 09 Initial safe computer actions — implemented with verification pending. 09-review-073 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 109/109 supplemental; NativeChecks/Mac GUI/NSWorkspace/live Ollama/07 retest/pin-runtime initialize open. Unaccepted copy `evidence/09-contract-wip.md`. Depends on accepted 06 and unaccepted 07. Not Shipped.
 - 10 Compatible plugin management — implemented with verification pending. 10-review-065 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 49/49 supplemental; NativeChecks/Mac GUI/live Ollama/pin-runtime initialize open. Unaccepted copy `evidence/10-contract-wip.md`. CompanionController applyPlugins creates 07 Apply/Quit retest obligation. Not Shipped.
-- 11 Connections and custom MCP — unstarted. Depends on accepted 01, 03, 06; 10 when a connection is plugin-delivered. After 10, or non-plugin MCP with a recorded 10 obligation.
+- 11 Connections and custom MCP — in progress (draft-proposal 11-draft-074). Depends on accepted 01, 03, 06; parked 10 when a connection is plugin-delivered (record 10 obligation). Non-plugin MCP may proceed with that recorded obligation.
 - 12 Reusable skills for the same Wisp — unstarted. Depends on accepted 04, 06, unaccepted 07, and 10–11 as required by the chosen demo skill (choose when contracting).
 - 13 Interchangeable mascot bodies — unstarted. Depends on accepted 02–05 and unaccepted 07. Fox/robot/bird are illustrative; choose starter assets when contracting.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
@@ -254,4 +254,13 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 
 19. Slice 08 download path — live pull remains unauthorized until a coordinator-recorded consented resource plan (source, purpose, size/location, consent). This Linux host must not run it. Control stays disabled without the plan. Invalidated by pull-transport/OnboardingInstall edits.
 
+20. Slice 09 / Done when 2–4 — declared-Mac native Allow Once / Deny / Cancel for URL, file, and time; exact destination visible; deny/cancel zero effect; Allow Once one platform open or one clock read. Requires declared Mac and participant. Automated: Linux-supplemental recording opener (`sh tools/linux-js-tests.sh`, 109/109 at candidate `acf317bbb2645a832daec8db54248cd870c4d69b22b4fbdd5dc393fb630b3714`; product `3fbedef8cd46bd3017751d7b184ae8c0c793215f`). Procedure: isolated app; request each action; native buttons. Expected: 0/0/0/1 per tool; `file:` and `/etc` never succeed. Invalidated by safe-actions/permission-protocol/PermissionState/SafeActionOpener edits.
+
+21. Slice 09 / Done when 5 — 07 retest after 09 bridge/permission/opener edits: shortcut/Wake, no auto-listen, mute preserved, pending-approval speech suppression, no grant/reply revival, no orphan. Requires declared Mac. Do not spend DeepSeek 0/1. Automated: Linux voice-seams analogue. Invalidated by CompanionController/EngineBridge/VoiceLifecycle/opener edits.
+
+22. Slice 09 / Tests 4 native — compile NativeChecks including SafeActionOpener assertions. Requires macOS SDK. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by any `desktop/macos` source listed in `test-native.sh`.
+
+23. Slice 09 / Tests 2 — prepared pin runtime initialize: inventory includes the three 09 names; excludes `wisp_compatible_check` unless enabled; hostile extra tool fails initialize. Requires pnpm 11.7.0 and prepared `.wisp-spike.json` (missing-external-resource here). Invalidated by product-sdk inventory/seal or overlay composer.
+
+24. Slice 15 obligation — Accessibility computer control remains unavailable after 09; 11/15 must not assume 09 admitted AX APIs. Invalidated if 09 later admits those tools (that would be a contract change).
 
