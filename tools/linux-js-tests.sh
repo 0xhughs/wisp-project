@@ -19,6 +19,7 @@ ver=$("$NODE" -p "process.versions.node")
 }
 "$NODE" --test \
   desktop/tests/voice-protocol.test.mjs \
+  desktop/tests/voice-seams.test.mjs \
   desktop/tests/body-bridge.test.mjs \
   desktop/tests/permission-protocol.test.mjs \
   desktop/tests/reasoning-config.test.mjs \

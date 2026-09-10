@@ -18,3 +18,7 @@ node_modules/
 DerivedData/
 *.app/
 *.dSYM/
+
+# Python import residue; identity.py and other tools must not change candidate identity.
+__pycache__/
+
