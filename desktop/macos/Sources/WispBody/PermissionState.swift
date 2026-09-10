@@ -33,7 +33,9 @@ struct PermissionRequest {
             do { try SafeActionOpener.rejectPrivilegedDestination(destination) } catch { throw PermissionFailure.invalid }
         case "wisp_tell_time":
             guard source=="wisp-safe-action",operation=="read-local-clock",args.isEmpty,destination=="local-system-clock" else { throw PermissionFailure.invalid }
-        default: throw PermissionFailure.invalid
+        default:
+            guard tool.range(of:"^mcp__[A-Za-z0-9_-]{1,32}__record$",options:.regularExpression) != nil,
+                  source=="wisp-mcp",operation=="append-test-record",Set(args.keys)==["label"],let label=args["label"],label.range(of:"^[A-Za-z0-9_-]{1,40}$",options:.regularExpression) != nil else { throw PermissionFailure.invalid }
         }
         guard let values=value["fields"] as? [[String:String]],values.count<=12 else {throw PermissionFailure.invalid}
         fields=try values.map { field in
@@ -47,6 +49,9 @@ struct PermissionRequest {
             let label=tool=="wisp_open_url" ? "Open URL" : tool=="wisp_open_file" ? "Open file for viewing" : "Tell local time"
             let operationLine=tool=="wisp_tell_time" ? "Read this device’s local clock once" : tool=="wisp_open_url" ? "Open one http(s) address with the default handler" : "Open one viewable file with the default handler"
             return "Wisp is acting on your behalf.\n\nOperation: \(operationLine)\nSource: Wisp safe action (\(label))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nThis decision applies to this one action only. No account permission or future consent is granted. A spoken or typed yes is not a grant."
+        }
+        if source=="wisp-mcp" {
+            return "Wisp is acting on your behalf.\n\nOperation: Append one verification record\nSource: Wisp MCP demonstration (\(tool))\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nActual record label: \((wire["arguments"] as? [String:String])?["label"] ?? "")\n\nThis decision applies to this one action only. No account permission or future consent is granted. A spoken or typed yes is not a grant. Saving a connection is not a grant. There is no Allow Always."
         }
         let sourceLabel = source == "wisp-direct" ? "Wisp developer check" : source == "wisp-compatible-plugin" ? "Compatible plugin check" : "Local verification plugin"
         return "Wisp is acting on your behalf.\n\nOperation: Append one verification record\nSource: \(sourceLabel)\nDestination: \(destination)\n\n" + fields.joined(separator:"\n\n") + "\n\nActual record label: \((wire["arguments"] as? [String:String])?["label"] ?? "")\n\nThis decision applies to this one action only. No account permission or future consent is granted. Installing a plugin is not permission."

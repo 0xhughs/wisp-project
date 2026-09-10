@@ -9,6 +9,8 @@ import { SessionId } from '@deepseek-ai/dsh-session';
 import { PermissionPolicy, strict } from './approval-policy.ts';
 import { registerFixture } from './permission-fixtures.ts';
 import { registerSafeActions, createOpenBroker } from './safe-action-tools.ts';
+import { McpVerification } from './mcp-verification.ts';
+import { connectionInventory, defaultConnectionSnapshot, validateConnectionSnapshot } from './connection-config.mjs';
 function pluginSnapshotFromEnv() {
   const raw=process.env.WISP_PLUGIN_SNAPSHOT;
   if(!raw)return {version:1 as const,catalogId:'wisp-compatible-plugin',enabled:false,config:{note:''},revision:''};
@@ -17,11 +19,17 @@ function pluginSnapshotFromEnv() {
   if(o.enabled&&!o.revision)throw Error('WISP_PLUGIN_SNAPSHOT');
   return o as {version:1;catalogId:'wisp-compatible-plugin';enabled:boolean;config:{note:string};revision:string};
 }
+function connectionSnapshotFromEnv() {
+  const raw=process.env.WISP_CONNECTION_SNAPSHOT;
+  if(!raw)return defaultConnectionSnapshot();
+  return validateConnectionSnapshot(JSON.parse(raw));
+}
 function pluginInventoryPayload(tools:string[]) {
   const snap=pluginSnapshotFromEnv(),has=tools.includes('wisp_compatible_check');
   if(snap.enabled){if(!has)throw Error('WISP_INVENTORY');}
   else if(has)throw Error('WISP_INVENTORY');
-  return {tools,transport:'stdio',plugins:snap.enabled?[{id:'wisp-compatible-plugin',revision:snap.revision,tools:['wisp_compatible_check'],configDigest:createHash('sha256').update(JSON.stringify({note:snap.config.note})).digest('hex')}]:[]};
+  const connections=connectionInventory({snapshot:connectionSnapshotFromEnv(),tools,transport:'stdio'}).connections;
+  return {tools,transport:'stdio',plugins:snap.enabled?[{id:'wisp-compatible-plugin',revision:snap.revision,tools:['wisp_compatible_check'],configDigest:createHash('sha256').update(JSON.stringify({note:snap.config.note})).digest('hex')}]:[],connections};
 }
 export const name='wisp-product-sdk';
 export const inject=['sdkAppStartup','loader','agents','tools','approval','subagents'];
@@ -54,8 +62,9 @@ export function apply(ctx:Context) {
   if(!companionId||!generation||!uuid.test(companionId)||!uuid.test(generation))throw Error('WISP_IDENTITY');
   const queue=new QueueVerification(ctx);
   const compatible=new CompatibleVerification(ctx);
+  const mcpVerify=new McpVerification(ctx);
   const children=new ChildVerification(ctx,()=>sessionId?ctx.agents.get(SessionId(sessionId)):undefined,(m,p)=>transport.notify(m,p));
-  const bridge=new PermissionPolicy(ctx,{companionId,generation},exec=>busy&&!!exec.agent&&(String(exec.agent.session.id)===sessionId||children.owned.has(exec.agent)||queue.owned===exec.agent||compatible.owned===exec.agent)&&ctx.agents.get(exec.agent.session.id)===exec.agent,(m,p)=>transport.notify(m,p));
+  const bridge=new PermissionPolicy(ctx,{companionId,generation},exec=>busy&&!!exec.agent&&(String(exec.agent.session.id)===sessionId||children.owned.has(exec.agent)||queue.owned===exec.agent||compatible.owned===exec.agent||mcpVerify.owned===exec.agent)&&ctx.agents.get(exec.agent.session.id)===exec.agent,(m,p)=>transport.notify(m,p));
   bridge.install();
   ctx.provide('wispPermissions',bridge);
   const opens=createOpenBroker({notify:(m,p)=>transport.notify(m,p)});
@@ -68,12 +77,12 @@ export function apply(ctx:Context) {
   ctx.on('agent/status',({agent,status})=>{if(String(agent.session.id)===sessionId&&status==='idle'&&turnEnded)busy=false;});
   const failDisposal=():never=>{process.stderr.write('WISP_DISPOSAL_FAILED\n');process.exit(1);};
   installDisposalBarrier(ctx.root.fiber,async()=>{
-    closing=true;bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();
+    closing=true;bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();mcpVerify.cancel();
     const agent=sessionId?ctx.agents.get(SessionId(sessionId)):undefined;
     if(agent){agent.cancel({kind:'user'});await agent.whenIdle();}
     // Session persistence remains attached until the driver has written the
     // cancellation audit and turn/end. Server handle disposal then drains it.
-    await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();
+    await children.quiesce();await queue.quiesce();await compatible.quiesce();await mcpVerify.quiesce();await server.shutdown();await transport.flush();
   },failDisposal);
   let exitTask:Promise<void>|undefined;
   const exit=()=>exitTask??=(async()=>{
@@ -111,6 +120,10 @@ export function apply(ctx:Context) {
         if(params&&Object.keys(params).length||!initialized||busy)throw Error('WISP_QUEUE_UNAVAILABLE');
         busy=true;try{return await queue.start();}finally{busy=false;}
       }
+      case 'wisp/verification.mcp': {
+        if(params&&Object.keys(params).length||!initialized||busy)throw Error('WISP_QUEUE_UNAVAILABLE');
+        busy=true;try{return await mcpVerify.start();}finally{busy=false;}
+      }
       case 'wisp/verification.compatible': {
         if(params&&Object.keys(params).length||!initialized||busy)throw Error('WISP_QUEUE_UNAVAILABLE');
         busy=true;try{return await compatible.start();}finally{busy=false;}
@@ -122,7 +135,7 @@ export function apply(ctx:Context) {
       }
       case 'wisp/approval.decide': {
         const result=bridge.decide(params);
-        if((params as any).decision==='cancel'){bridge.cancel();opens.cancel();queue.cancel();compatible.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
+        if((params as any).decision==='cancel'){bridge.cancel();opens.cancel();queue.cancel();compatible.cancel();mcpVerify.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
         return result;
       }
       case 'wisp/voice.cancel': {
@@ -130,14 +143,14 @@ export function apply(ctx:Context) {
         if(!initialized||params.sessionId!==sessionId||!lastPromptId||params.messageId!==lastPromptId)throw Error('WISP_UNOWNED_VOICE');
         const agent=ctx.agents.get(SessionId(sessionId!));
         if(!agent)throw Error('WISP_UNOWNED_VOICE');
-        if(busy){bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();agent.cancel({kind:'user'});}
+        if(busy){bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();mcpVerify.cancel();agent.cancel({kind:'user'});}
         await agent.whenIdle();
         return {settled:true,messageId:lastPromptId};
       }
       case 'wisp/session.cancel': {
         strict(params,['sessionId']);
         if(!busy||params.sessionId!==sessionId)throw new Error('WISP_NO_ACTIVE_SESSION');
-        bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
+        bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();mcpVerify.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
       }
       case 'shutdown': {
         if(params&&Object.keys(params).length)throw new Error('WISP_INVALID_PARAMS');
@@ -152,5 +165,5 @@ export function apply(ctx:Context) {
       default:throw new Error('WISP_UNKNOWN_METHOD');
     }
   });
-  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();opens.cancel();await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
+  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();opens.cancel();await children.quiesce();await queue.quiesce();await compatible.quiesce();await mcpVerify.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
 }

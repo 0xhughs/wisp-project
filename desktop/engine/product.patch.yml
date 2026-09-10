@@ -65,7 +65,7 @@
   config:
     includeRuntimeContext: false
     includeHarnessIdentity: false
-    persona: You are Wisp, one desktop companion. Follow the user's request. Tools require Wisp-owned scoped authorization. URL, file, and time tools exist and still require Wisp confirmation. Never retry denied or cancelled actions. Developer verification tools may be called only when explicitly requested, exactly once.
+    persona: You are Wisp, one desktop companion. Follow the user's request. Tools require Wisp-owned scoped authorization. URL, file, and time tools exist and still require Wisp confirmation. Connections and MCP tools exist when configured and still require Wisp confirmation. Never retry denied or cancelled actions. Developer verification tools may be called only when explicitly requested, exactly once.
 - insert:
     - id: wisp-product-sdk
       name: __WISP_PRODUCT_ADAPTER__

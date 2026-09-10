@@ -3,7 +3,7 @@ import {resolve,join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {randomUUID} from 'node:crypto';
-export const productFiles=['product-sdk.ts','approval-policy.ts','permission-fixtures.ts','local-permission-plugin.ts','compatible-plugin.ts','compatible-verification.ts','child-verification.ts','queue-verification.ts','safe-actions.mjs','safe-action-tools.ts','product.patch.yml'];
+export const productFiles=['product-sdk.ts','approval-policy.ts','permission-fixtures.ts','local-permission-plugin.ts','compatible-plugin.ts','compatible-verification.ts','child-verification.ts','queue-verification.ts','safe-actions.mjs','safe-action-tools.ts','connection-config.mjs','connection-secrets.mjs','mcp-wrap.mjs','mcp-demo-fixture.mjs','mcp-connection.ts','mcp-verification.ts','plugin-config.mjs','plugin-overlay.mjs','product.patch.yml'];
 const pin='d347e703908d0406b7a7ef80e3a0e594d86b2215';
 export function prepareProduct(runtime,source=dirname(fileURLToPath(import.meta.url))) {
  const root=realpathSync(runtime),meta=JSON.parse(readFileSync(join(root,'.wisp-spike.json'))),up=join(root,'upstream');

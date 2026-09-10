@@ -43,7 +43,7 @@ export const UNSUPPORTED_CATALOG=[
  {id:'dsh-plugin-registry',kind:'unsupported',title:'Registry and marketplace install',status:'unavailable',detail:'Named marketplaces and dsh plugin pnpm, npm or git installs are unavailable.'},
  {id:'arbitrary-third-party-folder',kind:'unsupported',title:'Arbitrary third-party folder',status:'unavailable',detail:'Loading an arbitrary JavaScript folder is unavailable.'},
  {id:'stock-executable-tools',kind:'unsupported',title:'Stock executable tools',status:'incompatible',detail:'Shell, filesystem, web, job and related stock tools stay disabled.'},
- {id:'mcp-connection-plugin',kind:'unsupported',title:'MCP and Connections plugins',status:'unavailable',detail:'Connections and custom MCP stay unavailable until slice 11.'},
+ {id:'mcp-connection-plugin',kind:'unsupported',title:'MCP and Connections plugins',status:'unavailable',detail:'Plugin-delivered Connections remain unavailable; use Settings → Connections.'},
  {id:'skill-plugin',kind:'unsupported',title:'Skills plugins',status:'unavailable',detail:'Skills stay unavailable until slice 12.'},
  {id:'web-chat-ui-plugin',kind:'unsupported',title:'Web and chat UI plugins',status:'unavailable',detail:'Harness web and chat UI is not a Wisp surface.'},
  {id:'plugin-model-provider',kind:'unsupported',title:'Plugin-supplied models and providers',status:'incompatible',detail:'Models remains the sole owner of reasoning keys and provider choice.'},

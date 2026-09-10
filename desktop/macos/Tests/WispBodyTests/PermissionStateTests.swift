@@ -58,4 +58,13 @@ func permissionStateTests() throws {
     let opener=RecordingWorkspaceOpener()
     _=stateCancel.decide(cancelable.requestID,action:"cancel")
     try check(opener.count==0, "confirm-cancel performs zero opener calls")
+    let mcpFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-mcp","rootCallId":"call-mcp","actionDigest":String(repeating:"e",count:64),"turn":1,"toolName":"mcp__wispdemo__record","source":"wisp-mcp","revision":"1","arguments":["label":"once"],"operation":"append-test-record","destination":"/owned/mcp-ledger","fields":[["label":"Public tool","value":"mcp__wispdemo__record"],["label":"Record label","value":"once"]]]
+    let mcpRequest=try PermissionRequest(mcpFrame)
+    try check(mcpRequest.summary.contains("mcp__wispdemo__record") && mcpRequest.summary.contains("Wisp MCP demonstration") && mcpRequest.summary.contains("Append one verification record") && mcpRequest.summary.contains("Saving a connection is not a grant") && mcpRequest.summary.contains("spoken or typed yes is not a grant") && !mcpRequest.summary.contains("Allow Always"), "MCP request decode and copy")
+    var unknown=mcpFrame; unknown["toolName"]="mcp__wispdemo__delete"
+    do {_=try PermissionRequest(unknown); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var wrongSource=mcpFrame; wrongSource["source"]="wisp-direct"
+    do {_=try PermissionRequest(wrongSource); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var extraMcp=mcpFrame; extraMcp["arguments"]=["label":"once","extra":"x"]
+    do {_=try PermissionRequest(extraMcp); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
 }

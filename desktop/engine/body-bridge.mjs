@@ -6,6 +6,7 @@ import { bootstrap, profileFor } from './reasoning-config.mjs';
 import { readSnapshot } from './memory-schema.mjs';
 import { composeOverlay } from './plugin-overlay.mjs';
 import { readPluginSnapshot, defaultPluginSnapshot, pluginInventory } from './plugin-config.mjs';
+import { readConnectionSnapshot, defaultConnectionSnapshot, connectionInventory } from './connection-config.mjs';
 import { Client, completedTurn } from '../../spike/client.mjs';
 import { PIN, environment } from '../../spike/prepare.mjs';
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, realpathSync, existsSync } from 'node:fs';
@@ -40,7 +41,7 @@ export function denyApproval(descriptor) {
 export async function run(argv) {
   const options = {};
   for (let i=0;i<argv.length;i+=2) {
-    if (!['--runtime-root','--scratch','--developer','--memory-file','--plugin-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
+    if (!['--runtime-root','--scratch','--developer','--memory-file','--plugin-file','--connection-file'].includes(argv[i]) || !argv[i+1] || options[argv[i]]) throw new Error('BODY_CONFIG');
     options[argv[i]]=argv[i+1];
   }
   const send = value => { if (!process.stdout.destroyed) process.stdout.write(JSON.stringify(value)+'\n'); };
@@ -172,6 +173,7 @@ export async function run(argv) {
     const home=mkdtempSync(join(scratch,'body-')); mkdirSync(join(home,'workspace'),{mode:0o700}); mkdirSync(join(home,'dsh-home'),{mode:0o700}); mkdirSync(join(home,'tmp'),{mode:0o700});
     memory=readSnapshot(options['--memory-file']);
     const plugin=options['--plugin-file']?readPluginSnapshot(options['--plugin-file']):defaultPluginSnapshot();
+    const connection=options['--connection-file']?readConnectionSnapshot(options['--connection-file']):defaultConnectionSnapshot();
     let launch=await incoming; clearTimeout(bootstrapTimer); if(ending)return;
     voiceProvider=launch.configuration.selected;
     const route=profileFor(launch.configuration);
@@ -186,9 +188,10 @@ export async function run(argv) {
       memoryConfig:memory,
       developerPath:options['--developer']==='true'?join(up,'wisp-product/engine/local-permission-plugin.ts'):null,
       compatible:plugin.enabled?{path:join(up,'wisp-product/engine/compatible-plugin.ts'),config:plugin.config,snapshot:plugin}:null,
+      mcp:connection.enabled?{path:join(up,'wisp-product/engine/mcp-connection.ts'),config:connection.config,snapshot:connection}:null,
     }),{mode:0o600});
     ledger=join(home,'ledger.jsonl');
-    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,WISP_PLUGIN_SNAPSHOT:JSON.stringify({version:plugin.version,catalogId:plugin.catalogId,enabled:plugin.enabled,config:plugin.config,revision:plugin.revision}),...(plugin.enabled?{WISP_COMPATIBLE_LEDGER:join(home,'ledger.compatible.jsonl')}:{}),...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
+    const env={...environment(home,m.pnpm),TSX_TSCONFIG_PATH:join(up,'tsconfig.json'),WISP_COMPANION_ID:memory.companionId,WISP_ENGINE_GENERATION:permissionGeneration,WISP_PLUGIN_SNAPSHOT:JSON.stringify({version:plugin.version,catalogId:plugin.catalogId,enabled:plugin.enabled,config:plugin.config,revision:plugin.revision}),WISP_CONNECTION_SNAPSHOT:JSON.stringify({version:connection.version,catalogId:connection.catalogId,enabled:connection.enabled,config:connection.config,revision:connection.revision}),...(plugin.enabled?{WISP_COMPATIBLE_LEDGER:join(home,'ledger.compatible.jsonl')}:{}),...(connection.enabled?{WISP_MCP_LEDGER:join(home,'ledger.mcp.jsonl')}:{}),...(options['--developer']==='true'?{WISP_PERMISSION_FIXTURES:'1',WISP_PERMISSION_LEDGER:ledger}:{}),[route.profile.apiKeyEnv]:launch.configuration.selected==='local'?'ollama':launch.key};
     launch=undefined;
     client=new Client(m.node,['--import',m.tsx,join(up,'apps/cli/src/bin.ts'),'--profile','sdk','--patch',patch],{cwd:join(home,'workspace'),env});
     delete env.WISP_REASONING_CLOUD_KEY;
@@ -202,8 +205,10 @@ export async function run(argv) {
     if (ending) return;
     const notified=client.frames.find(f=>f.method==='wisp.inventory')?.params;
     const inventory=pluginInventory({snapshot:plugin,tools:notified?.tools,transport:notified?.transport||'stdio'});
+    const connections=connectionInventory({snapshot:connection,tools:notified?.tools,transport:notified?.transport||'stdio'});
     if(JSON.stringify(notified?.plugins)!==JSON.stringify(inventory.plugins))throw Error('WISP_INVENTORY');
-    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,plugins:inventory.plugins,pluginRevision:plugin.revision,observation:client.observe()});
+    if(JSON.stringify(notified?.connections||[])!==JSON.stringify(connections.connections))throw Error('WISP_INVENTORY');
+    ready=true; send({event:'ready',permissionGeneration,permissionFixtures:options['--developer']==='true',provider:route.provider,model:route.model,pid:client.pid,sessionId,companionId:memory.companionId,memoryRevision:memory.revision,plugins:inventory.plugins,pluginRevision:plugin.revision,connections:connections.connections,connectionRevision:connection.revision,observation:client.observe()});
   } catch (error) { await fail(error); }
 }
 if (process.argv[1] && resolve(process.argv[1])===fileURLToPath(import.meta.url)) run(process.argv.slice(2)).catch(()=>{process.exitCode=1;});
