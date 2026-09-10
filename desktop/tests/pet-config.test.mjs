@@ -91,7 +91,7 @@ test('Linux-supplemental: raster sample table has distinct unique-opaque points 
  assert.throws(()=>rasterSamples('official-skins'));
 });
 
-test('Linux-supplemental: writing pets/config.json does not modify sibling memory, reasoning, voice, plugins, or connections bytes',()=>{
+test('Linux-supplemental: writing pets/config.json does not modify sibling memory, reasoning, voice, plugins, connections, or skills bytes',()=>{
  const dir=mkdtempSync(join(tmpdir(),'wisp-pet-iso-'));
  try{
   const siblings={
@@ -100,16 +100,19 @@ test('Linux-supplemental: writing pets/config.json does not modify sibling memor
    'voice/config.json':JSON.stringify({version:1,locale:'en-US',voice:'installed',rate:0.5,muted:false}),
    'plugins/config.json':JSON.stringify({version:1,catalogId:'wisp-compatible-plugin',enabled:false,config:{note:''}}),
    'connections/config.json':JSON.stringify({version:1,catalogId:'wisp-demo-connection',enabled:false,config:{serverName:'wispdemo',note:'',credentialId:''}}),
+   'skills/config.json':JSON.stringify({version:1,catalogId:'wisp-local-time-briefing',enabled:false}),
   };
   mkdirSync(join(dir,'reasoning'),{recursive:true});
   mkdirSync(join(dir,'voice'),{recursive:true});
   mkdirSync(join(dir,'plugins'),{recursive:true});
   mkdirSync(join(dir,'connections'),{recursive:true});
+  mkdirSync(join(dir,'skills'),{recursive:true});
   writeFileSync(join(dir,'memory.json'),siblings['memory.json'],{mode:0o600});
   writeFileSync(join(dir,'reasoning/config.json'),siblings['reasoning/config.json'],{mode:0o600});
   writeFileSync(join(dir,'voice/config.json'),siblings['voice/config.json'],{mode:0o600});
   writeFileSync(join(dir,'plugins/config.json'),siblings['plugins/config.json'],{mode:0o600});
   writeFileSync(join(dir,'connections/config.json'),siblings['connections/config.json'],{mode:0o600});
+  writeFileSync(join(dir,'skills/config.json'),siblings['skills/config.json'],{mode:0o600});
   const before=Object.fromEntries(Object.keys(siblings).map(rel=>[rel,readFileSync(join(dir,rel))]));
   const written=writePetSnapshot(dir,{version:1,catalogId:'wisp-fox'});
   assert.deepEqual(written,{version:1,catalogId:'wisp-fox'});

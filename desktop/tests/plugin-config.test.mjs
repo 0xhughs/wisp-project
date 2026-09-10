@@ -69,6 +69,9 @@ test('closed catalog lists demonstration, developer fixture and unsupported clas
  assert.equal(rows[1].id,'wisp-local-permission-plugin');assert.equal(rows[1].canManage,false);assert.equal(rows[1].status,'unavailable');
  const ids=new Set(UNSUPPORTED_CATALOG.map(r=>r.id));
  for(const need of ['dsh-plugin-registry','arbitrary-third-party-folder','stock-executable-tools','mcp-connection-plugin','skill-plugin','web-chat-ui-plugin','plugin-model-provider']) assert.ok(ids.has(need));
+ const skillPlugin=UNSUPPORTED_CATALOG.find(r=>r.id==='skill-plugin');
+ assert.match(skillPlugin.detail,/Settings → Skills/);
+ assert.equal(skillPlugin.detail.includes('until slice 12'),false);
  for(const row of rows.filter(r=>r.kind!=='demonstration')) assert.equal(row.canManage,false);
  assert.equal(catalogRows({snapshot:snapshotFromConfiguration({version:1,catalogId:PLUGIN_CATALOG_ID,enabled:true,config:{note:''}}),applying:true})[0].status,'applying');
  assert.equal(catalogRows({snapshot:snapshotFromConfiguration({version:1,catalogId:PLUGIN_CATALOG_ID,enabled:true,config:{note:''}}),active:true})[0].status,'active');

@@ -1,0 +1,22 @@
+{
+  "dispatch": "12-build-084",
+  "linuxJsTests": "151/151",
+  "contractIdentity": "8d7b28860c42fe1be5917851ba5a8e1ed213b1bbd0399552936086b647c12d3b",
+  "pin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
+  "pinRuntimeInitialize": "not-run",
+  "pinRuntimeInitializeGap": "missing-external-resource",
+  "nativeChecks": "uncompiled",
+  "nativeChecksGap": "missing-platform",
+  "slice07Shipped": false,
+  "slice08Shipped": false,
+  "slice09Shipped": false,
+  "slice10Shipped": false,
+  "slice11Shipped": false,
+  "slice12Shipped": false,
+  "slice13Shipped": false,
+  "slice07Retest": "CompanionController applySkills/startAttachment/ready/unavailable and permission-protocol changed; voice-seams analogue passed; Mac shortcut/mic/TTS backlog; do not spend DeepSeek 0/1",
+  "slice09Retest": "permission-protocol and PermissionState accept skill/wisp-skill and still accept wisp_tell_time; Direct recording-opener tests still pass; live Ollama/NSWorkspace not claimed",
+  "slice10Retest": "composeOverlay skill= id-patch plus register insert; classifyInsert still rejects tool-skill/skill-filesystem/tool-subagent and extraInserts; skill-plugin detail Settings → Skills",
+  "slice11Retest": "MCP insert still orthogonal; mcp__ names absent unless connection enabled; MCP wrap/0/0/0/1 tests still pass",
+  "deepSeekCall": 0
+}

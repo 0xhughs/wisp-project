@@ -15,6 +15,8 @@ export function validateRequest(value) {
   if(value.source!==fixtures[value.toolName]||value.operation!=='append-test-record'||!fields(value.arguments,['label'])||!/^[A-Za-z0-9_-]{1,40}$/.test(value.arguments.label))throw Error('PERMISSION_REQUEST');
  } else if(mcpRecord.test(value.toolName)) {
   if(value.source!=='wisp-mcp'||value.operation!=='append-test-record'||!fields(value.arguments,['label'])||!/^[A-Za-z0-9_-]{1,40}$/.test(value.arguments.label))throw Error('PERMISSION_REQUEST');
+ } else if(value.toolName==='skill') {
+  if(value.source!=='wisp-skill'||value.operation!=='load-skill-instructions'||!fields(value.arguments,['name'])||value.arguments.name!=='wisp-local-time-briefing')throw Error('PERMISSION_REQUEST');
  } else if(actions[value.toolName]) {
   const a=actions[value.toolName];
   if(value.source!==a.source||value.operation!==a.operation||!fields(value.arguments,a.args))throw Error('PERMISSION_REQUEST');

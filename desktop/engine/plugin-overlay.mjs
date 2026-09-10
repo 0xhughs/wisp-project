@@ -1,6 +1,7 @@
 import {basename} from 'node:path';
 import {PLUGIN_CATALOG_ID,keys,validatePluginConfig,validatePluginSnapshot} from './plugin-config.mjs';
 import {MCP_INSERT_ID,validateConnectionInsertConfig,validateConnectionSnapshot,overlayConnectionConfig} from './connection-config.mjs';
+import {SKILL_INSERT_ID,validateSkillSnapshot} from './skill-config.mjs';
 
 export const DISABLED_STOCK_IDS=Object.freeze([
  'sdk-jsonrpc-server','session-title-llm','session-telemetry-otel','hmr',
@@ -16,6 +17,7 @@ const COVERED={
  'wisp-local-permission-plugin':'local-permission-plugin.ts',
  [PLUGIN_CATALOG_ID]:'compatible-plugin.ts',
  [MCP_INSERT_ID]:'mcp-connection.ts',
+ [SKILL_INSERT_ID]:'skill-register.ts',
 };
 const INJECT={
  'wisp-product-sdk':['sdkAppStartup','loader','agents','tools','approval','subagents'],
@@ -23,6 +25,7 @@ const INJECT={
  'wisp-local-permission-plugin':['tools','wispPermissions'],
  [PLUGIN_CATALOG_ID]:['tools','wispPermissions'],
  [MCP_INSERT_ID]:['tools','wispPermissions'],
+ [SKILL_INSERT_ID]:['skills'],
 };
 
 export function isPackageSpec(name){
@@ -58,9 +61,9 @@ export function jsonDataInsert(entry,options){
  return '\n- insert:\n    - '+JSON.stringify(entry)+'\n';
 }
 
-export function composeOverlay({basePatch,adapterPath,memoryPath,memoryConfig,developerPath=null,compatible=null,mcp=null,extraInserts}={}){
+export function composeOverlay({basePatch,adapterPath,memoryPath,memoryConfig,developerPath=null,compatible=null,mcp=null,skill=null,extraInserts}={}){
  if(extraInserts!==undefined&&!(Array.isArray(extraInserts)&&extraInserts.length===0))throw Error('PLUGIN_INCOMPATIBLE');
- if(typeof basePatch!=='string'||!basePatch.includes('__WISP_PRODUCT_ADAPTER__')||basePatch.includes(PLUGIN_CATALOG_ID)||basePatch.includes(MCP_INSERT_ID))throw Error('PLUGIN_OVERLAY');
+ if(typeof basePatch!=='string'||!basePatch.includes('__WISP_PRODUCT_ADAPTER__')||basePatch.includes(PLUGIN_CATALOG_ID)||basePatch.includes(MCP_INSERT_ID)||basePatch.includes(SKILL_INSERT_ID))throw Error('PLUGIN_OVERLAY');
  if(typeof adapterPath!=='string'||isPackageSpec(adapterPath)||basename(adapterPath)!=='product-sdk.ts')throw Error('PLUGIN_OVERLAY');
  if(typeof memoryPath!=='string'||isPackageSpec(memoryPath)||basename(memoryPath)!=='memory-context.mjs')throw Error('PLUGIN_OVERLAY');
  let text=basePatch.replaceAll('__WISP_PRODUCT_ADAPTER__',JSON.stringify(adapterPath));
@@ -83,7 +86,20 @@ export function composeOverlay({basePatch,adapterPath,memoryPath,memoryConfig,de
   if(typeof mcp.path!=='string')throw Error('PLUGIN_INCOMPATIBLE');
   text+=jsonDataInsert({id:MCP_INSERT_ID,name:mcp.path,inject:['tools','wispPermissions'],config},{developer:!!developerPath});
  }
+ let skillEnabled=false;
+ if(skill){
+  if(!keys(skill,['path'])&&!keys(skill,['path','snapshot']))throw Error('PLUGIN_INCOMPATIBLE');
+  if(skill.snapshot)validateSkillSnapshot(skill.snapshot);
+  if(typeof skill.path!=='string')throw Error('PLUGIN_INCOMPATIBLE');
+  skillEnabled=!!(skill.snapshot&&skill.snapshot.enabled);
+  if(skillEnabled){
+   // Id-patch the existing stock row. This is not classifyInsert of a second tool-skill.
+   text+='\n- id: tool-skill\n  disabled: false\n';
+   text+=jsonDataInsert({id:SKILL_INSERT_ID,name:skill.path,inject:['skills']},{developer:!!developerPath});
+  }
+ }
  if((text.match(/wisp-compatible-plugin/g)||[]).length!==(compatible?1:0))throw Error('PLUGIN_OVERLAY');
  if((text.match(/wisp-mcp-connection/g)||[]).length!==(mcp?1:0))throw Error('PLUGIN_OVERLAY');
+ if((text.match(/wisp-skill-register/g)||[]).length!==(skillEnabled?1:0))throw Error('PLUGIN_OVERLAY');
  return text;
 }

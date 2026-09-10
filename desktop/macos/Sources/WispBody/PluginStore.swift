@@ -41,7 +41,7 @@ enum PluginCatalog {
         ("arbitrary-third-party-folder","Arbitrary third-party folder",.unavailable,"Loading an arbitrary JavaScript folder is unavailable."),
         ("stock-executable-tools","Stock executable tools",.incompatible,"Shell, filesystem, web, job and related stock tools stay disabled."),
         ("mcp-connection-plugin","MCP and Connections plugins",.unavailable,"Plugin-delivered Connections remain unavailable; use Settings → Connections."),
-        ("skill-plugin","Skills plugins",.unavailable,"Skills stay unavailable until slice 12."),
+        ("skill-plugin","Skills plugins",.unavailable,"Skills are managed in Settings → Skills; Cordis skill plugins stay unavailable."),
         ("web-chat-ui-plugin","Web and chat UI plugins",.unavailable,"Harness web and chat UI is not a Wisp surface."),
         ("plugin-model-provider","Plugin-supplied models and providers",.incompatible,"Models remains the sole owner of reasoning keys and provider choice."),
     ]

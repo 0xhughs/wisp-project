@@ -66,6 +66,8 @@ final class PermissionWindow:NSWindowController,NSWindowDelegate {
                     label=$0.element.tool == "wisp_open_url" ? "Open URL" : $0.element.tool == "wisp_open_file" ? "Open file" : "Tell time"
                 } else if source == "wisp-mcp" {
                     label="Wisp MCP demonstration"
+                } else if source == "wisp-skill" {
+                    label="Wisp skill"
                 } else {
                     label=source == "wisp-direct" ? "Wisp check" : source == "wisp-compatible-plugin" ? "Compatible plugin check" : "Local plugin check"
                 }

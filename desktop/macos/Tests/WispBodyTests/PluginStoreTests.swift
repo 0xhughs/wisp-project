@@ -29,6 +29,7 @@ func pluginStoreTests() throws {
     try check(disabledRows.filter{$0.kind == .unsupported}.allSatisfy{!$0.canManage && ($0.status == .unavailable || $0.status == .incompatible)}, "unsupported rows cannot be enabled")
     try check(Set(disabledRows.map(\.id)).isSuperset(of:["dsh-plugin-registry","arbitrary-third-party-folder","stock-executable-tools","mcp-connection-plugin","skill-plugin","web-chat-ui-plugin","plugin-model-provider"]), "closed unsupported classes")
     try check(disabledRows.first{$0.id=="mcp-connection-plugin"}?.detail.contains("Settings → Connections") == true && disabledRows.first{$0.id=="mcp-connection-plugin"}?.detail.contains("until slice 11") == false, "plugin-delivered MCP copy")
+    try check(disabledRows.first{$0.id=="skill-plugin"}?.detail.contains("Settings → Skills") == true && disabledRows.first{$0.id=="skill-plugin"}?.detail.contains("until slice 12") == false, "skill-plugin copy")
     let applying = PluginCatalog.rows(snapshot:saved,applying:true)
     try check(applying.first{$0.id == "wisp-compatible-plugin"}?.status == .applying && applying.first!.canManage == false, "applying disables manage")
     try check(PluginCatalog.rows(snapshot:saved,active:true).first{$0.id == "wisp-compatible-plugin"}?.status == .active, "active after inventory")

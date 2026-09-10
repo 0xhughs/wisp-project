@@ -39,12 +39,12 @@ After a confirmed body change, and after Quit/relaunch that restores the saved i
 - Models route and protected key refs unchanged
 - Voice settings (locale, voice id, rate, mute) unchanged
 - Plugin snapshot and connection snapshot unchanged
-- Skills still unavailable; this build has not queried installed or learned behaviors
+- Skills persist on that same Wisp (closed catalog; see `skills.md`); pet Apply does not restart the engine or change the skill snapshot
 - Admitted tools, overlay YAML, and persona unchanged
 
 Pet Apply follows Voice settings (`homeQueue` persist, then swap the drawing view). It **must not** call `stopReasoning` / `startAttachment`, must not replace Harness, and must not change `sessionId` / `runtimePID` when an engine is already attached. Pet id is not a second `companionId`, is not written into overlay YAML, argv, `product.patch.yml` persona, or memory instructions, and is not a permission grant.
 
-Apply Body confirmation states that this is the same Wisp and that identity, memory, models, voice, plugins, and connections stay the same. Cancel, Escape, or Revert Draft: zero file write, zero view replacement. Applying the already-saved id is a no-op. Without a chosen Wisp folder, Apply explains that a folder is required to save a body and does not invent a second identity.
+Apply Body confirmation states that this is the same Wisp and that identity, memory, models, voice, plugins, connections, and skills persist. Cancel, Escape, or Revert Draft: zero file write, zero view replacement. Applying the already-saved id is a no-op. Without a chosen Wisp folder, Apply explains that a folder is required to save a body and does not invent a second identity.
 
 Body change recreates `MascotView` inside the **existing** controller-owned `MascotPanel` (`replaceBody`: one panel, generation bump, no second window). Developer `recreate` recreates the **current** pet. Developer `raster` reports `catalogId`, corner alpha, interior-gap alpha, and one body-unique opaque sample.
 

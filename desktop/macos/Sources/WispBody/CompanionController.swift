@@ -30,6 +30,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     private(set) var connectionSnapshot: ConnectionSnapshot?
     private(set) var connectionStatus="Choose a Wisp folder to manage connections."
     private(set) var connectionActive=false, connectionApplying=false
+    private var skillStore: SkillStore?
+    private(set) var skillSnapshot: SkillSnapshot?
+    private(set) var skillStatus="Choose a Wisp folder to manage skills."
+    private(set) var skillActive=false, skillApplying=false
     private var petStore: PetStore?
     private(set) var petSnapshot: PetSnapshot?
     private(set) var petStatus="Choose a Wisp folder to save a body."
@@ -118,9 +122,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
         if management.section == .plugins { return pluginDescription }
         if management.section == .connections { return connectionDescription }
+        if management.section == .skills { return skillDescription }
         if management.section == .pets { return petDescription }
         if management.section == .permissions { return permissionDescription }
-        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+petDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
+        if management.section == .diagnostics{return voiceDescription+"\n"+pluginDiagnostic+"\n"+connectionDiagnostic+"\n"+skillDiagnostic+"\n"+petDiagnostic+"\n"+OnboardingDiagnostics.diagnosticText(snapshot:hardwareSnapshot,inspect:ollamaInspect,record:onboarding)}
         return management.description
     }
     private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
@@ -196,6 +201,21 @@ final class CompanionController:NSObject,NSApplicationDelegate {
                 self?.connectionStatus=connections.configuration.enabled ? "Saved connection composition loaded. Apply to mount it." : "Demonstration connection is not installed."
             }
             do {
+                if skillStore == nil { skillStore = try SkillStore(support:support) }
+                let skills = try skillStore!.load()
+                DispatchQueue.main.async { [weak self] in
+                    self?.skillSnapshot=skills
+                    self?.skillStatus=skills.configuration.enabled ? "Saved skill composition loaded. Apply to mount it." : "Local time briefing is not installed."
+                }
+            } catch {
+                DispatchQueue.main.async { [weak self] in
+                    self?.skillStatus = SkillError.invalid.message
+                    if self?.skillSnapshot == nil {
+                        self?.skillSnapshot = SkillSnapshot(configuration:SkillConfiguration(),revision:"")
+                    }
+                }
+            }
+            do {
                 if petStore == nil { petStore = try PetStore(support:support) }
                 let pets = try petStore!.load()
                 DispatchQueue.main.async { [weak self] in
@@ -250,13 +270,13 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
             else if let next=self.restartAction {
                 self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
-            } else { self.modelBusy=false; self.pluginApplying=false; self.pluginActive=false; self.connectionApplying=false; self.connectionActive=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
+            } else { self.modelBusy=false; self.pluginApplying=false; self.pluginActive=false; self.connectionApplying=false; self.connectionActive=false; self.skillApplying=false; self.skillActive=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
         }
     }
     private func waitForOldRuntime(generation: Int, remaining: Int, then action: @escaping () -> Void) {
         guard !ending,bridgeGeneration == generation else { return }
         if runtimePID == 0 || kill(-Int32(runtimePID),0) != 0 && errno == ESRCH { action(); return }
-        guard remaining > 0 else { modelBusy=false; pluginApplying=false; connectionApplying=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
+        guard remaining > 0 else { modelBusy=false; pluginApplying=false; connectionApplying=false; skillApplying=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
         DispatchQueue.main.asyncAfter(deadline:.now()+0.1) { [weak self] in self?.waitForOldRuntime(generation:generation,remaining:remaining-1,then:action) }
     }
     private func stopReasoning(then action: @escaping () -> Void) {
@@ -350,6 +370,33 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             }
         }
     }
+    func applySkills(_ draft: SkillConfiguration, expected: String, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { skillStatus=SkillError.invalid.message; render(); completed(false); return }
+        guard memorySnapshot != nil, skillStore != nil else {
+            skillStatus=SkillApply.folderRequired; render(); completed(false); return
+        }
+        guard SkillApply.allowed(modelBusy:modelBusy,homeBusy:homeBusy,ending:ending) else { return }
+        if let saved=skillSnapshot, saved.configuration.enabled == draft.enabled, saved.configuration.catalogId == draft.catalogId {
+            skillStatus="Saved skill enablement is unchanged."; completed(true); render(); return
+        }
+        modelBusy=true; skillApplying=true; skillStatus="Applying saved skill composition…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.skillStore else { throw SkillError.invalid }; return try store.save(draft,expected:expected) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.skillSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error):
+                        self.skillApplying=false; self.modelBusy=false
+                        self.skillStatus=(error as? SkillError)?.message ?? (error as? StoreError)?.message ?? "Skill settings could not be saved. The previous composition was kept."
+                        completed(false); self.render()
+                    }
+                }
+            }
+        }
+    }
     func applyPets(_ draft: PetConfiguration, expected: String, completed: @escaping (Bool)->Void) {
         do { try draft.validate() } catch { petStatus=PetError.invalid.message; render(); completed(false); return }
         guard PetApply.allowed(homeBusy:homeBusy,ending:ending) else { return }
@@ -403,13 +450,25 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let demo=connectionCatalog.first{$0.kind == .demonstration}
         return "Connections: \(connectionActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed"). No secrets, overlay YAML or credential values."
     }
+    var skillCatalog: [SkillCatalogRow] {
+        SkillCatalog.rows(snapshot:skillSnapshot ?? SkillSnapshot(configuration:SkillConfiguration(),revision:""),applying:skillApplying,active:skillActive,engineUnavailable:management.lifecycle == .unavailable || state.phase == .unavailable)
+    }
+    var skillDescription: String {
+        let rows=skillCatalog
+        let demo=rows.first{$0.kind == .demonstration}
+        return "This is the same Wisp. Skills are reusable instructions of that companion, not a second assistant. Demonstration: \(demo?.status.rawValue ?? "not installed") — Local time briefing. Marketplace catalogs were not queried. Enable is not Allow Once.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+    }
+    private var skillDiagnostic: String {
+        let demo=skillCatalog.first{$0.kind == .demonstration}
+        return "Skills: \(skillActive ? 1 : 0) mounted. Demonstration: \(demo?.status.rawValue ?? "not installed") (wisp-local-time-briefing). No secrets, overlay YAML or credential values."
+    }
     var petCatalog: [PetCatalogRow] {
         PetCatalog.rows(savedId:petSnapshot?.configuration.catalogId ?? "wisp-orb",currentId:currentCatalogId,applying:petApplying,applyingId:petApplyingId)
     }
     var petDescription: String {
         let rows=petCatalog
         let current=rows.first{$0.status == .current} ?? rows.first{$0.id == currentCatalogId}
-        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins and connections stay the same. Additional official skins remain unavailable; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
+        return "Current body: \(current?.title ?? PetCatalog.title(currentCatalogId)). This is the same Wisp. Identity, memory, models, voice, plugins, connections and skills persist. Additional official skins remain unavailable; no marketplace was queried.\n\n" + rows.map{"\($0.title): \($0.status.rawValue)\($0.canManage ? "" : " (cannot enable)")."}.joined(separator:" ")
     }
     private var petDiagnostic: String {
         "Body: \(currentCatalogId) (\(PetCatalog.title(currentCatalogId))). No secrets, overlay YAML or credential values."
@@ -418,7 +477,10 @@ final class CompanionController:NSObject,NSApplicationDelegate {
         let mcp = connectionActive
             ? "The demonstration MCP tool mcp__wispdemo__record is Ask-each-time when mounted."
             : "MCP is unavailable until the demonstration Connection is mounted."
-        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. A mounted compatible plugin still requires Allow Once. \(mcp) Connection save is not a grant. Named SaaS connectors, MCP resources and prompts, skills, Accessibility, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction or pet Apply never grants action permission."
+        let skill = skillActive
+            ? "The skill tool is Ask-each-time when the demonstration is mounted. Loading skill instructions does not run wisp_tell_time."
+            : "Skill invocation is unavailable until Local time briefing is mounted."
+        return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nOpen URL, open a file for viewing, and tell the local time are Ask-each-time. Telling time uses this gated clock tool and still asks. A mounted compatible plugin still requires Allow Once. \(mcp) \(skill) Connection save is not a grant. Skill Enable is not a grant. Named SaaS connectors, MCP resources and prompts, Accessibility, visual click, Windows computer control, third-party plugins and external sub-agents stay unavailable. Stock shell, filesystem and web tools stay disabled. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key, plugin installation, spoken yes, connection save, memory instruction, skill Enable or pet Apply never grants action permission."
     }
     func testModelConnection() {
         guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
@@ -456,36 +518,40 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     private func startAttachment() {
         guard let snapshot=memorySnapshot,memoryUsable,!attachmentStarting,!ending,
-              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { pluginApplying=false; connectionApplying=false; unavailable(); return }
+              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { pluginApplying=false; connectionApplying=false; skillApplying=false; unavailable(); return }
         attachmentStarting=true; modelBusy=true; modelStatus="Attaching saved reasoning configuration…"; render()
         let script=Bundle.main.resourceURL!.appendingPathComponent("desktop/engine/body-bridge.mjs").path
         homeQueue.async { [weak self] in
             guard let self else { return }
-            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any],PluginSnapshot?,URL?,ConnectionSnapshot?,URL?) in
+            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any],PluginSnapshot?,URL?,ConnectionSnapshot?,URL?,SkillSnapshot?,URL?) in
                 guard let store=self.reasoningStore else { throw ReasoningError.unavailable }
                 let saved=try store.load(); let bootstrap=try store.bootstrap(saved)
                 var pluginSaved: PluginSnapshot?; var pluginFile: URL?
                 if let plugins=self.pluginStore { pluginSaved=try plugins.load(); pluginFile=try plugins.stage(pluginSaved!) }
                 var connectionSaved: ConnectionSnapshot?; var connectionFile: URL?
                 if let connections=self.connectionStore { connectionSaved=try connections.load(); connectionFile=try connections.stage(connectionSaved!) }
-                return (try self.homeStore!.stage(snapshot),saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile)
+                var skillSaved: SkillSnapshot?; var skillFile: URL?
+                if let skills=self.skillStore { skillSaved=try skills.load(); skillFile=try skills.stage(skillSaved!) }
+                return (try self.homeStore!.stage(snapshot),saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile,skillSaved,skillFile)
             }
             DispatchQueue.main.async {
                 self.attachmentStarting=false
                 guard !self.ending else { return }
                 do {
-                    let (path,saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile)=try staged.get(); self.reasoningSnapshot=saved
+                    let (path,saved,bootstrap,pluginSaved,pluginFile,connectionSaved,connectionFile,skillSaved,skillFile)=try staged.get(); self.reasoningSnapshot=saved
                     if let pluginSaved { self.pluginSnapshot=pluginSaved }
                     if let connectionSaved { self.connectionSnapshot=connectionSaved }
+                    if let skillSaved { self.skillSnapshot=skillSaved }
                     self.bridge=EngineBridge(); self.bridgeGeneration += 1; self.bridgeExited=false; self.runtimePID=0; self.sessionId=""
                     self.installBridgeCallbacks(self.bridge,generation:self.bridgeGeneration)
                     let section=self.management.section; self.state=BodyState(); self.management=ManagementState(); self.management.select(section)
                     var arguments=["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path]
                     if let pluginFile { arguments += ["--plugin-file",pluginFile.path] }
                     if let connectionFile { arguments += ["--connection-file",connectionFile.path] }
+                    if let skillFile { arguments += ["--skill-file",skillFile.path] }
                     try self.bridge.start(node:node,script:script,arguments:arguments,bootstrap:bootstrap)
                     self.attachedRevision=snapshot.revision; self.render()
-                } catch { self.bridgeExited=true; self.modelBusy=false; self.pluginApplying=false; self.connectionApplying=false; self.modelFailure(error) }
+                } catch { self.bridgeExited=true; self.modelBusy=false; self.pluginApplying=false; self.connectionApplying=false; self.skillApplying=false; self.modelFailure(error) }
             }
         }
     }
@@ -501,6 +567,8 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             pluginStatus = pluginActive ? "Demonstration plugin is mounted. Wisp still asks before each action." : (pluginSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Demonstration plugin is not installed.")
             connectionApplying=false; connectionActive=(event["connections"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-demo-connection"} == true
             connectionStatus = connectionActive ? "Demonstration connection is mounted. Wisp still asks before each action. Connection save is not a grant." : (connectionSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Demonstration connection is not installed.")
+            skillApplying=false; skillActive=(event["skills"] as? [[String:Any]])?.contains{($0["id"] as? String)=="wisp-local-time-briefing"} == true
+            skillStatus = skillActive ? "Local time briefing is mounted. Enable is not Allow Once. Wisp still asks before loading instructions and before telling time." : (skillSnapshot?.configuration.enabled==true ? "Saved composition did not become active." : "Local time briefing is not installed.")
             activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
         case "testing": if operations.start(event) {modelTesting=true;render()}
         case "connection-test": if operations.verifiedConnection(event) {modelStatus="Connection verified by a completed response.";render()}
@@ -520,7 +588,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
                 if let failed=SafeActionOpener.failed(from:event) {bridge.completeOpen(failed)}
                 else {invalidatePermissions();bridge.stop();unavailable()}
             }
-        case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; connectionApplying=false; connectionActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; if connectionSnapshot?.configuration.enabled==true { connectionStatus="Engine unavailable. Saved connection composition was kept." }; clearStage(); unavailable()
+        case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; connectionApplying=false; connectionActive=false; skillApplying=false; skillActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; if connectionSnapshot?.configuration.enabled==true { connectionStatus="Engine unavailable. Saved connection composition was kept." }; if skillSnapshot?.configuration.enabled==true { skillStatus="Engine unavailable. Saved skill composition was kept." }; clearStage(); unavailable()
         default: break
         }
         if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if event["event"] as? String == "open-request" {emit(["event":"open-request","openRequestId":event["openRequestId"] ?? "","kind":event["kind"] ?? ""])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}

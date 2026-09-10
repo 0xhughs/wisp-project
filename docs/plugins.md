@@ -11,7 +11,7 @@ Wisp Settings → Plugins manages a **closed, Wisp-authored catalog**. It does n
 
 ## What stays unavailable
 
-The catalog lists, and cannot enable: registry/marketplace installs; arbitrary third-party folders; stock executable-tool enablers (`tool-bash`, `tool-fs`, `tool-web`, skill/sub-agent rows, HMR, telemetry, …); MCP/Connection plugins (plugin-delivered Connections remain unavailable; use Settings → Connections); skills (slice 12); web/chat UI plugins; plugin-supplied model or provider replacements. Models remains the sole owner of reasoning keys.
+The catalog lists, and cannot enable: registry/marketplace installs; arbitrary third-party folders; stock executable-tool enablers (`tool-bash`, `tool-fs`, `tool-web`, skill/sub-agent rows, HMR, telemetry, …); MCP/Connection plugins (plugin-delivered Connections remain unavailable; use Settings → Connections); Cordis skill plugins (Skills are managed in Settings → Skills; Cordis skill plugins stay unavailable); web/chat UI plugins; plugin-supplied model or provider replacements. Models remains the sole owner of reasoning keys.
 
 The 06 developer fixture `wisp-local-permission-plugin` / `wisp_plugin_check` remains `--developer` / `WISP_PERMISSION_FIXTURES` only. It is visible as not a user plugin and is not the Plugins install target.
 

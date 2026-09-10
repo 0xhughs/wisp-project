@@ -13,7 +13,7 @@ export function strict(value: unknown, fields: string[]): asserts value is Recor
   if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).sort().join() !== [...fields].sort().join()) throw Error('WISP_INVALID_FRAME');
 }
 export type Action = {operation:string;destination:string;fields:Array<{label:string;value:string}>};
-export type Admission = {source:'wisp-direct'|'wisp-local-plugin'|'wisp-compatible-plugin'|'wisp-safe-action'|'wisp-mcp';revision:string;describe:(args:any)=>Action};
+export type Admission = {source:'wisp-direct'|'wisp-local-plugin'|'wisp-compatible-plugin'|'wisp-safe-action'|'wisp-mcp'|'wisp-skill';revision:string;describe:(args:any)=>Action};
 export type Descriptor = Action & {version:1;companionId:string;generation:string;sessionId:string;turn:number;callId:string;rootCallId:string;toolName:string;source:string;revision:string;arguments:unknown;actionDigest:string};
 type Capture = {exec:ToolExecution;descriptor:Descriptor;signal:AbortSignal};
 type Pending = Capture & {requestId:string;settle:(outcome:ApprovalOutcome)=>void};

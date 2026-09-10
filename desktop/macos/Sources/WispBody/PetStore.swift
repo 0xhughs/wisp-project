@@ -72,7 +72,7 @@ struct PetDraft: Equatable {
 }
 enum PetApply {
     static let folderRequired = "A Wisp folder is required to save a body. Choose a folder in General or Memory. This does not create a second identity."
-    static let confirmDetail = "This is the same Wisp. Identity, memory, models, voice, plugins, and connections stay the same. Changing the body is not a permission grant."
+    static let confirmDetail = "This is the same Wisp. Identity, memory, models, voice, plugins, connections, and skills persist. Changing the body is not a permission grant."
     static func allowed(homeBusy: Bool, ending: Bool = false, modelBusy: Bool = false) -> Bool { !homeBusy && !ending }
 }
 enum PetRaster {

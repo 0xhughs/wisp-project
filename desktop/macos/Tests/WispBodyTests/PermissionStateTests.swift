@@ -52,6 +52,15 @@ func permissionStateTests() throws {
     let timeFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-time","rootCallId":"call-time","actionDigest":String(repeating:"d",count:64),"turn":1,"toolName":"wisp_tell_time","source":"wisp-safe-action","revision":"1","arguments":[:] as [String:String],"operation":"read-local-clock","destination":"local-system-clock","fields":[["label":"Clock","value":"Wisp will read this device’s local clock once."]]]
     let timeRequest=try PermissionRequest(timeFrame)
     try check(timeRequest.summary.contains("local clock") && !timeRequest.summary.contains("Allow Always"), "time summary names the clock")
+    let skillFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-skill","rootCallId":"call-skill","actionDigest":String(repeating:"f",count:64),"turn":1,"toolName":"skill","source":"wisp-skill","revision":"1","arguments":["name":"wisp-local-time-briefing"],"operation":"load-skill-instructions","destination":"wisp-local-time-briefing","fields":[["label":"Skill","value":"Local time briefing"],["label":"Name","value":"wisp-local-time-briefing"]]]
+    let skillRequest=try PermissionRequest(skillFrame)
+    try check(skillRequest.summary.contains("wisp-local-time-briefing") && skillRequest.summary.contains("Load skill instructions") && skillRequest.summary.contains("does not run other tools") && skillRequest.summary.contains("Enable is not Allow Once") && !skillRequest.summary.contains("Allow Always"), "skill request decode and copy")
+    var badSkill=skillFrame; badSkill["arguments"]=["name":"meeting-prep-bundle"]
+    do {_=try PermissionRequest(badSkill); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var extraSkill=skillFrame; extraSkill["arguments"]=["name":"wisp-local-time-briefing","extra":"x"]
+    do {_=try PermissionRequest(extraSkill); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    var wrongSkillSource=skillFrame; wrongSkillSource["source"]="wisp-direct"
+    do {_=try PermissionRequest(wrongSkillSource); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
     var stateCancel=PermissionState(); stateCancel.attach(generation:generation,companionID:companion)
     let cancelable=try PermissionRequest(urlFrame)
     try stateCancel.receive(cancelable)

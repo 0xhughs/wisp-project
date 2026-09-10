@@ -11,6 +11,8 @@ import { registerFixture } from './permission-fixtures.ts';
 import { registerSafeActions, createOpenBroker } from './safe-action-tools.ts';
 import { McpVerification } from './mcp-verification.ts';
 import { connectionInventory, defaultConnectionSnapshot, validateConnectionSnapshot } from './connection-config.mjs';
+import { defaultSkillSnapshot, describeSkillLoad, skillInventory, SKILL_SOURCE, validateSkillSnapshot } from './skill-config.mjs';
+import { wrapSkillExecute } from './skill-wrap.mjs';
 function pluginSnapshotFromEnv() {
   const raw=process.env.WISP_PLUGIN_SNAPSHOT;
   if(!raw)return {version:1 as const,catalogId:'wisp-compatible-plugin',enabled:false,config:{note:''},revision:''};
@@ -24,12 +26,18 @@ function connectionSnapshotFromEnv() {
   if(!raw)return defaultConnectionSnapshot();
   return validateConnectionSnapshot(JSON.parse(raw));
 }
+function skillSnapshotFromEnv() {
+  const raw=process.env.WISP_SKILL_SNAPSHOT;
+  if(!raw)return defaultSkillSnapshot();
+  return validateSkillSnapshot(JSON.parse(raw));
+}
 function pluginInventoryPayload(tools:string[]) {
   const snap=pluginSnapshotFromEnv(),has=tools.includes('wisp_compatible_check');
   if(snap.enabled){if(!has)throw Error('WISP_INVENTORY');}
   else if(has)throw Error('WISP_INVENTORY');
   const connections=connectionInventory({snapshot:connectionSnapshotFromEnv(),tools,transport:'stdio'}).connections;
-  return {tools,transport:'stdio',plugins:snap.enabled?[{id:'wisp-compatible-plugin',revision:snap.revision,tools:['wisp_compatible_check'],configDigest:createHash('sha256').update(JSON.stringify({note:snap.config.note})).digest('hex')}]:[],connections};
+  const skills=skillInventory({snapshot:skillSnapshotFromEnv(),tools,transport:'stdio'}).skills;
+  return {tools,transport:'stdio',plugins:snap.enabled?[{id:'wisp-compatible-plugin',revision:snap.revision,tools:['wisp_compatible_check'],configDigest:createHash('sha256').update(JSON.stringify({note:snap.config.note})).digest('hex')}]:[],connections,skills};
 }
 export const name='wisp-product-sdk';
 export const inject=['sdkAppStartup','loader','agents','tools','approval','subagents'];
@@ -100,6 +108,14 @@ export function apply(ctx:Context) {
         initializing=true;
         try {
           await ctx.get('loader')?.await();
+          const skillSnap=skillSnapshotFromEnv();
+          if(skillSnap.enabled){
+            const skillTool=ctx.tools.get('skill');
+            if(!skillTool||ctx.tools.get('skill')!==skillTool)throw Error('WISP_INVENTORY');
+            wrapSkillExecute(skillTool,exec=>bridge.consume(exec));
+            if(ctx.tools.get('skill')!==skillTool)throw Error('WISP_INVENTORY');
+            bridge.admit(skillTool,{source:SKILL_SOURCE,revision:'1',describe:args=>describeSkillLoad(args)});
+          }
           bridge.seal();
           const result=await server.handleRequest(method,params);initialized=true;
           transport.notify('wisp.inventory',pluginInventoryPayload(ctx.tools.schemas().map(s=>s.name)));return result;

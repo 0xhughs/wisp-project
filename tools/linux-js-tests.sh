@@ -30,5 +30,6 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/safe-actions.test.mjs \
   desktop/tests/safe-actions-protocol.test.mjs \
   desktop/tests/connection-config.test.mjs \
-  desktop/tests/pet-config.test.mjs
+  desktop/tests/pet-config.test.mjs \
+  desktop/tests/skill-config.test.mjs
 python3 tools/identity.py --self-test --repo "$root"
