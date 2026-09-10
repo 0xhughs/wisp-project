@@ -17,6 +17,7 @@ final class CompanionController:NSObject,NSApplicationDelegate {
     }
     private var permissionWindow:PermissionWindow?
     private var operations=BridgeOperationState()
+    private var workspaceOpener:WorkspaceOpening=NativeWorkspaceOpener()
     private var bridgeGeneration=0
     private var restartAction: (() -> Void)?
     private var reasoningStore: ReasoningStore?
@@ -392,10 +393,19 @@ final class CompanionController:NSObject,NSApplicationDelegate {
             do {try permissions.receive(PermissionRequest(event));voice.approval(pending:true);if permissionWindow == nil {permissionWindow=PermissionWindow(owner:self)};permissionWindow?.refresh(present:true)} catch {invalidatePermissions();bridge.stop();unavailable()}
         case "approval-closed":
             if !permissions.generation.isEmpty {do {try permissions.closed(event);voice.approval(pending:!permissions.requests.isEmpty);permissionWindow?.refresh()}catch {invalidatePermissions();bridge.stop();unavailable()}}
+        case "open-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {
+                let completion=try SafeActionOpener.handle(event,expectedGeneration:permissions.generation,opener:workspaceOpener)
+                bridge.completeOpen(completion)
+            } catch {
+                if let failed=SafeActionOpener.failed(from:event) {bridge.completeOpen(failed)}
+                else {invalidatePermissions();bridge.stop();unavailable()}
+            }
         case "unavailable": modelBusy=false; modelTesting=false; pluginApplying=false; pluginActive=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; if pluginSnapshot?.configuration.enabled==true { pluginStatus="Engine unavailable. Saved plugin composition was kept." }; clearStage(); unavailable()
         default: break
         }
-        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
+        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if event["event"] as? String == "open-request" {emit(["event":"open-request","openRequestId":event["openRequestId"] ?? "","kind":event["kind"] ?? ""])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
     }
     func decidePermission(_ id:String,decision:String) {guard !ending,memoryUsable,let frame=permissions.decide(id,action:decision)else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
     func cancelPermissions() {guard !ending,memoryUsable,let frame=permissions.cancelAll() else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}

@@ -2,7 +2,7 @@
 
 Wisp asks for each supported tool action. The native request identifies the actual operation, source, destination and complete nonsecret inputs. Allow Once permits only that invocation; Deny prevents it; Cancel Request stops the owned request and associated work. Escape or closing the window cancels the owned operation and its queued requests with one cancellation batch. Repeated close gestures cannot send duplicate decisions. The initial focus is Cancel Request. Tab traverses request selection, scrollable details and the three decisions. Switching requests changes both the details and their waiting/sending status.
 
-Settings → Permissions shows admission status. Models alone owns reasoning keys. A configured key, installed plugin, skill instruction, selected model or parent approval gives no action permission. There is no Allow Always. Development verification tools are harmless ledger appends and are absent in normal mode; useful actions arrive in later slices.
+Settings → Permissions shows admission status. Models alone owns reasoning keys. A configured key, installed plugin, skill instruction, selected model or parent approval gives no action permission. There is no Allow Always. Useful actions in this slice are the three Wisp-owned tools `wisp_open_url`, `wisp_open_file`, and `wisp_tell_time` (source `wisp-safe-action`). Settings → Permissions lists them as Ask-each-time. Development verification tools remain harmless ledger appends and are absent in normal mode.
 
 ## Enforcement boundary
 
@@ -16,7 +16,7 @@ Cancellation and teardown revoke pending/unused grants before disposing agents a
 
 | Route | Slice 06 status | Required before future admission |
 | --- | --- | --- |
-| Direct | Developer-only real registry fixture proved; no general tools | Each action's destination and deny/cancel/allow effect contract |
+| Direct | Three Wisp-owned tools `wisp_open_url`, `wisp_open_file`, `wisp_tell_time` (source `wisp-safe-action`) plus the developer-only registry fixture. Ask-each-time; Allow Once / Deny / Cancel only | Stock shell/fs/web stay disabled. Accessibility (15), visual click (16) and Windows (17) remain unavailable |
 | Local Cordis plugin | One Wisp-authored demonstration (`wisp-compatible-plugin` / `wisp_compatible_check`) can be mounted from Settings → Plugins via overlay insert + restart. Installation is not Allow Once. The 06 developer fixture remains `--developer` only | Classifier + admission adapter; unknown/third-party/MCP/skill plugins stay unavailable (11/12) |
 | MCP | Not registered or executable | Real server tools/call, identity/generation, reconnect and credential endpoint tests in 11 |
 | Skills | Invocation/discovery disabled | Real registry load/invoke and subsequent gated actions in 12 |

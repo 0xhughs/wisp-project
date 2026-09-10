@@ -26,5 +26,7 @@ ver=$("$NODE" -p "process.versions.node")
   desktop/tests/memory-context.test.mjs \
   desktop/tests/plugin-config.test.mjs \
   desktop/tests/hardware-inspect.test.mjs \
-  desktop/tests/ollama-inspect.test.mjs
+  desktop/tests/ollama-inspect.test.mjs \
+  desktop/tests/safe-actions.test.mjs \
+  desktop/tests/safe-actions-protocol.test.mjs
 python3 tools/identity.py --self-test --repo "$root"

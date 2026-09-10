@@ -8,6 +8,7 @@ import { HarnessSdkJsonRpcServer } from '@deepseek-ai/dsh-sdk-jsonrpc-server';
 import { SessionId } from '@deepseek-ai/dsh-session';
 import { PermissionPolicy, strict } from './approval-policy.ts';
 import { registerFixture } from './permission-fixtures.ts';
+import { registerSafeActions, createOpenBroker } from './safe-action-tools.ts';
 function pluginSnapshotFromEnv() {
   const raw=process.env.WISP_PLUGIN_SNAPSHOT;
   if(!raw)return {version:1 as const,catalogId:'wisp-compatible-plugin',enabled:false,config:{note:''},revision:''};
@@ -57,6 +58,8 @@ export function apply(ctx:Context) {
   const bridge=new PermissionPolicy(ctx,{companionId,generation},exec=>busy&&!!exec.agent&&(String(exec.agent.session.id)===sessionId||children.owned.has(exec.agent)||queue.owned===exec.agent||compatible.owned===exec.agent)&&ctx.agents.get(exec.agent.session.id)===exec.agent,(m,p)=>transport.notify(m,p));
   bridge.install();
   ctx.provide('wispPermissions',bridge);
+  const opens=createOpenBroker({notify:(m,p)=>transport.notify(m,p)});
+  registerSafeActions(ctx,bridge,{requestOpen:req=>opens.request(req)});
   if(process.env.WISP_PERMISSION_FIXTURES==='1') {
     const ledger=process.env.WISP_PERMISSION_LEDGER;if(!ledger)throw Error('WISP_LEDGER_REQUIRED');
     registerFixture(ctx,bridge,'wisp-direct',ledger);
@@ -65,7 +68,7 @@ export function apply(ctx:Context) {
   ctx.on('agent/status',({agent,status})=>{if(String(agent.session.id)===sessionId&&status==='idle'&&turnEnded)busy=false;});
   const failDisposal=():never=>{process.stderr.write('WISP_DISPOSAL_FAILED\n');process.exit(1);};
   installDisposalBarrier(ctx.root.fiber,async()=>{
-    closing=true;bridge.cancel();children.cancel();queue.cancel();compatible.cancel();
+    closing=true;bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();
     const agent=sessionId?ctx.agents.get(SessionId(sessionId)):undefined;
     if(agent){agent.cancel({kind:'user'});await agent.whenIdle();}
     // Session persistence remains attached until the driver has written the
@@ -74,7 +77,7 @@ export function apply(ctx:Context) {
   },failDisposal);
   let exitTask:Promise<void>|undefined;
   const exit=()=>exitTask??=(async()=>{
-    try {bridge.cancel();await transport.flush();await ctx.root.fiber.dispose();await transport.flush();process.exit(0);}
+    try {bridge.cancel();opens.cancel();await transport.flush();await ctx.root.fiber.dispose();await transport.flush();process.exit(0);}
     catch {process.stderr.write('WISP_DISPOSAL_FAILED\n');process.exit(1);}
   })();
   transport.onRequest(async(method,params)=>{
@@ -119,7 +122,7 @@ export function apply(ctx:Context) {
       }
       case 'wisp/approval.decide': {
         const result=bridge.decide(params);
-        if((params as any).decision==='cancel'){bridge.cancel();queue.cancel();compatible.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
+        if((params as any).decision==='cancel'){bridge.cancel();opens.cancel();queue.cancel();compatible.cancel();children.cancel();if(sessionId)ctx.agents.get(SessionId(sessionId))?.cancel({kind:'user'});}
         return result;
       }
       case 'wisp/voice.cancel': {
@@ -127,23 +130,27 @@ export function apply(ctx:Context) {
         if(!initialized||params.sessionId!==sessionId||!lastPromptId||params.messageId!==lastPromptId)throw Error('WISP_UNOWNED_VOICE');
         const agent=ctx.agents.get(SessionId(sessionId!));
         if(!agent)throw Error('WISP_UNOWNED_VOICE');
-        if(busy){bridge.cancel();children.cancel();queue.cancel();compatible.cancel();agent.cancel({kind:'user'});}
+        if(busy){bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();agent.cancel({kind:'user'});}
         await agent.whenIdle();
         return {settled:true,messageId:lastPromptId};
       }
       case 'wisp/session.cancel': {
         strict(params,['sessionId']);
         if(!busy||params.sessionId!==sessionId)throw new Error('WISP_NO_ACTIVE_SESSION');
-        bridge.cancel();children.cancel();queue.cancel();compatible.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
+        bridge.cancel();opens.cancel();children.cancel();queue.cancel();compatible.cancel();ctx.agents.get(SessionId(sessionId!))?.cancel({kind:'user'});return {cancellationRequested:true};
       }
       case 'shutdown': {
         if(params&&Object.keys(params).length)throw new Error('WISP_INVALID_PARAMS');
-        closing=true;bridge.cancel();
+        closing=true;bridge.cancel();opens.cancel();
         try {const result=await server.handleRequest(method,params);setImmediate(()=>void exit());return result;}
         catch {setImmediate(()=>process.exit(1));throw new Error('WISP_DISPOSAL_FAILED');}
+      }
+      case 'wisp/open.complete': {
+        if(!initialized)throw new Error('WISP_NOT_INITIALIZED');
+        return opens.complete(params);
       }
       default:throw new Error('WISP_UNKNOWN_METHOD');
     }
   });
-  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
+  ctx.effect(()=>{transport.start();return async()=>{closing=true;bridge.cancel();opens.cancel();await children.quiesce();await queue.quiesce();await compatible.quiesce();await server.shutdown();await transport.flush();transport.close();};},'wisp.stdio');
 }

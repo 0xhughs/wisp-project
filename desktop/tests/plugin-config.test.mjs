@@ -121,6 +121,8 @@ test('prepare-product copies the demonstration overlay source',()=>{
  assert.ok(productFiles.includes('compatible-plugin.ts'));
  assert.ok(productFiles.includes('compatible-verification.ts'));
  assert.ok(productFiles.includes('product-sdk.ts'));
+ assert.ok(productFiles.includes('safe-actions.mjs'));
+ assert.ok(productFiles.includes('safe-action-tools.ts'));
 });
 
 test('snapshot revision may be the native store hash, not only the JS canonical digest',()=>{

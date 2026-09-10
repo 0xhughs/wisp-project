@@ -35,6 +35,27 @@ func permissionStateTests() throws {
     try check(compatible.summary.contains("Compatible plugin check") && compatible.summary.contains("lab_1") && !compatible.summary.contains("Allow Always"), "compatible plugin still uses Allow Once")
     for _ in 0..<8 {try state.receive(PermissionRequest(request()))}
     do {try state.receive(PermissionRequest(request()));throw PermissionFailure.invalid}catch PermissionFailure.overflow {}
-    state.invalidate();try check(state.requests.isEmpty&&state.deciding.isEmpty,"invalidate revokes all")
+    state.invalidate();    try check(state.requests.isEmpty&&state.deciding.isEmpty,"invalidate revokes all")
     do {try state.receive(r);throw PermissionFailure.invalid}catch PermissionFailure.stale {}
+    try check(PermissionChrome.decisionTitles==["Cancel Request","Deny","Allow Once"] && PermissionChrome.initialFocus=="Cancel Request", "cancel-first decisions; no Allow Always")
+    let urlFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-url","rootCallId":"call-url","actionDigest":String(repeating:"b",count:64),"turn":1,"toolName":"wisp_open_url","source":"wisp-safe-action","revision":"1","arguments":["url":"https://example.com/ok"],"operation":"open-http-url","destination":"https://example.com/ok","fields":[["label":"URL","value":"https://example.com/ok"]]]
+    let urlRequest=try PermissionRequest(urlFrame)
+    try check(urlRequest.summary.contains("https://example.com/ok") && urlRequest.summary.contains("Open URL") && !urlRequest.summary.contains("Allow Always") && urlRequest.summary.contains("spoken or typed yes is not a grant"), "url summary")
+    for badDest in ["javascript:alert(1)","file:///etc/passwd"] {
+        var bad=urlFrame; bad["destination"]=badDest; bad["arguments"]=["url":badDest]
+        do {_=try PermissionRequest(bad); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    }
+    var extra=urlFrame; extra["arguments"]=["url":"https://example.com/ok","application":"Safari"]
+    do {_=try PermissionRequest(extra); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    let fileFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-file","rootCallId":"call-file","actionDigest":String(repeating:"c",count:64),"turn":1,"toolName":"wisp_open_file","source":"wisp-safe-action","revision":"1","arguments":["path":"/tmp/note.txt"],"operation":"open-local-file-for-viewing","destination":"/etc/passwd","fields":[["label":"Path","value":"/etc/passwd"]]]
+    do {_=try PermissionRequest(fileFrame); throw PermissionFailure.stale} catch PermissionFailure.invalid {}
+    let timeFrame:[String:Any]=["event":"approval-request","version":1,"generation":generation,"requestId":UUID().uuidString,"companionId":companion,"sessionId":"wisp-test","callId":"call-time","rootCallId":"call-time","actionDigest":String(repeating:"d",count:64),"turn":1,"toolName":"wisp_tell_time","source":"wisp-safe-action","revision":"1","arguments":[:] as [String:String],"operation":"read-local-clock","destination":"local-system-clock","fields":[["label":"Clock","value":"Wisp will read this device’s local clock once."]]]
+    let timeRequest=try PermissionRequest(timeFrame)
+    try check(timeRequest.summary.contains("local clock") && !timeRequest.summary.contains("Allow Always"), "time summary names the clock")
+    var stateCancel=PermissionState(); stateCancel.attach(generation:generation,companionID:companion)
+    let cancelable=try PermissionRequest(urlFrame)
+    try stateCancel.receive(cancelable)
+    let opener=RecordingWorkspaceOpener()
+    _=stateCancel.decide(cancelable.requestID,action:"cancel")
+    try check(opener.count==0, "confirm-cancel performs zero opener calls")
 }
