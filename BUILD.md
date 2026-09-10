@@ -139,11 +139,17 @@ Required deliverables after plan approval; none claimed run in this no-code phas
 
 6. **Regressions and identities.** Existing macos/engine/spike tests remain applicable and must not be rewritten for Windows claims. Pristine pin `d347e703908d0406b7a7ef80e3a0e594d86b2215`, byte-identical spike and archives 01–06. No 07, 08, 09, 10, 11, 12, 13, or 15 Shipped claim. Final proof maps each Done when item to Linux-supplemental vs Windows-native evidence.
 ## Proof
-17-plan-091 APPROVE_PLAN consumed. Slice 17 Builder may start against contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195 and baseline 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files) at HEAD 173e6465062d277f32527a2df3face86e4814b19. Not 17 acceptance. Slices 07, 08, 09, 10, 11, 12, 13 and 15 remain implemented with verification pending; unaccepted copies `evidence/07-contract-wip.md` through `evidence/15-contract-wip.md`; historical 07-review-060 HUMAN_REQUIRED unchanged; parked IMPLEMENTATION_READY reviews unchanged; no `slices/07-*.md` through `slices/17-*.md`.
+17-build-092 Building complete. Product HEAD da52341b72e6d3c5b6d88f1c6337949aa1c2b74e. Candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 (282 files). Contract unchanged 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195. Linux-supplemental 199/199 claimed and coordinator-reproduced. Native Win32 uncompiled. Not 17 acceptance. Slices 07–15 remain implemented with verification pending; historical 07-review-060 HUMAN_REQUIRED unchanged; parked IMPLEMENTATION_READY reviews unchanged; no `slices/07-*.md` through `slices/17-*.md`.
+
+Builder 17-build-092 (worker bc-aa8d2032-1eb5-5e48-9cf7-3cde5b994b65) implemented Windows body/tray/shortcut/same-home identity sources, Linux-supplemental validators, skip-on-Linux build scripts, docs/windows-companion.md, evidence/17-windows-companion.md. Handback $HOME/wisp-work/loop-state/17-build-092.md. Claims only until independent review.
+
+17-plan-091 APPROVE_PLAN consumed. Baseline 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files). Not 17 acceptance.
 
 Coordinator persisted Builder 17-draft-090 Proposed contract (worker bc-d7ed8473-8563-5e4d-b973-09cae9ccd060). No application code in the proposal commits.
 
 ## Review
+Pending independent implementation review 17-review-093 of candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47. Not consumed.
+
 17-plan-091 APPROVE_PLAN — independent reviewer bc-e80dd2da-881e-50f4-ba8d-58bce64c55da. Contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195 and candidate 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb match before/after (250 files). HEAD 173e6465062d277f32527a2df3face86e4814b19. Archives 01–06 untouched. 07–15 not Shipped. Not implementation approval. Counters 0/0. Full verbatim $HOME/wisp-work/loop-state/17-plan-091.md. Consumed.
 
 17-draft-090 Builder draft-proposal complete (bc-d7ed8473-8563-5e4d-b973-09cae9ccd060). Handback $HOME/wisp-work/loop-state/17-draft-090.md. Not plan approval. Consumed.
@@ -157,25 +163,25 @@ loop-plan-061 APPROVE_PLAN — independent reviewer bc-d950b4e9-45b7-5209-ba88-2
 ## Loop state
 Tool adapter: Cursor Task generalPurpose subagent; coordinator persists dispatch ID then launches; waits for confirmed completion; Reviewer context is independent of Builder reasoning. One active worker per checkout. This Linux host cannot actuate macOS CUA; Mac physical tests remain participant-gated.
 Coordinator: cursor-cloud bc-81f7c99b-f70d-4a0a-83e5-180597760926
-Worker / role / phase: none (pending launch) / Builder / Building
-Dispatch ID / launch state / input identity: 17-build-092 / pending launch / approved contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195; baseline 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files)
-Pending result / last consumed dispatch: none / 17-plan-091
+Worker / role / phase: none (pending launch) / Reviewer / Ready for review
+Dispatch ID / launch state / input identity: 17-review-093 / pending launch / approved contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195; implementation candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 (282 files); baseline 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files)
+Pending result / last consumed dispatch: none / 17-build-092
 Snapshot capture and recheck commands / coverage / exclusions: Run `python3 tools/identity.py --repo .` from repository root (replacement of unavailable ../../work/loop-state/identity.py). SHA-256 sorted relative file manifest includes git tracked and non-ignored untracked files, bytes, types, executable bits, symlink targets. Excludes .git, tools/identity.py (hashed only into contract identity), and the WISP_LOOP_STATE store if it lies inside the checkout. BUILD.md and SLICES.md contribute canonicalized bytes: BUILD stops before ## Proof; SLICES omits Run status, Release evidence, Shipped/Now/Later/Implemented-verification-pending placement headings, Implementation ledger and Verification backlog while keeping mapped slice bodies and target membership ordered by slice ID. Contract hashes BUILD through Tests, the Loop-state snapshot capture line, that SLICES canonicalization, full AGENTS/LOOP/BUILDER/REVIEWER, and tools/identity.py bytes. Manifest JSON stored outside coverage at $WISP_LOOP_STATE (default $HOME/wisp-work/loop-state). No other dependency or generated paths currently excluded: place dependencies/test outputs outside checkout. Pinned upstream source remains an external reference; when present verify `git -C "$WISP_HARNESS" rev-parse HEAD` and porcelain status, default $HOME/wisp-work/deepseek-harness; only pristine pin d347e703908d0406b7a7ef80e3a0e594d86b2215 may support source claims. Historical identities below are records only and cannot be recomputed on this host. Changing identity.py rules requires plan re-review.
 Baseline snapshot: 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files; approved 17-plan-091 baseline). Parked 15 implementation candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea (249 files) retained as record; parked tree after evidence/15-contract-wip.md was bf271faa0d7c2129a5224a675ebfccc7a856d25ddfbf67d94cfbe19b6fa466a6 (250 files, 15 page).
 Contract identity: 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195 (approved 17-plan-091).
-Candidate snapshot: 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb (250 files; current until 17-build-092).
+Candidate snapshot: 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 (282 files; 17-build-092).
 Rejection count: 0
 Consecutive no-progress repairs: 0
-Open acceptance gaps / prior failing evidence: Slice 17 implementation not started. 07–15 Mac/runtime gates remain backlog and do not block 17. Native Win32 uncompiled here. Body/tray/shortcut/identity only; UIA/voice/engine remain 17.x.
+Open acceptance gaps / prior failing evidence: Linux 199/199 supplemental claimed by Builder and coordinator-reproduced. Independent Reviewer must reproduce. Remaining: NativeChecks/MSVC/Win32 GUI/tray/hotkey/DACL (missing-platform/human-test). Not 17 Shipped.
 Repair awaiting review: false
-Review events: 17-plan-091 APPROVE_PLAN contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195 candidate 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb; reviewer bc-e80dd2da-881e-50f4-ba8d-58bce64c55da; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/17-plan-091.md. 17-draft-090 draft-proposal complete builder bc-d7ed8473-8563-5e4d-b973-09cae9ccd060; not a review verdict. 15-review-089 IMPLEMENTATION_READY contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea; reviewer bc-dac81f09-21ff-5116-8729-1a43f2c26b35. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
+Review events: 17-build-092 Building complete candidate 28bc82ae285d081a0d6639a093eeb7d023bdcddfcb51552f709cba15527f5e47 contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195; builder bc-aa8d2032-1eb5-5e48-9cf7-3cde5b994b65; not a review verdict. 17-plan-091 APPROVE_PLAN contract 691b64a52b69ed54447cb1e399c8ac85004c8165cf571c953f958f28a7fbf195 candidate 244c380f76592b18d4995767943afb4a63b1f30a076301e4bbe44dcd1ddedceb; reviewer bc-e80dd2da-881e-50f4-ba8d-58bce64c55da; not implementation approval; counters 0/0; verbatim $HOME/wisp-work/loop-state/17-plan-091.md. 17-draft-090 draft-proposal complete builder bc-d7ed8473-8563-5e4d-b973-09cae9ccd060; not a review verdict. 15-review-089 IMPLEMENTATION_READY contract eb62e35e66ea4ae865b7ab755bc749c05dc4146f4d9c126e86abbf785aa9e539 candidate 0756b7da7e25273c3a6b25eacc77dacfce6062c4e9f764f9a0fee05ec3998eea; reviewer bc-dac81f09-21ff-5116-8729-1a43f2c26b35. loop-plan-061 APPROVE_PLAN amendment contract d6689d48dfcf22d42a4d389f7307ebe0b659dc3bf688c706a451eb5d07612c66. 07-review-060 HUMAN_REQUIRED remains the last 07 implementation review (not rewritten). Accepted06 final1/0 archived.
 Budget limit / consumed / measurement: no global execution budget. Cloud05 allowance6/6 exhausted and immutable. Separate one-small-agent-cloud-greeting allowance0/1spent, max1024tokens/retry0, requires explicit physicalactivation and ledger reservation beforedispatch. Four user-operated successful connectiontests050 recorded separately, not agent calls. No extra connectiontest/keyinspection/download; local per-scenario modelnoncompliancecap2. Linux host must not consume the reserved cloud greeting.
-Blocker / resume status / resume action / recheck condition / deadline: none for slice 17 Building. Recheck: Builder 17-build-092 completion. No automatic paid calls/downloads. Counters0/0.
+Blocker / resume status / resume action / recheck condition / deadline: none for 17-review-093. Recheck: independent implementation review. No automatic paid calls/downloads. Counters0/0.
 Advance phase: none
-Next slice ID / draft: 17 / implementing
+Next slice ID / draft: 17 / ready for review
 
 ## Status
-Building
+Ready for review
 
 ## Next
-Independent Builder 17-build-092 against approved 17-plan-091. Do not mark 07, 08, 09, 10, 11, 12, 13, 15, or 17 Shipped. Counters 0/0.
+Independent implementation review of dispatch 17-review-093. Do not mark 07, 08, 09, 10, 11, 12, 13, 15, or 17 Shipped. Counters 0/0.
