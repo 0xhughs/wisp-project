@@ -1,0 +1,188 @@
+{
+  "dispatch": "05-build-032",
+  "acceptance": "Builder local and authorized real cloud proof complete; independent implementation review pending",
+  "externalCloudRequests": 3,
+  "nativeAssertions": "passed, actual isolated Security storage",
+  "jsTests": 18,
+  "shell": {
+    "exitZero": true,
+    "cleanup": true,
+    "noForcedStop": true,
+    "bodyNeverKey": true,
+    "oneStatus": true,
+    "oneSettings": true,
+    "voiceNeverReady": true,
+    "settingsOpened": true,
+    "twoDistinctTurns": true,
+    "sameIdentity": true,
+    "recreated": true,
+    "allSections": true,
+    "sameWindow": true,
+    "closed": true
+  },
+  "memorySecurity": {
+    "sameSupportRefused": true,
+    "sameHomeRefused": true,
+    "stagingRemoved": true,
+    "environmentCanaryAbsent": true,
+    "ownerDeathCleanedRuntime": true,
+    "crashRecoveryIdentityAndMemory": true,
+    "actualModelInputCanaryAbsent": true,
+    "lockReplacementNoSecondEngine": true,
+    "lockReplacementOwnerExitRecovery": true,
+    "corruptRefusedUnchanged": true,
+    "inaccessibleRefused": true,
+    "adversarialInstructionNoEffect": true,
+    "noAutomaticRawFailureFile": true,
+    "nativeDiagnosticsCanaryAbsent": true
+  },
+  "wireFixture": {
+    "success": {
+      "requests": 1,
+      "orphanFree": true,
+      "framesContainSentinel": false,
+      "stderrContainsSentinel": false
+    },
+    "failure": {
+      "requests": 2,
+      "orphanFree": true,
+      "framesContainSentinel": true,
+      "stderrContainsSentinel": false
+    },
+    "missing": {
+      "requests": 2,
+      "orphanFree": true,
+      "framesContainSentinel": false,
+      "stderrContainsSentinel": false
+    },
+    "wire": {
+      "requests": 2,
+      "authMatches": true,
+      "caps": [
+        1024,
+        1024
+      ],
+      "models": [
+        "deepseek-v4-flash",
+        "deepseek-v4-flash"
+      ],
+      "missingReferenceNoAmbientFallback": true
+    },
+    "artifactSentinelPaths": []
+  },
+  "productErrorFixture": {
+    "results": [
+      {
+        "name": "hostile-error",
+        "unavailable": true,
+        "productOutputSafe": true,
+        "events": [
+          "owned",
+          "ready",
+          "testing",
+          "unavailable",
+          "stopped"
+        ]
+      },
+      {
+        "name": "duplicate-bootstrap",
+        "unavailable": true,
+        "productOutputSafe": true,
+        "events": [
+          "unavailable",
+          "stopped"
+        ]
+      },
+      {
+        "name": "missing-cloud-key",
+        "unavailable": true,
+        "productOutputSafe": true,
+        "events": [
+          "unavailable",
+          "stopped"
+        ]
+      }
+    ],
+    "requests": 1,
+    "sentinelAbsentFromProductAndArtifacts": true,
+    "externalRequests": 0
+  },
+  "guiRuns": [
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 1,
+      "recalls": 0,
+      "run": "../../work/wisp-05/05-build-032/live/run-1788915599998",
+      "cloudCompletedTurns": 0,
+      "recallMatchedGeneratedFact": false,
+      "companionIds": [
+        "a2ef874a-0f0c-49ba-9e64-849ca4b155d1"
+      ]
+    },
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 6,
+      "completedTests": 1,
+      "recalls": 1,
+      "run": "../../work/wisp-05/05-build-032/live/run-1788915856357",
+      "cloudCompletedTurns": 0,
+      "recallMatchedGeneratedFact": true,
+      "companionIds": [
+        "a2ef874a-0f0c-49ba-9e64-849ca4b155d1"
+      ]
+    },
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 0,
+      "recalls": 1,
+      "run": "../../work/wisp-05/05-build-032/live/run-1788917033783",
+      "cloudCompletedTurns": 0,
+      "recallMatchedGeneratedFact": true,
+      "companionIds": [
+        "a2ef874a-0f0c-49ba-9e64-849ca4b155d1"
+      ]
+    },
+    {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 1,
+      "completedTests": 0,
+      "recalls": 1,
+      "run": "../../work/wisp-05/05-build-032/live/run-1788917843623",
+      "cloudCompletedTurns": 0,
+      "recallMatchedGeneratedFact": true,
+      "companionIds": [
+        "a2ef874a-0f0c-49ba-9e64-849ca4b155d1"
+      ]
+    }
+  ],
+  "protectedBaselineFilesUnchanged": 22,
+  "authorizedRouteSHA256": "5afb9e4971433c059e1ec76ea772da8527981ad9ccdcccf951dc2543a1571f5d",
+  "pristinePin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
+  "cloudContinuationEvidence": "05-cloud-results.json"
+}

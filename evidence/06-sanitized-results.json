@@ -1,0 +1,420 @@
+{
+  "prior040": {
+    "live01/results.json": [
+      {
+        "scenario": "direct-deny",
+        "attempts": 1,
+        "actualLocalHarness": true,
+        "withheldZero": true,
+        "effects": 0,
+        "requestDigest": "f9c57d9a6faa8bca83b31aae5b1a99a2cfac97a0ed551b143a1416f9f9dc4dd7",
+        "closed": "rejected",
+        "turn": 1,
+        "cleanup": true
+      }
+    ],
+    "live02/results.json": [
+      {
+        "scenario": "plugin-allow",
+        "attempts": 1,
+        "actualLocalHarness": true,
+        "withheldZero": true,
+        "effects": 1,
+        "requestDigest": "ab89311e942b6ba0c637878479cf9a6b6f3f68fac333084495d199194b0d44a4",
+        "closed": "allowed-once",
+        "turn": 1,
+        "cleanup": true
+      }
+    ],
+    "child01/results.json": [
+      {
+        "scenario": "spawn-denied",
+        "actualLocalModel": true,
+        "actualProvider": true,
+        "attempts": 1,
+        "provider": "spawn",
+        "stopReason": "completed",
+        "never": true,
+        "parentSessionMatches": true,
+        "toolCalls": 1,
+        "asked": 1,
+        "outcomes": [
+          "rejected"
+        ],
+        "sessionId": "836b38f5-2fa5-4cad-9889-d048f4b066cd",
+        "parentEffects": 1,
+        "childEffects": 0,
+        "noForwardedPrompt": true,
+        "cleanup": true
+      }
+    ],
+    "child03/results.json": [
+      {
+        "scenario": "fork-denied",
+        "actualLocalModel": true,
+        "actualProvider": true,
+        "attempts": 1,
+        "provider": "fork",
+        "liveStart": 21,
+        "stopReason": "completed",
+        "never": true,
+        "parentSessionMatches": true,
+        "toolCalls": 1,
+        "asked": 1,
+        "outcomes": [
+          "rejected"
+        ],
+        "sessionId": "ec26e0f3-ef7e-4527-9bc1-079da7b9dc86",
+        "parentEffects": 1,
+        "childEffects": 0,
+        "noForwardedPrompt": true,
+        "cleanup": true
+      }
+    ],
+    "child04/results.json": [
+      {
+        "scenario": "spawn-cancelled",
+        "actualLocalModel": true,
+        "actualProvider": true,
+        "attempts": 1,
+        "provider": "spawn",
+        "liveStart": 0,
+        "stopReason": "aborted",
+        "never": true,
+        "parentSessionMatches": true,
+        "toolCalls": 0,
+        "asked": 0,
+        "outcomes": [],
+        "sessionId": "61fbdec0-7abd-4120-b5ad-e497146509e6",
+        "parentEffects": 1,
+        "childEffects": 0,
+        "noForwardedPrompt": true,
+        "cleanup": true
+      }
+    ],
+    "child05/results.json": [
+      {
+        "scenario": "fork-cancelled",
+        "actualLocalModel": true,
+        "actualProvider": true,
+        "attempts": 1,
+        "provider": "fork",
+        "liveStart": 21,
+        "stopReason": "aborted",
+        "never": true,
+        "parentSessionMatches": true,
+        "toolCalls": 0,
+        "asked": 0,
+        "outcomes": [],
+        "sessionId": "5c40dc20-f116-4047-b58f-85bae83aaadd",
+        "parentEffects": 1,
+        "childEffects": 0,
+        "noForwardedPrompt": true,
+        "cleanup": true
+      }
+    ],
+    "credential01/sanitized-results.json": {
+      "success": {
+        "requests": 1,
+        "orphanFree": true,
+        "framesContainSentinel": false,
+        "stderrContainsSentinel": false
+      },
+      "failure": {
+        "requests": 2,
+        "orphanFree": true,
+        "framesContainSentinel": true,
+        "stderrContainsSentinel": false
+      },
+      "missing": {
+        "requests": 2,
+        "orphanFree": true,
+        "framesContainSentinel": false,
+        "stderrContainsSentinel": false
+      },
+      "wire": {
+        "requests": 2,
+        "authMatches": true,
+        "caps": [
+          1024,
+          1024
+        ],
+        "models": [
+          "deepseek-v4-flash",
+          "deepseek-v4-flash"
+        ],
+        "missingReferenceNoAmbientFallback": true
+      },
+      "artifactSentinelPaths": []
+    },
+    "bridge-security01/sanitized-results.json": {
+      "results": [
+        {
+          "name": "hostile-error",
+          "unavailable": true,
+          "productOutputSafe": true,
+          "events": [
+            "owned",
+            "ready",
+            "testing",
+            "unavailable",
+            "stopped"
+          ]
+        },
+        {
+          "name": "duplicate-bootstrap",
+          "unavailable": true,
+          "productOutputSafe": true,
+          "events": [
+            "unavailable",
+            "stopped"
+          ]
+        },
+        {
+          "name": "missing-cloud-key",
+          "unavailable": true,
+          "productOutputSafe": true,
+          "events": [
+            "unavailable",
+            "stopped"
+          ]
+        }
+      ],
+      "requests": 1,
+      "sentinelAbsentFromProductAndArtifacts": true,
+      "externalRequests": 0
+    }
+  },
+  "resume041": {
+    "queue02/results.json": [
+      {
+        "deterministicRegistryFixture": true,
+        "modelCalls": 0,
+        "completed": 2,
+        "allowed": 1,
+        "withheldZero": true,
+        "reverseDecisionOrder": true,
+        "replayRejected": true,
+        "effectMatchesChosenCall": true,
+        "auditPairs": 2,
+        "cleanup": {
+          "exitCode": 0,
+          "noOrphan": true,
+          "shutdownResponse": true
+        }
+      }
+    ],
+    "lifecycle01/results.json": [
+      {
+        "scenario": "cancel",
+        "pending": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "eof",
+        "pending": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "signal",
+        "pending": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "invalid-frame",
+        "pending": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "categoricalFailure": true
+      },
+      {
+        "scenario": "stale-generation",
+        "pending": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "categoricalFailure": true
+      }
+    ],
+    "live-direct-allow/results.json": [
+      {
+        "scenario": "direct-allow",
+        "attempts": 1,
+        "actualLocalHarness": true,
+        "withheldZero": true,
+        "effects": 1,
+        "requestDigest": "f4d0c412bb48ba774cd98f735a6a5db850b5396c58974664fdc259a99b2ab0eb",
+        "closed": "allowed-once",
+        "turn": 1,
+        "cleanup": true
+      }
+    ],
+    "live-plugin-deny/results.json": [
+      {
+        "scenario": "plugin-deny",
+        "attempts": 1,
+        "actualLocalHarness": true,
+        "withheldZero": true,
+        "effects": 0,
+        "requestDigest": "00ec2a0c2772b21086c77f2b5995e303bb43e62ea63056d2b6dc2443120e16bd",
+        "closed": "rejected",
+        "turn": 1,
+        "cleanup": true
+      }
+    ]
+  },
+  "cloudCalls": 0,
+  "realKeyAccess": false,
+  "guiEvidence": "06-permissions.md; external work/loop-state/06-resume-041-root-ui.md (coordinator input, not independent review)",
+  "nativeRuns": {
+    "run-1788983131501": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 0,
+      "recalls": 0,
+      "run": "../../work/wisp-06/06-resume-041/gui01/run-1788983131501"
+    },
+    "run-1788983459335": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 1,
+      "recalls": 1,
+      "run": "../../work/wisp-06/06-resume-041/gui01/run-1788983459335"
+    },
+    "run-1788983664762": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 1,
+      "completedTests": 0,
+      "recalls": 1,
+      "run": "../../work/wisp-06/06-resume-041/gui01/run-1788983664762"
+    }
+  },
+  "repair043": {
+    "lifecycle": [
+      {
+        "scenario": "native-close",
+        "pending": 2,
+        "batches": 2,
+        "closures": 4,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "cancel",
+        "pending": 2,
+        "batches": 1,
+        "closures": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "eof",
+        "pending": 2,
+        "batches": 1,
+        "closures": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "signal",
+        "pending": 2,
+        "batches": 1,
+        "closures": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": false
+      },
+      {
+        "scenario": "invalid-frame",
+        "pending": 2,
+        "batches": 1,
+        "closures": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": true
+      },
+      {
+        "scenario": "stale-generation",
+        "pending": 2,
+        "batches": 1,
+        "closures": 2,
+        "effects": 0,
+        "cleanup": true,
+        "modelCalls": 0,
+        "correlatedClosures": true,
+        "noCompletionAfterFailure": true,
+        "categoricalFailure": true
+      }
+    ],
+    "nativeAssertions": "passed; work/wisp-06/06-repair-043/native01.log",
+    "jsTests": 36,
+    "freshBuild": "work/wisp-06/06-repair-043/build01/Wisp.app",
+    "approval": "pending independent review",
+    "nativeRun": {
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "cleanup": true,
+      "noForcedStop": true,
+      "homeLoaded": true,
+      "generations": 2,
+      "completedTests": 2,
+      "recalls": 0,
+      "run": "../../work/wisp-06/06-repair-043/gui/run-1788984929143"
+    },
+    "nativeEffects": {
+      "oldGenerationDirect": 1,
+      "oldGenerationPlugin": 1,
+      "newGenerationDirect": 0,
+      "newGenerationPlugin": 0
+    },
+    "comparison": "All three042 gaps have new passing oracles; fresh independent review pending."
+  }
+}

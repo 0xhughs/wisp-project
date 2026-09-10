@@ -1,0 +1,130 @@
+{
+  "dispatch": "04-repair-026",
+  "reviewStatus": "pending independent review",
+  "reproducedOriginalFindings": {
+    "lockReplacementTwoLiveWriters": true,
+    "unsafeReadmeRecoveryCommittedPointer": true
+  },
+  "newRegressionFailsOnOriginalSource": true,
+  "twoProcessCases": [
+    {
+      "location": "home",
+      "mutation": "unlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "replace",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "symlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "hardlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "home",
+      "mutation": "mode",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "unlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "replace",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "symlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "hardlink",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    },
+    {
+      "location": "private",
+      "mutation": "mode",
+      "rivalRefused": true,
+      "allOperationsRefused": true,
+      "dataUnchanged": true,
+      "recoveredAfterOwnerExit": true
+    }
+  ],
+  "unsafeRecoveryNativeVariants": [
+    "symlink",
+    "hardlink",
+    "wrong-mode",
+    "directory",
+    "fifo"
+  ],
+  "nativeAssertionsPassed": true,
+  "javascriptTestsPassed": 15,
+  "security": {
+    "sameSupportRefused": true,
+    "sameHomeRefused": true,
+    "stagingRemoved": true,
+    "environmentCanaryAbsent": true,
+    "ownerDeathCleanedRuntime": true,
+    "crashRecoveryIdentityAndMemory": true,
+    "actualModelInputCanaryAbsent": true,
+    "lockReplacementNoSecondEngine": true,
+    "lockReplacementOwnerExitRecovery": true,
+    "corruptRefusedUnchanged": true,
+    "inaccessibleRefused": true,
+    "adversarialInstructionNoEffect": true,
+    "noAutomaticRawFailureFile": true,
+    "nativeDiagnosticsCanaryAbsent": true
+  },
+  "actualGUI": {
+    "unsafeChooseNoPointer": true,
+    "unsafeChooseNoEngine": true,
+    "unsafeChooseVisibleError": true,
+    "outsideCanaryUnchanged": true,
+    "safeRetrySameIdentity": true,
+    "safeRetryRealEngine": true,
+    "safeRetrySmokeZeroEffects": true,
+    "menuQuitCleanup": true
+  },
+  "executableSHA256": "f44bb6e26aacde8b6103d34427368cf96e9cc6107893732baca2c0600786bf6a",
+  "homeStoreSourceSHA256": "34abd24da65977e952b1cfa3c89383ebf62c2204c58a38359d8329f5d6c7067b",
+  "cleanup": true,
+  "applicability": "Only HomeStore product source changed in this repair. Final repair build directly tested by14 security gates and targeted unsafe chooser/repaired same-identity real engine smoke. Prior general UI/body/context/recall coverage remains historical source-applicable evidence; full5 shell cases, long scrolling and moved-home GUI were not repeated here."
+}

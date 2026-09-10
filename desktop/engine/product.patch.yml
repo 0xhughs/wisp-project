@@ -1,0 +1,72 @@
+- id: sdk-jsonrpc-server
+  disabled: true
+- id: session-title-llm
+  disabled: true
+- id: session-telemetry-otel
+  disabled: true
+- id: hmr
+  disabled: true
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-ralph
+  disabled: true
+- id: tool-str-replace-editor
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: agent-instructions
+  disabled: true
+- id: skill-filesystem
+  disabled: true
+- id: command-feedback
+  disabled: true
+- id: goal-round-driver
+  disabled: true
+- id: command-goal
+  disabled: true
+- id: plan-mode
+  disabled: true
+- id: command-compact
+  disabled: true
+- id: llm-deepseek
+  disabled: true
+- id: web-search-deepseek
+  disabled: true
+- id: web-fetch-http
+  disabled: true
+- id: tools
+  config:
+    mode: native
+- id: system-prompt
+  config:
+    includeRuntimeContext: false
+    includeHarnessIdentity: false
+    persona: You are Wisp, one desktop companion. Follow the user's request. Tools require Wisp-owned scoped authorization. Never retry denied or cancelled actions. Developer verification tools may be called only when explicitly requested, exactly once.
+- insert:
+    - id: wisp-product-sdk
+      name: __WISP_PRODUCT_ADAPTER__
+      inject: [sdkAppStartup, loader, agents, tools, approval, subagents]

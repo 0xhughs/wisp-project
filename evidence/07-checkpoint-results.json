@@ -1,0 +1,44 @@
+{
+  "status": "WIP_NOT_ACCEPTED",
+  "build": "10",
+  "binarySha256": "9c15fe1696558846694855359d48a218228c8b7a9d31941ee9d4f50c6fe156c4",
+  "headless": {
+    "javascriptTestsPassed": 32,
+    "nativeAssertionsPassed": true,
+    "bridgeRejectionAndDuplicateChecksPassed": true,
+    "bundlePrivacyPassed": true,
+    "cloudCalls": 0
+  },
+  "cloudPhysical": {
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "generation": "78e53547-d4dd-49cf-a906-1025c9554b7b",
+    "userOperatedTurns": 3,
+    "participantConfirmedAudibleReplies": true,
+    "participantStillFindsSamanthaRobotic": true,
+    "rootOrBuilderInitiatedCalls": 0
+  },
+  "controlledSource": {
+    "kind": "macOS say through existing physical speaker and microphone",
+    "utteranceId": "7f527865-e53b-47ee-8357-26c67f280207",
+    "captureMilliseconds": 19846,
+    "buffers": 198,
+    "frames": 950400,
+    "nonzeroSamples": true,
+    "finalCharacters": 0,
+    "modelAdmissions": 0,
+    "result": "FAILED_RECOGNITION_SUPPLEMENTAL_TEST"
+  },
+  "remainingPhysicalGates": true,
+  "independentImplementationAcceptance": false,
+  "finalRestore": {
+    "savedProvider": "deepseek",
+    "savedModel": "deepseek-v4-flash",
+    "activeReady": false,
+    "failure": "Keychain access failed or was denied",
+    "credentialChangedByRoot": false,
+    "extraConnectionTest": false,
+    "rootConfirmedAllOwnedPidsAbsent": true,
+    "launcherExit": 0
+  }
+}

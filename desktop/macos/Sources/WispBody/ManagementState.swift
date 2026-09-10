@@ -1,0 +1,39 @@
+import Foundation
+
+enum ManagementSection: String, CaseIterable {
+    case general = "General", models = "Models", voice = "Voice", pets = "Pets", plugins = "Plugins", connections = "Connections", skills = "Skills", memory = "Memory", permissions = "Permissions", proactivity = "Proactivity", diagnostics = "Diagnostics"
+}
+enum ManagementLifecycle: String { case starting = "Starting", ready = "Ready", unavailable = "Unavailable", stopping = "Stopping" }
+struct ManagementState {
+    private(set) var section: ManagementSection = .general
+    private(set) var lifecycle: ManagementLifecycle = .starting
+    var canNavigate: Bool { lifecycle != .stopping }
+    var canShowCompanion: Bool { canNavigate }
+    var voiceEnabled=false
+    var voiceAvailable: Bool { voiceEnabled }
+    mutating func select(_ next: ManagementSection) { if canNavigate { section = next } }
+    mutating func refresh(_ phase: BodyPhase) {
+        guard lifecycle != .stopping else { return }
+        switch phase {
+        case .stopped: lifecycle = .stopping
+        case .unavailable: lifecycle = .unavailable
+        case .idle, .listening, .speaking, .processing, .approval, .muted: if lifecycle == .starting { lifecycle = .ready }
+        case .starting: break
+        }
+    }
+    var description: String {
+        switch section {
+        case .general: return "Your starter companion is available on this desktop. Engine: \(lifecycle.rawValue.lowercased()). This attachment lasts for the current app run. Voice is unavailable."
+        case .models: return "Choose local Ollama or optional DeepSeek cloud reasoning. Other providers and account sign-in methods are not supported in this build."
+        case .voice: return "Voice is unavailable. Microphone capture, speech recognition and speech playback are not connected. Engine readiness does not enable voice."
+        case .pets: return "Current body: Wisp starter. Additional bodies and body selection are unavailable. Your companion remains the same Wisp."
+        case .plugins: return "Plugin management is unavailable. This build has not queried an installed plugin inventory."
+        case .connections: return "Connection management is unavailable. Services and custom MCP servers cannot be configured here; no connection inventory has been queried."
+        case .skills: return "Skill management is unavailable. This build has not queried installed or learned behaviors."
+        case .memory: return "No Wisp home or durable memory has been configured. Memory management and editing are unavailable."
+        case .permissions: return "Wisp asks before every supported tool action. Allow Once applies only to the exact action shown; Deny or Cancel prevents permission to execute. No automatic or permanent consent is stored.\n\nComputer actions, third-party plugins, Connections, MCP, skills and external sub-agents are unavailable in this build. Internal delegated consequential actions are denied. Developer verification uses isolated harmless records only.\n\nReasoning keys are managed in Models. A saved key never grants action permission."
+        case .proactivity: return "No proactive behavior is configured. Autonomous triggers and proactivity management are unavailable."
+        case .diagnostics: return "Engine: \(lifecycle.rawValue). Voice: unavailable.\n\nReady means the hidden engine is attached; microphone capture, recognition and playback remain disconnected."
+        }
+    }
+}

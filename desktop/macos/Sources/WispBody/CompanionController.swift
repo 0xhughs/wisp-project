@@ -1,0 +1,427 @@
+import AppKit
+final class CompanionController:NSObject,NSApplicationDelegate {
+    let identity=UUID().uuidString
+    private(set) var state=BodyState()
+    private(set) var management=ManagementState()
+    let voice=VoiceController()
+    private let voiceShortcut=VoiceShortcut()
+    private var voiceStore:VoiceStore?
+    private var menuBar:MenuBarController?
+    private var settings:SettingsWindowController?
+    private(set) var body:MascotPanel?
+    private var bridge=EngineBridge()
+    private(set) var permissions=PermissionState()
+    private var permissionWindow:PermissionWindow?
+    private var operations=BridgeOperationState()
+    private var bridgeGeneration=0
+    private var restartAction: (() -> Void)?
+    private var reasoningStore: ReasoningStore?
+    private(set) var reasoningSnapshot: ReasoningSnapshot?
+    private(set) var modelBusy=false, modelTesting=false
+    private(set) var modelStatus="Choose a Wisp folder to configure reasoning."
+    private(set) var activeModel: String?
+    private let homeQueue = DispatchQueue(label:"wisp.home")
+    private var homeStore: HomeStore?
+    private(set) var memorySnapshot: MemorySnapshot?
+    private(set) var memoryStatus = "Choose a Wisp folder to begin."
+    private(set) var memoryUsable = false, homeBusy = false
+    private var attachedRevision: String?
+    private var attachmentStarting = false
+    private let options:[String:String]
+    private var signals=[DispatchSourceSignal]()
+    private var observer:NSObjectProtocol?
+    private var moveObserver:NSObjectProtocol?
+    private var inputBuffer=Data()
+    private var ending=false, bridgeExited=false
+    private var runtimePID:Int=0, sessionId=""
+    private var generationCount=0
+    private var developer:Bool { options["--developer"] == "true" }
+    init(options:[String:String]) { self.options=options; super.init() }
+    func emit(_ extra:[String:Any]) {
+        guard developer else { return }
+        let facts:[String:Any]=["controller":identity,"bodyGeneration":generationCount,"state":state.phase.rawValue,"sessionId":sessionId,"runtimePID":runtimePID,"bridgePID":bridge.started ? Int(bridge.pid):0]
+        if let bytes=try? JSONSerialization.data(withJSONObject:facts.merging(extra){_,b in b},options:[.sortedKeys]) { try? FileHandle.standardOutput.write(contentsOf:bytes+Data([10])) }
+    }
+    func applicationDidFinishLaunching(_ notification:Notification) {
+        voice.ready={ [weak self] in guard let self else{return false};return !self.ending && self.memoryUsable && !self.modelBusy && !self.modelTesting && self.activeModel != nil && VoiceReasoningRoute(selected:self.reasoningSnapshot?.configuration.selected).supported }
+        voice.readinessIssue={ [weak self] in self?.voiceReadinessIssue ?? "Wisp is unavailable." }
+        voice.send={ [weak self] frame in self?.bridge.voice(frame) ?? false }
+        voice.diagnostic={ [weak self] id,value in self?.emit(value.object.merging(["event":"voice-recognition-diagnostic","utteranceId":id]){_,b in b}) }
+        voice.changed={ [weak self] in guard let self else{return};self.render();self.emit(["event":"voice-state","voicePhase":self.voice.state.phase.rawValue,"utteranceId":self.voice.state.operationID ?? "","muted":self.voice.state.muted]) }
+        voiceShortcut.diagnostic={ [weak self] edge,activates in self?.emit(["event":"voice-shortcut","edge":edge,"activates":activates]) }
+        voiceShortcut.activate={ [weak self] in self?.wakeVoice(source:"shortcut") };voiceShortcut.register()
+        emit(["event":"voice-shortcut-registration","available":voiceShortcut.available,"shortcut":VoiceShortcut.label])
+        menuBar=MenuBarController(owner:self)
+        installApplicationMenu()
+        replaceBody()
+        observer=NotificationCenter.default.addObserver(forName:NSApplication.didChangeScreenParametersNotification,object:nil,queue:.main) { [weak self] _ in self?.clamp() }
+        moveObserver=NotificationCenter.default.addObserver(forName:NSWindow.didMoveNotification,object:nil,queue:.main) { [weak self] notification in
+            guard let self,let window=notification.object as? NSWindow, window === self.body else { return }; self.facts("drag")
+        }
+        for signalNumber in [SIGTERM,SIGINT] {
+            signal(signalNumber,SIG_IGN)
+            let source=DispatchSource.makeSignalSource(signal:signalNumber,queue:.main)
+            source.setEventHandler { NSApp.terminate(nil) }; source.resume(); signals.append(source)
+        }
+        if developer {
+            FileHandle.standardInput.readabilityHandler={ [weak self] handle in
+                let bytes=handle.availableData
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    if bytes.isEmpty { handle.readabilityHandler=nil; NSApp.terminate(nil); return }
+                    self.commands(bytes)
+                }
+            }
+        }
+        openHome()
+    }
+    var managementDescription: String {
+        if management.section == .memory || management.section == .general {
+            let folder = memorySnapshot.map { "Wisp folder: " + $0.folder.path + "\n" } ?? ""
+            return folder + memoryStatus + (management.section == .general ? "\nEngine: \(management.lifecycle.rawValue.lowercased()). Voice: \(voice.state.phase.rawValue)." : "")
+        }
+        if management.section == .voice{return "Recognition and speech output are configured separately from the reasoning model."}
+        if management.section == .diagnostics{return voiceDescription}
+        return management.description
+    }
+    private func homeWork(_ operation: @escaping () throws -> MemorySnapshot?, completed: ((Bool)->Void)? = nil) {
+        guard !homeBusy,!ending else { return }; homeBusy = true; render()
+        homeQueue.async { [weak self] in
+            let result = Result { try operation() }
+            DispatchQueue.main.async {
+                guard let self else { return }; self.homeBusy = false
+                guard !self.ending else { return }
+                switch result {
+                case .success(let snapshot):
+                    self.memorySnapshot = snapshot; self.memoryUsable = snapshot != nil
+                    self.memoryStatus = snapshot == nil ? "Choose a Wisp folder to begin." : "Saved. Memory is used at the next reasoning restart or app launch."
+                    if let snapshot, self.attachedRevision == snapshot.revision { self.memoryStatus = "Saved. This memory is attached to the current Wisp." }
+                    self.emit(["event":"memory-loaded","companionId":snapshot?.companionId ?? "","revision":snapshot?.revision ?? "","entries":snapshot?.document.entries.count ?? 0])
+                    if snapshot != nil && (!self.bridge.started || self.bridgeExited), !self.modelBusy { self.startAttachment() }
+                    if snapshot == nil { self.unavailable() }
+                    completed?(true)
+                case .failure(let error):
+                    self.memoryStatus = (error as? StoreError ?? .unavailable).message
+                    // A conflict preserves the valid editor/base. Other failures disable save until reload.
+                    if (error as? StoreError) != .conflict { self.memoryUsable = false;self.voice.cancel();self.invalidatePermissions();self.bridge.stop() }
+                    if !self.bridge.started { self.unavailable() }
+                    self.emit(["event":"memory-error","category":String(describing:error as? StoreError ?? .unavailable)])
+                    completed?(false)
+                }
+                self.render()
+            }
+        }
+    }
+    private func openHome() {
+        homeWork { [self] in
+            let support: URL
+            if let test = options["--test-support"] { support = URL(fileURLWithPath:test) }
+            else {
+                let parent = try FileManager.default.url(for:.applicationSupportDirectory,in:.userDomainMask,appropriateFor:nil,create:true)
+                support = parent.appendingPathComponent("Wisp",isDirectory:true)
+            }
+            homeStore = try HomeStore(supportURL:support)
+            let snapshot = try homeStore!.load()
+            if let snapshot { try prepareModels(snapshot, support:support) }
+            return snapshot
+        }
+    }
+    func chooseHome(_ url: URL) { homeWork { [self] in guard let homeStore else { throw StoreError.busy }; let snapshot = try homeStore.choose(url); try prepareModels(snapshot,support:homeStore.supportURL); return snapshot } }
+    func reloadMemory() { homeWork { [self] in guard let homeStore else { throw StoreError.busy }; return try homeStore.read() } }
+    func saveMemory(_ document: MemoryDocument, expected: String, completed: @escaping (Bool)->Void) {
+        do { _ = try document.encoded() } catch { memoryStatus = StoreError.invalidMemory.message; render(); completed(false); return }
+        homeWork({ [self] in guard let homeStore else { throw StoreError.busy }; return try homeStore.save(document,expected:expected) },completed:completed)
+    }
+    // Store and Keychain operations run only on homeQueue, under the existing home owner.
+    private func prepareModels(_ snapshot: MemorySnapshot, support: URL) throws {
+        do {
+            if reasoningStore == nil {
+                let credentials = try ReasoningCredentials(namespace:snapshot.companionId,testKeychainPath:options["--test-keychain"])
+                reasoningStore = try ReasoningStore(support:support,credentials:credentials)
+            }
+            if voiceStore == nil{voiceStore=try VoiceStore(support:support,defaults:SystemSynthesis.defaultConfiguration)}
+            let speech=try voiceStore!.load()
+            DispatchQueue.main.async { [weak self] in self?.voice.configure(speech) }
+            let saved = try reasoningStore!.load()
+            DispatchQueue.main.async { [weak self] in self?.reasoningSnapshot=saved }
+        } catch {
+            DispatchQueue.main.async { [weak self] in self?.modelStatus=(error as? ReasoningError)?.message ?? "Saved model configuration cannot be read. Restore the file and reload saved settings." }
+        }
+    }
+    func reloadModels(completed: @escaping (Bool)->Void) {
+        guard !homeBusy,!modelBusy,!ending,let snapshot=memorySnapshot else { return }
+        modelBusy=true; render()
+        homeQueue.async { [weak self] in
+            guard let self else { return }
+            let result=Result { () -> ReasoningSnapshot in
+                guard let homeStore=self.homeStore else { throw ReasoningError.unavailable }
+                if self.reasoningStore == nil { try self.prepareModels(snapshot,support:homeStore.supportURL) }
+                guard let store=self.reasoningStore else { throw ReasoningError.unavailable };return try store.load()
+            }
+            DispatchQueue.main.async {
+                guard !self.ending else { return };self.modelBusy=false
+                switch result {
+                case .success(let saved): self.reasoningSnapshot=saved;self.modelStatus="Saved configuration reloaded. Apply to change active reasoning.";completed(true)
+                case .failure(let error): self.modelStatus=(error as? ReasoningError)?.message ?? "Saved configuration is unavailable.";completed(false)
+                }
+                self.render()
+            }
+        }
+    }
+    private func installBridgeCallbacks(_ current: EngineBridge, generation: Int) {
+        current.onEvent = { [weak self] event in
+            guard let self, self.bridgeGeneration == generation else { return }; self.receive(event)
+        }
+        current.onExit = { [weak self] code in
+            guard let self,self.bridgeGeneration == generation else { return }
+            self.voice.engineStopped(); self.invalidatePermissions(); self.bridgeExited=true; self.modelTesting=false; self.activeModel=nil
+            if self.ending { self.emit(["event":"native-stopped","bridgeExit":code]); NSApp.terminate(nil) }
+            else if let next=self.restartAction {
+                self.restartAction=nil; self.waitForOldRuntime(generation:generation,remaining:100,then:next)
+            } else { self.modelBusy=false; self.unavailable(); self.emit(["event":"bridge-exit","code":code]) }
+        }
+    }
+    private func waitForOldRuntime(generation: Int, remaining: Int, then action: @escaping () -> Void) {
+        guard !ending,bridgeGeneration == generation else { return }
+        if runtimePID == 0 || kill(-Int32(runtimePID),0) != 0 && errno == ESRCH { action(); return }
+        guard remaining > 0 else { modelBusy=false; modelStatus="The previous reasoning process has not stopped. Quit Wisp before retrying."; unavailable(); return }
+        DispatchQueue.main.asyncAfter(deadline:.now()+0.1) { [weak self] in self?.waitForOldRuntime(generation:generation,remaining:remaining-1,then:action) }
+    }
+    private func stopReasoning(then action: @escaping () -> Void) {
+        voice.cancel(); invalidatePermissions(); activeModel=nil; modelTesting=false
+        if !bridge.started || bridgeExited { waitForOldRuntime(generation:bridgeGeneration,remaining:100,then:action); return }
+        restartAction=action; bridge.stop()
+        let generation=bridgeGeneration
+        DispatchQueue.main.asyncAfter(deadline:.now()+32) { [weak self] in
+            guard let self,self.bridgeGeneration == generation,!self.bridgeExited else { return }
+            self.bridge.terminateBridge()
+        }
+    }
+    func applyModels(_ draft: ReasoningConfiguration, expected: String, key: String?, completed: @escaping (Bool)->Void) {
+        do { try draft.validate() } catch { modelStatus=ReasoningError.invalid.message; render(); completed(false); return }
+        guard !modelBusy,!homeBusy,!ending else { return }
+        modelBusy=true; modelStatus="Applying saved reasoning choice…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.reasoningStore else { throw ReasoningError.unavailable }; return try store.save(draft,expected:expected,newKey:key) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    switch result {
+                    case .success(let saved): self.reasoningSnapshot=saved; self.modelBusy=false; completed(true); self.startAttachment()
+                    case .failure(let error): self.modelBusy=false; self.modelFailure(error); completed(false)
+                    }
+                }
+            }
+        }
+    }
+    func removeModelKey(completed: @escaping (Bool)->Void) {
+        guard let saved=reasoningSnapshot,!modelBusy,!ending else { return }
+        modelBusy=true; modelStatus="Removing the saved cloud key…"; render()
+        stopReasoning { [weak self] in
+            guard let self else { return }
+            self.homeQueue.async {
+                let result=Result { guard let store=self.reasoningStore else { throw ReasoningError.unavailable }; return try store.removeKey(expected:saved.revision) }
+                DispatchQueue.main.async {
+                    guard !self.ending else { return }
+                    self.modelBusy=false
+                    switch result {
+                    case .success(let saved): self.reasoningSnapshot=saved; self.modelStatus="Cloud key removed."; completed(true); self.startAttachment()
+                    case .failure(let error): self.modelFailure(error); completed(false)
+                    }
+                }
+            }
+        }
+    }
+    func testModelConnection() {
+        guard voice.state.operationID == nil,activeModel != nil,!modelBusy,!modelTesting,!ending else { return }
+        modelTesting=true; modelStatus="Testing connection…"; bridge.testConnection(); render()
+    }
+    private func modelFailure(_ error: Error) {
+        modelStatus=ReasoningError.describe(error)
+        activeModel=nil; unavailable()
+    }
+    private func startAttachment() {
+        guard let snapshot=memorySnapshot,memoryUsable,!attachmentStarting,!ending,
+              (!bridge.started || bridgeExited),let root=options["--runtime-root"],let scratch=options["--scratch"],let node=options["--node"] else { unavailable(); return }
+        attachmentStarting=true; modelBusy=true; modelStatus="Attaching saved reasoning configuration…"; render()
+        let script=Bundle.main.resourceURL!.appendingPathComponent("desktop/engine/body-bridge.mjs").path
+        homeQueue.async { [weak self] in
+            guard let self else { return }
+            let staged=Result { () -> (URL,ReasoningSnapshot,[String:Any]) in
+                guard let store=self.reasoningStore else { throw ReasoningError.unavailable }
+                let saved=try store.load(); let bootstrap=try store.bootstrap(saved)
+                return (try self.homeStore!.stage(snapshot),saved,bootstrap)
+            }
+            DispatchQueue.main.async {
+                self.attachmentStarting=false
+                guard !self.ending else { return }
+                do {
+                    let (path,saved,bootstrap)=try staged.get(); self.reasoningSnapshot=saved
+                    self.bridge=EngineBridge(); self.bridgeGeneration += 1; self.bridgeExited=false; self.runtimePID=0; self.sessionId=""
+                    self.installBridgeCallbacks(self.bridge,generation:self.bridgeGeneration)
+                    let section=self.management.section; self.state=BodyState(); self.management=ManagementState(); self.management.select(section)
+                    try self.bridge.start(node:node,script:script,arguments:["--runtime-root",root,"--scratch",scratch,"--developer",self.developer ? "true":"false","--memory-file",path.path],bootstrap:bootstrap)
+                    self.attachedRevision=snapshot.revision; self.render()
+                } catch { self.bridgeExited=true; self.modelBusy=false; self.modelFailure(error) }
+            }
+        }
+    }
+
+    private func clearStage() { homeQueue.async { [weak self] in try? self?.homeStore?.clearStage() } }
+    private func receive(_ event:[String:Any]) {
+        if let pid=event["pid"] as? Int { runtimePID=pid }
+        if let session=event["sessionId"] as? String { sessionId=session }
+        switch event["event"] as? String {
+        case "ready":
+            if let generation=event["permissionGeneration"] as? String,let companion=memorySnapshot?.companionId {permissions.attach(generation:generation,companionID:companion);operations.attach(generation);voice.attach(generation:generation,companion:companion)}
+            modelBusy=false; activeModel=reasoningSnapshot?.configuration.label; modelStatus="Attached. Connection has not been tested."; state.ready(); if attachedRevision == memorySnapshot?.revision { memoryStatus = "Saved. This memory is attached to the current Wisp." }; clearStage(); render()
+        case "testing": if operations.start(event) {modelTesting=true;render()}
+        case "connection-test": if operations.verifiedConnection(event) {modelStatus="Connection verified by a completed response.";render()}
+        case "tested": if operations.finish(event) {modelTesting=false;render()}
+        case "voice-processing","voice-result","voice-settled","voice-failed":voice.receive(event)
+        case "approval-request":
+            guard !ending,!permissions.generation.isEmpty else {break}
+            do {try permissions.receive(PermissionRequest(event));voice.approval(pending:true);if permissionWindow == nil {permissionWindow=PermissionWindow(owner:self)};permissionWindow?.refresh(present:true)} catch {invalidatePermissions();bridge.stop();unavailable()}
+        case "approval-closed":
+            if !permissions.generation.isEmpty {do {try permissions.closed(event);voice.approval(pending:!permissions.requests.isEmpty);permissionWindow?.refresh()}catch {invalidatePermissions();bridge.stop();unavailable()}}
+        case "unavailable": modelBusy=false; modelTesting=false; activeModel=nil; modelStatus="Reasoning connection failed. Check the saved model, endpoint or API key, then apply again."; clearStage(); unavailable()
+        default: break
+        }
+        if ["approval-request","approval-closed"].contains(event["event"] as? String ?? "") {emit(["event":event["event"] ?? "approval","requestId":event["requestId"] ?? "","actionDigest":event["actionDigest"] ?? "","outcome":event["outcome"] ?? "pending","pendingPermissions":permissions.requests.count])}else if (event["event"] as? String)?.hasPrefix("voice-") == true{emit(event.filter{["event","generation","companionId","utteranceId","messageId","turn","cancelled","category"].contains($0.key)})}else{emit(event)}
+    }
+    func decidePermission(_ id:String,decision:String) {guard !ending,memoryUsable,let frame=permissions.decide(id,action:decision)else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
+    func cancelPermissions() {guard !ending,memoryUsable,let frame=permissions.cancelAll() else{return};bridge.decidePermission(frame);permissionWindow?.refresh()}
+    private func invalidatePermissions() {permissions.invalidate();permissionWindow?.invalidate();operations.invalidate()}
+    private func render() {
+        let phase:BodyPhase
+        if state.phase == .stopped || state.phase == .starting{phase=state.phase}else{switch voice.state.phase{case .listening:phase = .listening;case .speaking:phase = .speaking;case .finalizing,.processing,.releasing:phase = .processing;case .approval:phase = .approval;case .muted:phase = .muted;case .unavailable:phase = .unavailable;case .idle:phase=state.phase}}
+        management.voiceEnabled=voice.available
+        (body?.contentView as? MascotView)?.phase=phase; body?.title="Wisp \(phase.rawValue)"; management.refresh(state.phase); menuBar?.refresh(management); settings?.refresh(management) }
+    private func unavailable() { voice.cancel(); invalidatePermissions(); state.unavailable(); render(); emit(["event":"unavailable"]) }
+    private func clamp() { if let body { body.setFrame(ScreenGeometry.clamp(body.frame,to:NSScreen.screens.map(\.visibleFrame)),display:true) } }
+    func replaceBody() {
+        autoreleasepool {
+        state.interrupt()
+        let oldFrame=body?.frame ?? NSRect(x:500,y:400,width:160,height:160)
+        (body?.contentView as? MascotView)?.pause(); body?.contentView=nil
+        let panel=body ?? MascotPanel(frame:ScreenGeometry.clamp(oldFrame,to:NSScreen.screens.map(\.visibleFrame)))
+        let view=MascotView(frame:NSRect(x:0,y:0,width:160,height:160))
+
+        panel.contentView=view; body=panel; generationCount += 1
+        render(); panel.orderFrontRegardless(); view.resume(); facts("body")
+        }
+    }
+    private func facts(_ event:String) {
+        guard let panel=body,let view=panel.contentView as? MascotView else { return }
+        emit(["event":event,"frame":[panel.frame.minX,panel.frame.minY,panel.frame.width,panel.frame.height],"key":panel.isKeyWindow,"visible":panel.isVisible,"animation":view.animationRunning,"liveViews":MascotView.liveViews,"activeTimers":MascotView.activeTimers,"bodyWindows":autoreleasepool { NSApp.windows.filter{$0 is MascotPanel}.count },"opaque":panel.isOpaque,"shadow":panel.hasShadow,"level":panel.level.rawValue,"reduceMotion":view.reducedMotion,"screens":NSScreen.screens.map{["frame":[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height],"scale":$0.backingScaleFactor]}])
+    }
+    private func sequence() {
+        guard state.phase == .idle else { return }
+        state.interrupt(); let token=state.generation
+        _=state.present(.listening,token:token); render(); emit(["event":"simulated-presentation","label":"simulated presentation states; no voice input"])
+        DispatchQueue.main.asyncAfter(deadline:.now()+1.5) { [weak self] in
+            guard let self, self.state.present(.speaking,token:token) else { return }; self.render(); self.emit(["event":"simulated-presentation"])
+        }
+        DispatchQueue.main.asyncAfter(deadline:.now()+3) { [weak self] in
+            guard let self,self.state.generation == token else { return }; self.state.interrupt(); self.render(); self.emit(["event":"simulated-presentation"])
+        }
+    }
+    private func commands(_ bytes:Data) {
+        inputBuffer.append(bytes)
+        guard inputBuffer.count <= 4096 else { unavailable(); bridge.stop(); return }
+        while let newline=inputBuffer.firstIndex(of:10) {
+            let line=inputBuffer.prefix(upTo:newline); inputBuffer.removeSubrange(...newline)
+            guard let object=(try? JSONSerialization.jsonObject(with:line)) as? [String:String],object.count == 1,let op=object["op"] else { unavailable(); bridge.stop(); return }
+            switch op {
+            case "permission-direct", "permission-plugin", "permission-pair", "permission-queue": if voice.state.operationID == nil && state.phase == .idle && !modelTesting {bridge.permissionFixture(op)}
+            case "permissions": openSettings(.permissions)
+            case "smoke": if voice.state.operationID == nil && state.phase == .idle { bridge.smoke() }
+            case "recall": if voice.state.operationID == nil && state.phase == .idle { bridge.recall() }
+            case "sequence": sequence()
+            case "listen": state.interrupt(); _=state.present(.listening,token:state.generation); render(); emit(["event":"simulated-presentation","label":"simulated presentation state; no microphone"])
+            case "speak": _=state.present(.speaking,token:state.generation); render(); emit(["event":"simulated-presentation","label":"simulated presentation state; no speech playback"])
+            case "interrupt": state.interrupt(); render(); emit(["event":"interrupted"])
+            case "recreate": replaceBody()
+            case "hide": (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil); facts("hidden")
+            case "show": body?.orderFrontRegardless(); (body?.contentView as? MascotView)?.resume(); facts("shown")
+            case "status": facts("status"); shellFacts("shell-status")
+            case "raster":
+                if let view=body?.contentView,let bitmap=view.bitmapImageRepForCachingDisplay(in:view.bounds) { view.cacheDisplay(in:view.bounds,to:bitmap); emit(["event":"raster","cornerAlpha":bitmap.colorAt(x:0,y:0)?.alphaComponent ?? -1,"gapAlpha":bitmap.colorAt(x:80,y:98)?.alphaComponent ?? -1]) }
+            case "stop": NSApp.terminate(nil)
+            default: unavailable(); bridge.stop(); return
+            }
+        }
+    }
+    func applicationShouldTerminate(_ sender:NSApplication) -> NSApplication.TerminateReply {
+        if ending { return bridgeExited ? .terminateNow : .terminateCancel }
+        if settings?.allowQuit() == false { return .terminateCancel }
+        ending=true; voice.cancel(); voiceShortcut.dispose(); invalidatePermissions(); clearStage(); state.stop(); render(); menuBar?.dispose(); settings?.window?.orderOut(nil); settings?.close(); settings=nil; (body?.contentView as? MascotView)?.pause(); body?.orderOut(nil)
+        FileHandle.standardInput.readabilityHandler=nil
+        if !bridge.started || bridgeExited { return .terminateNow }
+        bridge.stop()
+        DispatchQueue.main.asyncAfter(deadline:.now()+32) { [weak self] in
+            guard let self,!self.bridgeExited else { return }; self.bridge.terminateBridge(); self.emit(["event":"forced-bridge-stop"])
+        }
+        return .terminateCancel
+    }
+    var voiceRouteDescription:String {
+        guard activeModel != nil else{return "Reasoning is not attached. Apply a model in Models before speaking."}
+        return VoiceReasoningRoute(selected:reasoningSnapshot?.configuration.selected).disclosure
+    }
+    private var voiceReadinessIssue:String {
+        if modelBusy{return "Reasoning is changing. Wait for the selected model to attach."}
+        if modelTesting{return "A connection test is running. Wait before speaking."}
+        if !memoryUsable{return "Companion memory is unavailable. Restore it before speaking."}
+        return voiceRouteDescription
+    }
+    var voiceDescription:String {
+        let support=SystemRecognition.supported(voice.configuration.locale) ? "Device reports on-device support; live service readiness is checked on activation":"On-device recognition unavailable; recording disabled"
+        return "\(voiceRouteDescription)\n\(voice.status)\nLanguage: \(voice.configuration.locale) · \(support).\nShortcut: \(VoiceShortcut.label) · \(voiceShortcut.available ? "registered":"unavailable (conflict); use Wake").\n\(SystemRecognition.permissionStatus)\nRaw audio stays on this Mac and is not saved; recognized text may remain in the private agent session."
+    }
+    func wakeVoice(source:String="native"){guard !ending else{return};emit(["event":"voice-activation","source":source,"voicePhase":voice.state.phase.rawValue,"utteranceId":voice.state.operationID ?? ""]);voice.activate()}
+    func toggleVoiceMute(){var config=voice.configuration;config.muted.toggle();voice.configure(config);saveVoice(config)}
+    func saveVoice(_ value:VoiceConfiguration){
+        guard !homeBusy,!ending else{return};homeBusy=true;render()
+        homeQueue.async{[weak self] in guard let self else{return};let result=Result{guard let store=self.voiceStore else{throw StoreError.unavailable};try store.save(value)}
+            DispatchQueue.main.async{self.homeBusy=false;guard !self.ending else{return};switch result{case .success:self.voice.configure(value);case .failure:self.voice.note("Voice settings could not be saved. Current mute remains active; restore the settings file before retrying.");self.emit(["event":"voice-save-failed"])};self.render()}
+        }
+    }
+    func openSettings(_ section:ManagementSection? = nil) {
+        guard !ending else { return }
+        if let section { management.select(section) }
+        if settings == nil { settings=SettingsWindowController(owner:self) }
+        settings?.refresh(management); settings?.present(); shellFacts("settings-opened")
+    }
+    func selectSection(_ section:ManagementSection) {
+        management.select(section); settings?.refresh(management); shellFacts("section-selected")
+    }
+    func showCompanion() {
+        guard !ending else { return }; clamp(); body?.orderFrontRegardless()
+        (body?.contentView as? MascotView)?.resume(); facts("shown")
+    }
+    func shellFacts(_ event:String) {
+        emit(["event":event,"section":management.section.rawValue,"lifecycle":management.lifecycle.rawValue,
+              "companionId":memorySnapshot?.companionId ?? "","memoryRevision":memorySnapshot?.revision ?? "","attachedRevision":attachedRevision ?? "","memoryUsable":memoryUsable,"homeBusy":homeBusy,
+              "modelGeneration":bridgeGeneration,"modelBusy":modelBusy,"modelTesting":modelTesting,"selectedProvider":reasoningSnapshot?.configuration.provider ?? "","selectedModel":reasoningSnapshot?.configuration.model ?? "","activeModel":activeModel != nil,
+              "voiceAvailable":management.voiceAvailable,"statusItems":menuBar?.item == nil ? 0:1,"statusFrame":menuBar?.item?.button?.window.map{[$0.frame.minX,$0.frame.minY,$0.frame.width,$0.frame.height]} ?? [],
+              "settingsAllocated":settings == nil ? 0:1,"settingsVisible":settings?.window?.isVisible ?? false,
+              "settingsKey":settings?.window?.isKeyWindow ?? false,"settingsMain":settings?.window?.isMainWindow ?? false,
+              "settingsWindow":settings?.window?.windowNumber ?? 0,"settingsMiniaturized":settings?.window?.isMiniaturized ?? false,
+              "appWindows":NSApp.windows.count,"bodyKey":body?.isKeyWindow ?? false,"bodyMain":body?.isMainWindow ?? false,
+              "controllerObservers":(observer == nil ? 0:1)+(moveObserver == nil ? 0:1),"signalSources":signals.count])
+    }
+    private func installApplicationMenu() {
+        let main=NSMenu(); let root=NSMenuItem(); main.addItem(root)
+        let menu=NSMenu(); root.submenu=menu
+        let setting=NSMenuItem(title:"Settings…",action:#selector(settingsShortcut),keyEquivalent:","); setting.target=self; menu.addItem(setting)
+        menu.addItem(NSMenuItem(title:"Close Window",action:#selector(NSWindow.performClose(_:)),keyEquivalent:"w"))
+        menu.addItem(NSMenuItem(title:"Quit Wisp",action:#selector(NSApplication.terminate(_:)),keyEquivalent:"q"))
+        let editRoot=NSMenuItem(); main.addItem(editRoot); let editMenu=NSMenu(title:"Edit"); editRoot.submenu=editMenu
+        editMenu.addItem(NSMenuItem(title:"Cut",action:#selector(NSText.cut(_:)),keyEquivalent:"x")); editMenu.addItem(NSMenuItem(title:"Copy",action:#selector(NSText.copy(_:)),keyEquivalent:"c")); editMenu.addItem(NSMenuItem(title:"Paste",action:#selector(NSText.paste(_:)),keyEquivalent:"v")); editMenu.addItem(NSMenuItem(title:"Select All",action:#selector(NSText.selectAll(_:)),keyEquivalent:"a"))
+        NSApp.mainMenu=main
+    }
+    @objc private func settingsShortcut() { openSettings() }
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender:NSApplication) -> Bool { false }
+    deinit { if let moveObserver { NotificationCenter.default.removeObserver(moveObserver) }; if let observer { NotificationCenter.default.removeObserver(observer) }; signals.forEach{$0.cancel()} }
+}

@@ -1,0 +1,335 @@
+{
+  "schema": 1,
+  "slice": "01",
+  "builderDispatch": "01-repair-010",
+  "upstream": {
+    "url": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "pin": "d347e703908d0406b7a7ef80e3a0e594d86b2215",
+    "pristine": true,
+    "lockfileSha256": "2c903ab870f821ee2db62fa9417d11b1c2b9c65fbeec30e851ddc53c4cc8c383",
+    "installedLockfileUnchanged": true
+  },
+  "versions": {
+    "node": "v24.12.0",
+    "pnpm": "11.7.0",
+    "git": "git version 2.50.1 (Apple Git-155)"
+  },
+  "resource": {
+    "runtimeVersion": "0.33.3",
+    "model": "qwen3:8b",
+    "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+    "contextWindow": 8192,
+    "streamedText": true,
+    "nativeToolCall": true,
+    "toolFollowup": true,
+    "terminalStreams": true,
+    "routeHash": "5afb9e4971433c059e1ec76ea772da8527981ad9ccdcccf951dc2543a1571f5d"
+  },
+  "live": [
+    {
+      "scenario": "normal",
+      "passed": true,
+      "live": true,
+      "turn": {
+        "turn": 1,
+        "reason": "completed",
+        "eventCount": 14,
+        "nonemptyText": true
+      },
+      "effects": 0,
+      "withheldZero": false,
+      "durableTurn": true,
+      "durableApprovalPair": false,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    },
+    {
+      "scenario": "deny",
+      "passed": true,
+      "live": true,
+      "turn": {
+        "turn": 1,
+        "reason": "completed",
+        "eventCount": 21,
+        "nonemptyText": true
+      },
+      "effects": 0,
+      "withheldZero": true,
+      "durableTurn": true,
+      "durableApprovalPair": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    },
+    {
+      "scenario": "cancel",
+      "passed": true,
+      "live": true,
+      "turn": {
+        "turn": 1,
+        "reason": "aborted",
+        "eventCount": 18,
+        "nonemptyText": false
+      },
+      "effects": 0,
+      "withheldZero": true,
+      "durableTurn": true,
+      "durableApprovalPair": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    },
+    {
+      "scenario": "allow",
+      "passed": true,
+      "live": true,
+      "turn": {
+        "turn": 1,
+        "reason": "completed",
+        "eventCount": 21,
+        "nonemptyText": true
+      },
+      "effects": 1,
+      "withheldZero": true,
+      "durableTurn": true,
+      "durableApprovalPair": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    }
+  ],
+  "lifecycle": [
+    {
+      "scenario": "unknown-provider",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    },
+    {
+      "scenario": "unknown-model",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "shutdownResponse": true
+    },
+    {
+      "scenario": "invalid-overlay",
+      "passed": true,
+      "nonzeroExit": true,
+      "noOrphan": true
+    },
+    {
+      "scenario": "eof",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0
+    },
+    {
+      "scenario": "sigterm",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0
+    },
+    {
+      "scenario": "eof-pending",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "effects": 0,
+      "durableTurn": true,
+      "durableApprovalPair": true,
+      "approvalOutcome": "cancelled",
+      "turnReason": "aborted",
+      "postTurnIdle": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0
+    },
+    {
+      "scenario": "sigterm-pending",
+      "passed": true,
+      "exitCode": 0,
+      "noOrphan": true,
+      "effects": 0,
+      "durableTurn": true,
+      "durableApprovalPair": true,
+      "approvalOutcome": "cancelled",
+      "turnReason": "aborted",
+      "postTurnIdle": true,
+      "ownedProcesses": 1,
+      "tcpListeners": 0,
+      "browserProcesses": 0
+    }
+  ],
+  "unit": {
+    "realRegistryApprovalCases": 11,
+    "passed": true,
+    "transportAndDurableReaderCases": 6,
+    "passedTransportAndDurableReader": true,
+    "typescriptPassed": true,
+    "fullUpstreamBuildPassed": true,
+    "cleanupCases": 3,
+    "cleanupPassed": true,
+    "cleanupIncludesRealOwnedChild": true,
+    "nodeSuiteWithResourceRegressionCases": 7,
+    "missingAndChangedMetadataCategory": "LIVE_RESOURCE_UNAVAILABLE",
+    "approvedRouteStillAccepted": true,
+    "rootDisposalBarrierCases": 2,
+    "rootDisposalBarrierPassed": true,
+    "vitestTotalCases": 13,
+    "staleIdleRegressionPassed": true
+  },
+  "sourceCopies": [
+    {
+      "path": "spike/cleanup.mjs",
+      "candidateSha256": "4cf0ec719c774d5c961b13f8d7d8d0922714d722a79b2115dbdd72bdec95b39a",
+      "runtimeSha256": "4cf0ec719c774d5c961b13f8d7d8d0922714d722a79b2115dbdd72bdec95b39a",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/client.mjs",
+      "candidateSha256": "ebd96fab0aed35e0b619e10ed717c26b4f36d775165569a22379527fc36f57a2",
+      "runtimeSha256": "ebd96fab0aed35e0b619e10ed717c26b4f36d775165569a22379527fc36f57a2",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/engine/approval-bridge.ts",
+      "candidateSha256": "ee751fea251dbf917c5a63b12bd22e5d3d4f0942ea64433fe22ba296c62c01aa",
+      "runtimeSha256": "ee751fea251dbf917c5a63b12bd22e5d3d4f0942ea64433fe22ba296c62c01aa",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/engine/test-effect.ts",
+      "candidateSha256": "eb9627bf555d7c0bebf77e6ffc038369e6860d280e2984aff9a73e2b08ca3fbf",
+      "runtimeSha256": "eb9627bf555d7c0bebf77e6ffc038369e6860d280e2984aff9a73e2b08ca3fbf",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/engine/wisp-sdk.ts",
+      "candidateSha256": "b1484a2c1ac2c96b8f51b8d8bfc18e9ad69747a1b39d9e2433cbca16dcd3e581",
+      "runtimeSha256": "b1484a2c1ac2c96b8f51b8d8bfc18e9ad69747a1b39d9e2433cbca16dcd3e581",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/prepare.mjs",
+      "candidateSha256": "65e833c6655a243f737a3dd6e96a3818e2c787eaf68e12cb203a50eeba5390c0",
+      "runtimeSha256": "65e833c6655a243f737a3dd6e96a3818e2c787eaf68e12cb203a50eeba5390c0",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/profile/live-route.example.json",
+      "candidateSha256": "b1df447fcb49bd77bd8c8308c10d5bc149c55f4478b14612299bac8de307e31e",
+      "runtimeSha256": "b1df447fcb49bd77bd8c8308c10d5bc149c55f4478b14612299bac8de307e31e",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/profile/wisp.patch.yml",
+      "candidateSha256": "fed12808d9345aaaca3b88a3e6128643fefa43ff95f93719abe82cf3807d02f3",
+      "runtimeSha256": "ca04f9b3fa56441777cae2aa1d734af8df85e23ce2ee61d4973c3b8203ec48b7",
+      "match": true,
+      "transform": "absolute adapter path"
+    },
+    {
+      "path": "spike/run.mjs",
+      "candidateSha256": "73a073a66caf1a227a79ff9990fa482ab4cdc59bd603c4bba9b2032052a6b649",
+      "runtimeSha256": "73a073a66caf1a227a79ff9990fa482ab4cdc59bd603c4bba9b2032052a6b649",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/tests/approval.spec.ts",
+      "candidateSha256": "f13a3887c28c215032002ce4b42fc8a45f00497934584d71a2a25803cfa65f72",
+      "runtimeSha256": "f13a3887c28c215032002ce4b42fc8a45f00497934584d71a2a25803cfa65f72",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/tests/cleanup.test.mjs",
+      "candidateSha256": "b185653f28eb1a3a0dfda80526c6c130a2eb193e5a3638e38a09287a5f1ef19f",
+      "runtimeSha256": "b185653f28eb1a3a0dfda80526c6c130a2eb193e5a3638e38a09287a5f1ef19f",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/tests/client.test.mjs",
+      "candidateSha256": "8661668a91d67af2672eb6fa7324845f6dd1d7deae1322156dd5766e06ba68b3",
+      "runtimeSha256": "8661668a91d67af2672eb6fa7324845f6dd1d7deae1322156dd5766e06ba68b3",
+      "match": true,
+      "transform": "none"
+    },
+    {
+      "path": "spike/tests/vitest.config.ts",
+      "candidateSha256": "c7cf9cf98978aacd571839fa0500610078d3eaea219b0abd4f7d09c1d7d46f6e",
+      "runtimeSha256": "c7cf9cf98978aacd571839fa0500610078d3eaea219b0abd4f7d09c1d7d46f6e",
+      "match": true,
+      "transform": "none"
+    }
+  ],
+  "sourceCopyTiming": "All13 current copies match after unit and lifecycle launch, before repair live run, and again after lifecycle/live checks. No pre-lifecycle capture claim. Sole transform: expanded absolute adapter path.",
+  "retainedRuntime": {
+    "relativePath": "../../work/wisp-01/builder-01",
+    "reason": "Coordinator-authorized dependency/proof retention for independent Reviewer reuse",
+    "cleanupCommand": "node spike/cleanup.mjs --root ../../work/wisp-01/builder-01"
+  },
+  "limits": [
+    "Technical spike only; no product UI, speech, memory or delegated-route approval proof.",
+    "Packaging readiness and general provider/plugin/MCP/skill/sub-agent compatibility are not verified.",
+    "Resource preflight and source inspection are distinct from live Harness evidence."
+  ],
+  "repair": {
+    "dispatch": "01-repair-010",
+    "review": "01-review-009",
+    "completionBefore": "Old/pre-end idle falsely accepted completed turn",
+    "completionAfter": "Regression requires idle after correlated turn/end, preserves pre-reply buffering",
+    "lifecycleBefore": {
+      "eofAsked": 1,
+      "eofDecided": 0,
+      "eofTurnEnd": false,
+      "independentSigtermSameFailure": true
+    },
+    "lifecycleAfter": {
+      "signals": [
+        "EOF",
+        "SIGTERM"
+      ],
+      "asked": 1,
+      "decided": 1,
+      "outcome": "cancelled",
+      "turnEnd": "aborted",
+      "postTurnIdle": true,
+      "effects": 0,
+      "exitCode": 0,
+      "noOrphan": true
+    },
+    "privateSeam": "Pinned own root.fiber.dispose interposition; upstream-revision compatibility conditional",
+    "rootFailureDeadlineMs": 4000,
+    "priorProofPreserved": true
+  }
+}
