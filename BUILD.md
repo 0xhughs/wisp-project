@@ -54,6 +54,8 @@ No download is currently shown necessary for the observed en-US/installed-voice 
 
 
 ## Proof
+Publication receipt: user-authorized WIP source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a pushed to origin/feat/macos-release-loop; remote hash verified. Independent advisory publication audits055/057 passed. No main merge, application deployment or slice07 implementation acceptance.
+
 Frozen build10/native+32JS/bridgechecks/signature pass; Builder052 and054 handbacks external, covered docs/voice.md/evidence/07-voice.md/evidence/07-checkpoint-results.json hold portable checkpoint results. Actual local and DeepSeek spoken turns and OptionSpace speechstop verified with useraudibilityconfirmation. Three user-operated DeepSeekFlash turns on10 succeeded. Samantha still sounds robotic to participant; installedspeechquality is Default. Actual Arabic on-device recognition remains unavailable. Controlledspeaker→mic supplementary phrase yieldedemptyfinal/zeromodel, not a cancellation pass. Participant cannot do remaininglivechecks now. Minimal.gitignore added; binaryunchanged. Root restored SAVEDDeepSeekflash, attachKeychainfailure recorded, thenactualQuit/allownedPIDsabsent. No07acceptance.
 
 ## Review
@@ -87,4 +89,4 @@ Next slice ID / draft: none
 Human required
 
 ## Next
-Publish this independently audited WIP checkpoint to feat/macos-release-loop (explicit user request); no mainmerge/deployment.07 remainsHumanrequired, notShipped: resume normalKeychainattachment and outstandingphysicalverification whenparticipantavailable, thenindependentimplementationreview. GitHubfork/reuse research completed separately; noarchitecture replacement/fork implemented.
+Source checkpoint published on feat/macos-release-loop; no further push/release action is pending for that checkpoint. Slice07 remains Human required: resume normal Keychain attachment and outstanding physical verification when a participant is available, then obtain independent implementation review. Do not mark07 Shipped or advance08 before acceptance. GitHub fork/reuse research completed separately; no architecture replacement or fork was implemented.
