@@ -47,7 +47,7 @@ For the selected full macOS first release:
 10. Starter pet switching is functional; approximately twenty skins, optional voice wake, advanced computer control, Windows and remote channels are not release gates. No publishing, signing identity or external deployment is authorized by acceptance alone.
 
 ## Release evidence
-Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11 and 13 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/13-*.md. 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 13-review-081 IMPLEMENTATION_READY parked 13 verification-pending; NOT Shipped; no slices/13-*.md. Next Now 12 (12-plan-083 Proposed). 12-draft-082 persisted; not plan approval. 13 candidate 8308bd8c484d25bc89671639477d14005039547b1db8a349e299a00db97ad511 (225 files); Linux 136/136 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
+Finalization pending.01–06 independentlyaccepted/archived. loop-plan-061 APPROVE_PLAN. 07, 08, 09, 10, 11, 12 and 13 parked implemented-with-verification-pending; NOT Shipped; no slices/07-*.md through slices/13-*.md. 12-review-085 IMPLEMENTATION_READY (Linux 151/151; Mac/runtime backlog). 11-review-077 IMPLEMENTATION_READY (Linux 130/130; Mac/runtime backlog). 13-review-081 IMPLEMENTATION_READY (Linux 136/136; Mac/runtime backlog). 09-review-073 IMPLEMENTATION_READY (Linux 109/109; Mac/runtime backlog). 08-review-069 IMPLEMENTATION_READY (Linux 68/68; Mac/runtime backlog). 10-review-065 IMPLEMENTATION_READY (Linux 49/49; Mac/runtime backlog). Historical 07-review-060 HUMAN_REQUIRED unchanged. 12-review-085 IMPLEMENTATION_READY parked 12 verification-pending; NOT Shipped; no slices/12-*.md. Next Now 15 (15-draft-086). 12 candidate 35ab842b1f877fc9080d69e0bfa96618bbf79213443246ec92ea60c34be92416 (238 files); Linux 151/151 independently reproduced. User-authorized source checkpoint ce014ffa20caab3e7c3d90ee9defd77faeb6740a published to feat/macos-release-loop. WIPpublication doesnotmean07or08or09or10or11or12or13accepted or releasecomplete. Existing05cloud6/6historical; extraagentallowanceunused.
 Failed release reviews for this target: 0
 Pending release result: none
 Release review events / last consumed dispatch: none
@@ -93,11 +93,11 @@ Depends on: 01, 03. Validate direct tools, plugins, MCP, skills and delegated su
 Target membership: inside the selected macOS release target. Out: granting broad automatic consent or building later computer-control tools.
 
 ## Now
-### 12 Reusable skills for the same Wisp
-Goal: install or learn reusable behaviors on the existing identity.
-Provides: Wisp skill management backed by Harness; a skill can orchestrate tools/connections and use internal sub-agents with inherited permission constraints.
-Depends on: 04, 06, 07, 10–11 as required by the selected skill. Example meeting preparation checks calendar, researches attendees, retrieves relevant documents, summarizes and speaks; choose a supported demonstration when contracting this slice.
-Target membership: inside the selected macOS release target. Out: separate assistants and a mandatory meeting integration bundle.
+### 15 macOS accessibility computer control
+Goal: act on applications primarily through structured macOS Accessibility APIs.
+Provides: focus/move windows, read focused interfaces, click named controls, type and search the desktop, with visible permission guidance and action-specific approval enforcement.
+Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
+Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
 
 ## Later
 ### 14 macOS integrated readiness
@@ -105,12 +105,6 @@ Goal: verify a coherent local-first macOS product across slices 01–13.
 Provides: end-to-end evidence, Wisp Diagnostics, launch/quit/recovery behavior, no required account or unnecessary telemetry, voice resource headroom and continued ordinary desktop usability.
 Depends on: 01–13. Apply the release gates above and document supported macOS hardware/versions and reproducible local installation. External distribution/signing remains a separate decision.
 Target membership: inside the selected macOS release target. Out: implied publication, signing credentials, invented performance thresholds or automatic inclusion of every future slice.
-
-### 15 macOS accessibility computer control
-Goal: act on applications primarily through structured macOS Accessibility APIs.
-Provides: focus/move windows, read focused interfaces, click named controls, type and search the desktop, with visible permission guidance and action-specific approval enforcement.
-Depends on: 06, 09. Re-scope into coherent sub-slices before execution if discovery shows multiple substantial independent outcomes.
-Target membership: inside the authorized 01–21 implementation target (2026-09-10); outside the macOS first-release acceptance gates (01–14). Out: silent privilege escalation and visual fallback implementation.
 
 ### 16 Visual computer-control fallback
 Goal: complete an authorized action when structured accessibility cannot reach a control.
@@ -179,6 +173,12 @@ Provides: connection setup/status/removal, protected credentials, permissions an
 Depends on: 01, 03, 06; 10 when a connection is plugin-delivered. GitHub, Google Drive, Notion, Calendar and Slack are examples, not a promise to ship all connectors together.
 Target membership: inside the selected macOS release target. Out: a required online account or unconfirmed external writes.
 
+### 12 Reusable skills for the same Wisp
+Goal: install or learn reusable behaviors on the existing identity.
+Provides: Wisp skill management backed by Harness; a skill can orchestrate tools/connections and use internal sub-agents with inherited permission constraints.
+Depends on: 04, 06, 07, 10–11 as required by the selected skill. Example meeting preparation checks calendar, researches attendees, retrieves relevant documents, summarizes and speaks; choose a supported demonstration when contracting this slice.
+Target membership: inside the selected macOS release target. Out: separate assistants and a mandatory meeting integration bundle.
+
 ### 13 Interchangeable mascot bodies
 Goal: change the pet without changing the underlying companion.
 Provides: pet selection and body assets/animation integration; prove identity, memory, tools, models, connections and skills persist across changes.
@@ -199,10 +199,10 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 09 Initial safe computer actions — implemented with verification pending. 09-review-073 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 109/109 supplemental; NativeChecks/Mac GUI/NSWorkspace/live Ollama/07 retest/pin-runtime initialize open. Unaccepted copy `evidence/09-contract-wip.md`. Depends on accepted 06 and unaccepted 07. Not Shipped.
 - 10 Compatible plugin management — implemented with verification pending. 10-review-065 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 49/49 supplemental; NativeChecks/Mac GUI/live Ollama/pin-runtime initialize open. Unaccepted copy `evidence/10-contract-wip.md`. CompanionController applyPlugins creates 07 Apply/Quit retest obligation. Not Shipped.
 - 11 Connections and custom MCP — implemented with verification pending. 11-review-077 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 130/130 supplemental; NativeChecks/Mac GUI/Keychain/live Ollama/07 retest/10 overlay retest/pin-runtime initialize open. Unaccepted copy `evidence/11-contract-wip.md`. Depends on accepted 01, 03, 06; parked 10 obligation for plugin-delivered Connections. Not Shipped.
-- 12 Reusable skills for the same Wisp — in progress (Ready for review 12-review-085 after 12-build-084). Chosen demo `wisp-local-time-briefing` (Local time briefing) then 09 `wisp_tell_time`. Meeting-prep is an unavailable row. Not Shipped.
+- 12 Reusable skills for the same Wisp — implemented with verification pending. 12-review-085 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 151/151 supplemental; NativeChecks/Mac GUI/live Ollama skill-then-time/pin-runtime initialize/07/09/10/11 retest open. Unaccepted copy `evidence/12-contract-wip.md`. Chosen demo `wisp-local-time-briefing` then 09 `wisp_tell_time`. Depends on accepted 04, 06; unaccepted 07; parked 09/10/11/13. Not Shipped.
 - 13 Interchangeable mascot bodies — implemented with verification pending. 13-review-081 IMPLEMENTATION_READY (not APPROVE_IMPLEMENTATION; counters 0/0). Linux 136/136 supplemental; NativeChecks/Mac GUI/raster/click-through/restart/PID/07 retest open. Unaccepted copy `evidence/13-contract-wip.md`. Depends on accepted 02–05 and unaccepted 07. Not Shipped.
 - 14 macOS integrated readiness — unstarted. Depends on 01–13. Last among the 01–14 acceptance target. Mostly Mac evidence.
-- 15 macOS accessibility computer control — unstarted. Depends on accepted 06 and 09. Linux native work is uncompiled/unverified here.
+- 15 macOS accessibility computer control — unstarted (next Now; 15-draft-086). Depends on accepted 06 and parked 09 (record retest; do not assume NSWorkspace/voice work). Linux native AX is uncompiled/unverified here. Out: silent privilege escalation and visual fallback (16).
 - 16 Visual computer-control fallback — unstarted. Depends on 15. Not eligible before 15.
 - 17 Windows companion — unstarted. Depends on accepted macOS architecture. Linux may author sources marked uncompiled/unverified. macOS tests do not prove Windows.
 - 18 Optional voice wake — blocked (product-decision). Depends on 07 and an agreed listening design. Do not make always-listening mandatory.
@@ -210,7 +210,7 @@ Bookkeeping only (excluded from contract identity). Status is one of: unstarted;
 - 20 Proactivity behavior — blocked (product-decision). Triggers unspecified. Settings may keep “no configured behavior.” Do not invent autonomous actions.
 - 21 Optional remote doorway — blocked (product-decision). Channel undecided. Do not add a paid/external messaging integration.
 
-Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 13 parked; next Now 12.
+Recommended eligible order after 07 park: 10 → 08 → 09 → 11 → 13 → 12 → 15 → 17 → 16 → 19; skip 18/20/21; 14 last among 01–14. 12 parked; next Now 15.
 
 ## Verification backlog
 Bookkeeping only (excluded from contract identity). Batch human checks for a later session. Do not repeatedly request the authorizing user's participation. Code revision for current 07 Linux increment: `ec2e76c402c254be517efa722f699d749913095e`; candidate `fb4e181e561bf4401b8285322f08451ea0653b87b55da7db44fee1a6b157357e` (164 files) on the pre-amendment contract. After this amendment the contract identity changes; 07 product files are unchanged until a later Builder dispatch. Invalidation: any change to Voice/Companion/permission/shortcut/speech sources, identity.py rules, or Harness pin.
@@ -288,3 +288,23 @@ Bookkeeping only (excluded from contract identity). Batch human checks for a lat
 36. Shared 07 retest after 13 — CompanionController `replaceBody`/`applyPets`/`prepareModels`/`render` and MascotView changed. Re-run 07 backlog shortcut/Wake, no auto-listen after pet Apply, mute preserved, new body tracks listening/speaking, pending-approval speech suppression, no grant/reply revival, no orphan. Do not treat 07 as accepted. Do not spend DeepSeek 0/1. Invalidated by CompanionController body-swap, MascotView, VoiceLifecycle, EngineBridge, or permission allowlists.
 
 37. Slice 19 obligation — additional official skins remain the unsupported `official-skins` row after 13; 19 must not assume a marketplace or a fourth starter (bird) shipped here. Invalidated if 13 later enables extra catalog ids (that would be a contract change).
+
+38. Slice 12 / Done when 1–2 — declared-Mac Settings → Skills: catalog labels, keyboard traversal, Enable confirm vs cancel (zero snapshot/overlay change on Cancel), Apply, restart persistence, Remove, unsupported rows not enableable, no marketplace-empty implication. Requires declared Mac and participant. Automated: Linux-supplemental catalog/overlay tests (`sh tools/linux-js-tests.sh`, 151/151 at candidate `35ab842b1f877fc9080d69e0bfa96618bbf79213443246ec92ea60c34be92416`; product `bef1bdd8d452adc4fd6abfc6e710d45e89bc7fcf`). Procedure: isolated app, navigate Skills, enable demo, Apply, relaunch, Remove. Expected: saved/active match; cancel changes nothing; Pets copy still same Wisp. Invalidated by SkillsView/SkillStore/overlay composer/ManagementState Skills or Pets copy edits.
+
+39. Slice 12 / Done when 3 — live local Ollama: `skill` withhold/deny/cancel/allow-once 0/0/0/1 (instruction load only, zero clock canary); then `wisp_tell_time` 0/0/0/1; Enable produces no ledger/clock record. Requires declared Mac, local model, native approval UI. Automated: protocol allowlist Linux-supplemental only. Do not spend DeepSeek 0/1. Invalidated by skill-wrap/admission/permission-protocol/safe-actions edits.
+
+40. Slice 12 / Tests 2 — prepared pin runtime initialize: default excludes `skill`; enabled includes `skill` and the 09 Direct names; disable removes `skill`; hostile extra unadmitted tool fails initialize. Requires pnpm 11.7.0 and prepared `.wisp-spike.json` (missing-external-resource here). Invalidated by overlay/admission/product-sdk inventory/skill-register/skill-wrap edits.
+
+41. Slice 12 / Tests 4 native — compile NativeChecks including SkillStore persist/reload, default disabled, unknown id rejected, confirm-cancel, draft vs saved, Apply while busy refused, unsupported rows, ManagementState Skills copy, PermissionState `skill` case. Requires macOS SDK. Procedure: `desktop/scripts/test-native.sh` and `desktop/scripts/build-macos.sh`. Invalidated by any `desktop/macos` source listed in `test-native.sh`.
+
+42. Shared 07 retest after 12 — CompanionController `applySkills` uses `stopReasoning`/`startAttachment`. Re-run 07 backlog shortcut/Wake, no auto-listen after skill Apply, mute preserved, pending-approval Apply, no orphan. Do not treat 07 as accepted. Do not spend DeepSeek 0/1. Invalidated by CompanionController apply/lifecycle, EngineBridge, VoiceLifecycle, or permission allowlists.
+
+43. Shared 09 retest after 12 — Direct names still present when 09 sources load; `wisp_tell_time` still 0/0/0/1; `file:` and `/etc` still fail. Invalidated by permission-protocol, PermissionState, SafeActionOpener, or Direct admission.
+
+44. Shared 10 overlay/inventory retest after 12 — demonstration plugin still absent until enabled; extra unadmitted tools still fail initialize; `skill` absent until Skills enabled; `mcp-connection-plugin` still not enableable. Invalidated by overlay composer, `classifyInsert`, `wisp.inventory`, or startAttachment snapshot attach.
+
+45. Shared 11 MCP retest after 12 — default excludes `mcp__` names; enabled connection inventory still only admitted MCP names; skill enablement does not admit MCP tools. Invalidated by overlay/admission/product-sdk inventory edits.
+
+46. Slice 13 copy obligation — Pets “has not queried” skills assertion is replaced by same-Wisp persistence copy. Pet Apply still must not restart the engine or change skill snapshot bytes. Invalidated by PetStore/applyPets/replaceBody or SkillStore sibling isolation.
+
+47. Slice 14/19/20 — additional skills, marketplaces, learned-skill authoring, and proactivity remain unavailable rows after 12. Invalidated if 12 later enables extra catalog ids (that would be a contract change).
